@@ -108,11 +108,11 @@ void VectorTest() {
   util::TensorIndices<2> indicesRank  = util::makeTensorIndices(4, 3);
 
   // check the comparison operators
-  BOOST_CHECK(indicesAgain == indices);
+  BOOST_CHECK((indicesAgain == indices));
   BOOST_CHECK(!(indicesAgain != indices));
-  BOOST_CHECK(indicesOther != indices);
+  BOOST_CHECK((indicesOther != indices));
   BOOST_CHECK(!(indicesOther == indices));
-  BOOST_CHECK(indicesRank != indices);
+  BOOST_CHECK((indicesRank != indices));
   BOOST_CHECK(!(indicesRank == indices));
 
 
@@ -198,11 +198,11 @@ void MatrixTest() {
   util::TensorIndices<3> indicesRank  = util::makeTensorIndices(5, 4, 3);
 
   // check the comparison operators
-  BOOST_CHECK(indicesAgain == indices);
+  BOOST_CHECK((indicesAgain == indices));
   BOOST_CHECK(!(indicesAgain != indices));
-  BOOST_CHECK(indicesOther != indices);
+  BOOST_CHECK((indicesOther != indices));
   BOOST_CHECK(!(indicesOther == indices));
-  BOOST_CHECK(indicesRank != indices);
+  BOOST_CHECK((indicesRank != indices));
   BOOST_CHECK(!(indicesRank == indices));
 
 } // MatrixTest()
@@ -295,11 +295,11 @@ void TensorRank3Test() {
   util::TensorIndices<2> indicesRank  = util::makeTensorIndices(2, 3);
 
   // check the comparison operators
-  BOOST_CHECK(indicesAgain == indices);
+  BOOST_CHECK((indicesAgain == indices));
   BOOST_CHECK(!(indicesAgain != indices));
-  BOOST_CHECK(indicesOther != indices);
+  BOOST_CHECK((indicesOther != indices));
   BOOST_CHECK(!(indicesOther == indices));
-  BOOST_CHECK(indicesRank != indices);
+  BOOST_CHECK((indicesRank != indices));
   BOOST_CHECK(!(indicesRank == indices));
 
 } // TensorRank3Test()
