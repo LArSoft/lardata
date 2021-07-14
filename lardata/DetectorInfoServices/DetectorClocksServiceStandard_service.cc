@@ -13,7 +13,6 @@
 #include "canvas/Persistency/Provenance/rootNames.h"
 #include "cetlib_except/exception.h"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "lardataalg/DetectorInfo/DetectorClocksStandard.h"
 #include "lardataalg/DetectorInfo/DetectorClocksStandardDataFor.h"
@@ -93,7 +92,7 @@ namespace detinfo {
 
       for (auto const& psEntry : psetMap) {
         fhicl::ParameterSet ps;
-        fhicl::make_ParameterSet(psEntry.second.pset_, ps);
+        ps = fhicl::ParameterSet::make(psEntry.second.pset_);
         if (!fClocks.IsRightConfig(ps)) { continue; }
 
         count_configuration_changes(ps);
@@ -105,7 +104,7 @@ namespace detinfo {
       sqlite3_prepare_v2(sqliteDB, "SELECT PSetBlob from ParameterSets;", -1, &stmt, nullptr);
       while (sqlite3_step(stmt) == SQLITE_ROW) {
         fhicl::ParameterSet ps;
-        fhicl::make_ParameterSet(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)), ps);
+        ps = fhicl::ParameterSet::make(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
         if (!fClocks.IsRightConfig(ps)) { continue; }
 
         count_configuration_changes(ps);

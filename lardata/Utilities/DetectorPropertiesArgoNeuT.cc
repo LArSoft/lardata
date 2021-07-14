@@ -19,7 +19,6 @@
 // Art includes
 #include "art_root_io/RootDB/SQLite3Wrapper.h"
 #include "canvas/Utilities/Exception.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
 namespace util {
 

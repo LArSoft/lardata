@@ -15,7 +15,9 @@
 
 // Art includes
 #include "art_root_io/RootDB/SQLite3Wrapper.h"
-#include "fhiclcpp/make_ParameterSet.h"
+
+#include "TFile.h"
+#include "TTree.h"
 
 namespace detinfo {
 
@@ -88,7 +90,7 @@ namespace detinfo {
     sqlite3_prepare_v2(sqliteDB, "SELECT PSetBlob from ParameterSets;", -1, &stmt, nullptr);
     while (sqlite3_step(stmt) == SQLITE_ROW) {
       fhicl::ParameterSet ps;
-      fhicl::make_ParameterSet(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 0)), ps);
+      ps = fhicl::ParameterSet::make(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 0)));
       // Is this a DetectorPropertiesService parameter set?
 
       if (isDetectorPropertiesServiceStandard(ps)) {

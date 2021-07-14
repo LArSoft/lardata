@@ -186,7 +186,7 @@ namespace detsim {
 
     // fetch the data to be dumped on screen
     auto const& Waveforms
-      = event.getByLabel<std::vector<raw::OpDetWaveform>>(fOpDetWaveformsTag);
+      = event.getProduct<std::vector<raw::OpDetWaveform>>(fOpDetWaveformsTag);
 
     dump::raw::OpDetWaveformDumper dump(fPedestal, fDigitsPerLine);
     dump.setTimeLabelMaker(fTimeLabel.get());
