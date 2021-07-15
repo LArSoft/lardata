@@ -67,8 +67,8 @@ struct end_const_iterator_t : base_iterator<int const> {};
 
 using wrapper_type = util::details::RangeForWrapperIterator<begin_iterator_t, end_iterator_t>;
 using const_wrapper_type = util::details::RangeForWrapperIterator<begin_const_iterator_t, end_const_iterator_t>;
-BOOST_TEST_DONT_PRINT_LOG_VALUE(wrapper_type);
-BOOST_TEST_DONT_PRINT_LOG_VALUE(const_wrapper_type);
+BOOST_TEST_DONT_PRINT_LOG_VALUE(wrapper_type)
+BOOST_TEST_DONT_PRINT_LOG_VALUE(const_wrapper_type)
 
 struct Data {
   std::vector<int> data;
