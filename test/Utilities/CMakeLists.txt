@@ -17,7 +17,7 @@ cet_test(Dereference_test USE_BOOST_UNIT)
 cet_test(TensorIndices_test USE_BOOST_UNIT)
 cet_test(TensorIndicesStress_test)
 cet_test(GridContainers_test USE_BOOST_UNIT)
-##cet_test(RangeForWrapper_test USE_BOOST_UNIT)
+cet_test(RangeForWrapper_test USE_BOOST_UNIT)
 cet_test(filterRangeFor_test USE_BOOST_UNIT)
 cet_test(CollectionView_test USE_BOOST_UNIT)
 cet_test(TupleLookupByTag_test)
@@ -34,4 +34,3 @@ cet_test(timingreference_test HANDBUILT
 install_headers()
 install_fhicl()
 install_source()
-
