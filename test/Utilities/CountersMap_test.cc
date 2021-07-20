@@ -27,8 +27,7 @@
  * (for example, a random seed).
  */
 #define BOOST_TEST_MODULE ( CountersMap_test )
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
-#include <boost/test/test_tools.hpp> // BOOST_CHECK()
+#include "boost/test/unit_test.hpp"
 
 // LArSoft libraries
 #include "lardata/Utilities/CountersMap.h"
@@ -159,18 +158,18 @@ void RunHoughTransformTreeTest() {
       }
     } // for element in map
 
-    BOOST_CHECK(cm_map.is_equal(stl_map));
+    BOOST_TEST(cm_map.is_equal(stl_map));
 
     // if they were the same, make sure that now they differ
     const_cast<MapVectorI_t::value_type&>(stl_map)[NDist / 2]++;
-    BOOST_CHECK(!cm_map.is_equal(stl_map));
+    BOOST_TEST(!cm_map.is_equal(stl_map));
 
     ++iMap;
   } // for map
 
-  BOOST_CHECK_EQUAL(nMismatchValue, 0U);
-  BOOST_CHECK_EQUAL(nMissingKeys, 0U);
-  BOOST_CHECK_EQUAL(nExtraKeys, 0U);
+  BOOST_TEST(nMismatchValue == 0U);
+  BOOST_TEST(nMissingKeys == 0U);
+  BOOST_TEST(nExtraKeys == 0U);
 
 
 } // RunHoughTransformTreeTest()

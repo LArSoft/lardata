@@ -1,6 +1,5 @@
 #define BOOST_TEST_MODULE ( SurfXYZTest )
-#include "cetlib/quiet_unit_test.hpp"
-#include "boost/test/tools/floating_point_comparison.hpp"
+#include "boost/test/unit_test.hpp"
 
 //
 // File: SurfXYZTest.cxx
@@ -12,6 +11,9 @@
 #include "lardata/RecoObjects/SurfXYZPlane.h"
 #include "lardata/RecoObjects/KalmanLinearAlgebra.h"
 #include "cetlib_except/exception.h"
+
+using boost::test_tools::tolerance;
+auto const tol = 1.e-6% tolerance();
 
 struct SurfXYZTestFixture
 {
@@ -31,23 +33,23 @@ BOOST_FIXTURE_TEST_SUITE(SurfXYZTest, SurfXYZTestFixture)
 // Test equality comparisons.
 
 BOOST_AUTO_TEST_CASE(Equality) {
-  BOOST_CHECK(surf1.isEqual(surf2));
-  BOOST_CHECK(!surf1.isEqual(surf3));
-  BOOST_CHECK(!surf1.isEqual(surf4));
-  BOOST_CHECK(!surf2.isEqual(surf3));
-  BOOST_CHECK(!surf2.isEqual(surf4));
-  BOOST_CHECK(!surf3.isEqual(surf4));
+  BOOST_TEST(surf1.isEqual(surf2));
+  BOOST_TEST(!surf1.isEqual(surf3));
+  BOOST_TEST(!surf1.isEqual(surf4));
+  BOOST_TEST(!surf2.isEqual(surf3));
+  BOOST_TEST(!surf2.isEqual(surf4));
+  BOOST_TEST(!surf3.isEqual(surf4));
 }
 
 // Test parallel comparisions.
 
 BOOST_AUTO_TEST_CASE(Parallel) {
-  BOOST_CHECK(surf1.isParallel(surf2));
-  BOOST_CHECK(surf1.isParallel(surf3));
-  BOOST_CHECK(!surf1.isParallel(surf4));
-  BOOST_CHECK(surf2.isParallel(surf3));
-  BOOST_CHECK(!surf2.isParallel(surf4));
-  BOOST_CHECK(!surf3.isParallel(surf4));
+  BOOST_TEST(surf1.isParallel(surf2));
+  BOOST_TEST(surf1.isParallel(surf3));
+  BOOST_TEST(!surf1.isParallel(surf4));
+  BOOST_TEST(surf2.isParallel(surf3));
+  BOOST_TEST(!surf2.isParallel(surf4));
+  BOOST_TEST(!surf3.isParallel(surf4));
 }
 
 // Test coordinate transformations.
@@ -59,25 +61,25 @@ BOOST_AUTO_TEST_CASE(Transformation) {
   surf4.toLocal(xyz1, uvw);
   surf4.toGlobal(uvw, xyz2);
   for(int i=0; i<3; ++i)
-    BOOST_CHECK_CLOSE(xyz1[i], xyz2[i], 1.e-6);
+    BOOST_TEST(xyz1[i] == xyz2[i], tol);
 }
 
 // Test separation.
 
 BOOST_AUTO_TEST_CASE(Separation) {
-  BOOST_CHECK(surf1.distanceTo(surf2) == 0.);
-  BOOST_CHECK(surf1.distanceTo(surf3) == 1.);
-  BOOST_CHECK(surf3.distanceTo(surf1) == -1.);
+  BOOST_TEST(surf1.distanceTo(surf2) == 0.);
+  BOOST_TEST(surf1.distanceTo(surf3) == 1.);
+  BOOST_TEST(surf3.distanceTo(surf1) == -1.);
 }
 
 // Should throw exception (not parallel).
 
 BOOST_AUTO_TEST_CASE(NotParallel) {
   BOOST_CHECK_EXCEPTION( surf1.distanceTo(surf4), cet::exception, \
-                         [](cet::exception const & e)	          \
-			 {				          \
-			   return e.category() == "SurfXYZPlane";  \
-			 } );
+                         [](cet::exception const & e)             \
+                         {                                        \
+                           return e.category() == "SurfXYZPlane";  \
+                         } );
 }
 
 // Test track parameters.
@@ -98,33 +100,33 @@ BOOST_AUTO_TEST_CASE(TrackParameters) {
   double xyz[3];
   double mom[3];
   surf1.getPosition(v, xyz);
-  BOOST_CHECK_CLOSE(xyz[0], 0.1, 1.e-6);
-  BOOST_CHECK_CLOSE(xyz[1], 0.2, 1.e-6);
-  BOOST_CHECK_CLOSE(xyz[2], 0.0, 1.e-6);
+  BOOST_TEST(xyz[0] == 0.1, tol);
+  BOOST_TEST(xyz[1] == 0.2, tol);
+  BOOST_TEST(xyz[2] == 0.0, tol);
   surf3.getPosition(v, xyz);
-  BOOST_CHECK_CLOSE(xyz[0], 1.1, 1.e-6);
-  BOOST_CHECK_CLOSE(xyz[1], 1.2, 1.e-6);
-  BOOST_CHECK_CLOSE(xyz[2], 1.0, 1.e-6);
+  BOOST_TEST(xyz[0] == 1.1, tol);
+  BOOST_TEST(xyz[1] == 1.2, tol);
+  BOOST_TEST(xyz[2] == 1.0, tol);
   surf1.getMomentum(v, mom, trkf::Surface::FORWARD);
-  BOOST_CHECK_CLOSE(mom[0], 4./std::sqrt(14.), 1.e-6);
-  BOOST_CHECK_CLOSE(mom[1], 6./std::sqrt(14.), 1.e-6);
-  BOOST_CHECK_CLOSE(mom[2], 2./std::sqrt(14.), 1.e-6);
+  BOOST_TEST(mom[0] == 4./std::sqrt(14.), tol);
+  BOOST_TEST(mom[1] == 6./std::sqrt(14.), tol);
+  BOOST_TEST(mom[2] == 2./std::sqrt(14.), tol);
   surf1.getMomentum(v, mom, trkf::Surface::BACKWARD);
-  BOOST_CHECK_CLOSE(mom[0], -4./std::sqrt(14.), 1.e-6);
-  BOOST_CHECK_CLOSE(mom[1], -6./std::sqrt(14.), 1.e-6);
-  BOOST_CHECK_CLOSE(mom[2], -2./std::sqrt(14.), 1.e-6);
+  BOOST_TEST(mom[0] == -4./std::sqrt(14.), tol);
+  BOOST_TEST(mom[1] == -6./std::sqrt(14.), tol);
+  BOOST_TEST(mom[2] == -2./std::sqrt(14.), tol);
   surf4.getMomentum(v, mom, trkf::Surface::FORWARD);
-  BOOST_CHECK_CLOSE(mom[0], (4.*std::cos(0.1) + 2.*std::sin(0.1))/std::sqrt(14.), 1.e-6);
-  BOOST_CHECK_CLOSE(mom[1], (4.*std::sin(0.1)*std::sin(1.) + 6.*std::cos(1.) - 2.*std::cos(0.1)*std::sin(1.))/std::sqrt(14.), 1.e-6);
-  BOOST_CHECK_CLOSE(mom[2], (-4.*std::sin(0.1)*std::cos(1.) + 6.*std::sin(1.) + 2.*std::cos(0.1)*std::cos(1.))/std::sqrt(14.), 1.e-6);
+  BOOST_TEST(mom[0] == (4.*std::cos(0.1) + 2.*std::sin(0.1))/std::sqrt(14.), tol);
+  BOOST_TEST(mom[1] == (4.*std::sin(0.1)*std::sin(1.) + 6.*std::cos(1.) - 2.*std::cos(0.1)*std::sin(1.))/std::sqrt(14.), tol);
+  BOOST_TEST(mom[2] == (-4.*std::sin(0.1)*std::cos(1.) + 6.*std::sin(1.) + 2.*std::cos(0.1)*std::cos(1.))/std::sqrt(14.), tol);
 
   // Should throw exception (no direction).
 
   BOOST_CHECK_EXCEPTION( surf1.getMomentum(v, mom), cet::exception, \
                          [](cet::exception const & e)		    \
-			 {					    \
-			   return e.category() == "SurfXYZPlane";    \
-			 } );
+                         {					    \
+                           return e.category() == "SurfXYZPlane";    \
+                         } );
 }
 
 BOOST_AUTO_TEST_SUITE_END()
