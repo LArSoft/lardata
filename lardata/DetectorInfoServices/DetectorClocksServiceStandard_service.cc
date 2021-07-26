@@ -109,6 +109,7 @@ namespace detinfo {
 
         count_configuration_changes(ps);
       }
+      sqlite3_finalize(stmt);
     }
 
     for (size_t i = 0; i < kConfigTypeMax; ++i) {
