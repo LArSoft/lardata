@@ -14,6 +14,8 @@
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "lardata/Utilities/LArFFT.h"
 
+#include "art/Framework/Services/Registry/ServiceDefinitionMacros.h"
+
 //-----------------------------------------------
 util::LArFFT::LArFFT(fhicl::ParameterSet const& pset, art::ActivityRegistry& reg)
   : fSize(pset.get<int>("FFTSize", 0))

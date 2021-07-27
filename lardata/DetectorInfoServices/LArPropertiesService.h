@@ -10,8 +10,9 @@
 #ifndef LARPROPERTIESSERVICE_H
 #define LARPROPERTIESSERVICE_H
 
-#include "art/Framework/Services/Registry/ServiceMacros.h"
 #include "lardataalg/DetectorInfo/LArProperties.h"
+
+#include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
 
 namespace detinfo {
   class LArPropertiesService {

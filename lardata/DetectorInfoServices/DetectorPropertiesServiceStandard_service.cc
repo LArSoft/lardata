@@ -14,6 +14,7 @@
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // Art includes
+#include "art/Framework/Services/Registry/ServiceDefinitionMacros.h"
 #include "art_root_io/RootDB/SQLite3Wrapper.h"
 
 #include "TFile.h"

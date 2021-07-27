@@ -23,7 +23,6 @@
 #include "lardataalg/DetectorInfo/ElecClock.h"
 
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
-#include "art/Framework/Services/Registry/ServiceMacros.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 
