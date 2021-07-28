@@ -63,8 +63,9 @@ if(OPENMP_FOUND)
   endif()
 endif(OPENMP_FOUND)
 
-add_library (gshf_MarqFitAlg STATIC MarqFitAlg.cxx)
-set_property(TARGET gshf_MarqFitAlg PROPERTY POSITION_INDEPENDENT_CODE ON)
+## Problematic with cetbuildtools 8 and does not appear to be used
+##add_library (gshf_MarqFitAlg STATIC MarqFitAlg.cxx)
+##set_property(TARGET gshf_MarqFitAlg PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 install_headers()
 install_fhicl()
