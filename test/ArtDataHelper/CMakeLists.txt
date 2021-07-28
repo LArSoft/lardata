@@ -2,10 +2,10 @@ art_make(
   MODULE_LIBRARIES
     lardata_ArtDataHelper
     lardataobj_RecoBase
-    ${MF_MESSAGELOGGER}
+    messagefacility::MF_MessageLogger
     
-    ${FHICLCPP}
-    cetlib_except
+    fhiclcpp::fhiclcpp
+    cetlib_except::cetlib_except
 )
 
 cet_test(HitCollectorTest HANDBUILT

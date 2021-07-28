@@ -8,22 +8,22 @@ art_make(NO_PLUGINS
             lardata_Utilities_LArPropertiesServiceArgoNeuT_service
             lardataobj_RecoBase
             larcorealg_Geometry
-            canvas
-            ${MF_MESSAGELOGGER}
-            cetlib_except
+            canvas::canvas
+            messagefacility::MF_MessageLogger
+            cetlib_except::cetlib_except
             ${FFTW_LIBRARIES})
 
 simple_plugin(DatabaseUtil "service"
-              ${MF_MESSAGELOGGER}
+              messagefacility::MF_MessageLogger
               ${PQ}
-              ${ART_FRAMEWORK_CORE}
-              ${ART_FRAMEWORK_PRINCIPAL}
+              art::Framework_Core
+              art::Framework_Principal
               ${ART_ROOT_IO_ROOTDB}
-              art_Persistency_Provenance)
+              art::Persistency_Provenance)
 
 simple_plugin(LArPropertiesServiceArgoNeuT "service"
               lardata_Utilities_DatabaseUtil_service
-              ${MF_MESSAGELOGGER})
+              messagefacility::MF_MessageLogger)
 
 simple_plugin(DetectorPropertiesServiceArgoNeuT "service"
               lardata_Utilities_LArPropertiesServiceArgoNeuT_service
@@ -33,13 +33,13 @@ simple_plugin(DetectorPropertiesServiceArgoNeuT "service"
               larcorealg_Geometry
               ${ART_ROOT_IO_ROOTDB}
               ${SQLITE3}
-              ${MF_MESSAGELOGGER}
+              messagefacility::MF_MessageLogger
               ROOT::Core
               ROOT::RIO)
 
 simple_plugin(LArFFT "service"
               lardataalg_DetectorInfo
-              ${MF_MESSAGELOGGER}
+              messagefacility::MF_MessageLogger
               ROOT::Core
               ROOT::FFTW
               ROOT::Hist
@@ -47,7 +47,7 @@ simple_plugin(LArFFT "service"
               ROOT::Physics)
 
 simple_plugin(ComputePi "module"
-              ${MF_MESSAGELOGGER})
+              messagefacility::MF_MessageLogger)
 
 include(FindOpenMP)
 if(OPENMP_FOUND)
