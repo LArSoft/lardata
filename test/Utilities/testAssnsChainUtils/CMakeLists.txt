@@ -40,7 +40,6 @@ simple_plugin(
     messagefacility::MF_MessageLogger
     fhiclcpp::fhiclcpp
     cetlib_except::cetlib_except
-    ${ROOT_BASIC_LIB_LIST}
   NO_INSTALL
   )
 simple_plugin(
