@@ -4,9 +4,11 @@ cet_find_library(FFTW_LIBRARY NAMES fftw3 fftw3-3 PATHS ENV FFTW_LIBRARY )
 art_make(NO_PLUGINS
          LIB_LIBRARIES
             lardata_Utilities_LArFFT_service
-            lardata_Utilities_LArPropertiesServiceArgoNeuT_service
             lardataobj_RecoBase
             larcorealg_Geometry
+              art::Framework_Core
+              art::Framework_Principal
+              art::Persistency_Provenance
             canvas::canvas
             messagefacility::MF_MessageLogger
             cetlib_except::cetlib_except
@@ -19,22 +21,6 @@ simple_plugin(DatabaseUtil "service"
               art::Framework_Principal
               ${ART_ROOT_IO_ROOTDB}
               art::Persistency_Provenance)
-
-simple_plugin(LArPropertiesServiceArgoNeuT "service"
-              lardata_Utilities_DatabaseUtil_service
-              messagefacility::MF_MessageLogger)
-
-simple_plugin(DetectorPropertiesServiceArgoNeuT "service"
-              lardata_Utilities_LArPropertiesServiceArgoNeuT_service
-              lardata_Utilities
-              lardata_Utilities_DatabaseUtil_service
-              larcore_Geometry_Geometry_service
-              larcorealg_Geometry
-              ${ART_ROOT_IO_ROOTDB}
-              ${SQLITE3}
-              messagefacility::MF_MessageLogger
-              ROOT::Core
-              ROOT::RIO)
 
 simple_plugin(LArFFT "service"
               lardataalg_DetectorInfo
