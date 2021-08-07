@@ -8,7 +8,7 @@
 
 cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
-project(lardata VERSION 09.02.06.02 LANGUAGES CXX)
+project(lardata VERSION 09.02.06.03 LANGUAGES CXX)
 
 # cetbuildtools contains our cmake modules
 find_package(cetbuildtools REQUIRED)
@@ -42,6 +42,7 @@ find_ups_product( canvas  )
 find_ups_product(messagefacility)
 find_ups_product(cetlib)
 find_ups_product(cetlib_except)
+find_ups_product( clhep  )
 
 #  Find all the libraries needed by our dependent CMakeList.txt files
 # cet_find_library( NUSIMDATA_SIMULATIONBASE NAMES nusimdata_SimulationBase PATHS ENV NUSIMDATA_LIB NO_DEFAULT_PATH )
