@@ -10,6 +10,7 @@
 #define DETECTORPROPERTIESSERVICE_H
 
 #include "art/Framework/Principal/fwd.h"
+#include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "lardataalg/DetectorInfo/DetectorProperties.h"
 #include "lardataalg/DetectorInfo/DetectorPropertiesData.h"
