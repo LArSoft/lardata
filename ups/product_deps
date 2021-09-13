@@ -1,26 +1,24 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent	lardata	v09_00_02
-defaultqual	e19
+parent	lardata	v09_02_08_01
+defaultqual	e20
 #
 fcldir product_dir job
 #
 product         version
-lardataalg	v09_00_02
-lardataobj	v09_00_00
-larcore 	v09_00_00
-range		v3_0_4_0
-cetbuildtools	v7_15_01	-	only_for_build
+lardataalg	v09_04_07_01
+lardataobj	v09_01_06_01
+larcore 	v09_02_04_01
+range		v3_0_11_0
+cetbuildtools	v8_15_00	-	only_for_build
 end_product_list
 
 
 qualifier        larcore          lardataobj	lardataalg	range	notes
-e19:py2:debug    e19:py2:debug    e19:py2:debug	e19:py2:debug	-nq-
-e19:py2:prof     e19:py2:prof     e19:py2:prof	e19:py2:prof	-nq-
+e20:debug        e20:debug        e20:debug	e20:debug	-nq-
+e20:prof         e20:prof         e20:prof	e20:prof	-nq-
 e19:debug        e19:debug        e19:debug	e19:debug	-nq-
 e19:prof         e19:prof         e19:prof	e19:prof	-nq-
-c7:py2:debug     c7:py2:debug     c7:py2:debug	c7:py2:debug	-nq-
-c7:py2:prof      c7:py2:prof      c7:py2:prof	c7:py2:prof	-nq-
 c7:debug         c7:debug         c7:debug	c7:debug	-nq-
 c7:prof          c7:prof          c7:prof	c7:prof		-nq-
 end_qualifier_list

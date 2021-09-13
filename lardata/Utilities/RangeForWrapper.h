@@ -4,10 +4,8 @@
  * @author  Gianluca Petrillo (petrillo@fnal.gov)
  * @date    December 12, 2016
  *
- * The functionality provided here is implemented in C++ language 2017.
- * Better than here, of course.
- * When C++17 is adopted in LArSoft, this header should be declared obsolete,
- * deprecated and then removed.
+ * This header will be needed likely until C++20, since range library is not
+ * providing some definitions that are needed for range for loops.
  */
 
 #ifndef LARDATA_UTILITIES_RANGEFORWRAPPER_H
@@ -239,11 +237,11 @@ namespace util {
 
       /// Extractor of the begin iterator from a range.
       static auto extractBegin(RangeRef_t range)
-        { using namespace std; return begin(static_cast<RangeRef_t>(range)); }
+        { using namespace std; return begin(range); }
 
       /// Extracts the end iterator from a range object.
       static auto extractEnd(RangeRef_t range)
-        { using namespace std; return end(static_cast<RangeRef_t>(range)); }
+        { using namespace std; return end(range); }
 
       /// Type of wrapped begin iterator.
       using BeginIter_t = decltype(extractBegin(std::declval<RangeRef_t>()));
@@ -297,6 +295,10 @@ namespace util {
 
       /// Type of difference between element positions.
       using difference_type = typename Traits_t::difference_type;
+
+      /// Type of value contained in the wrapped sequence.
+      using value_type = typename Traits_t::value_type;
+
 
       /// Constructor: references the specified range (lvalue reference).
       RangeForWrapperBox(Range_t& range)

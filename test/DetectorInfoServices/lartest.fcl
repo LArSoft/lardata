@@ -8,6 +8,7 @@ process_name: LArPropTest
 services:
 {
   ExptGeoHelperInterface:    @local::standard_geometry_helper
+  GeometryConfigurationWriter: {}
   Geometry:                  @local::standard_geo
   DetectorPropertiesService: @local::standard_detproperties
   LArPropertiesService:      @local::standard_properties

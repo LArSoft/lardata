@@ -3,13 +3,13 @@
 using std::string;
 std::mutex util::LArFFTWPlan::mutex_;
 
-util::LArFFTWPlan::LArFFTWPlan(int transformSize, const std::string &option) 
+util::LArFFTWPlan::LArFFTWPlan(int transformSize, const std::string &option)
   : fSize    (transformSize)
   , fOption  (option){
 
   std::lock_guard<std::mutex> lock(mutex_);
 
-  fFreqSize = fSize/2+1;  
+  fFreqSize = fSize/2+1;
   fN = new int[1];
   fN[0] = fSize;
 

@@ -4,12 +4,12 @@ art_make(LIB_LIBRARIES
            lardataalg_DetectorInfo
            larcore_Geometry_Geometry_service
            larcorealg_Geometry
-           ${ART_FRAMEWORK_CORE}
-           ${ART_FRAMEWORK_SERVICES_REGISTRY}
+           art::Framework_Core
+           art::Framework_Services_Registry
            ${ART_UTILITIES}
-           canvas
-           ${FHICLCPP}
-           cetlib_except
+           canvas::canvas
+           fhiclcpp::fhiclcpp
+           cetlib_except::cetlib_except
            ROOT::Core
            ROOT::Physics)
 

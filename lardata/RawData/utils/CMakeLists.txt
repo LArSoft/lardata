@@ -3,14 +3,14 @@ art_make(NO_PLUGINS
          LIB_LIBRARIES lardataobj_RawData
                        larcorealg_Geometry
                        larcoreobj_SummaryData
-                       ${ART_FRAMEWORK_CORE}
-                       ${ART_FRAMEWORK_IO_SOURCES}
-                       ${ART_FRAMEWORK_PRINCIPAL}
-                       art_Persistency_Common
-                       art_Persistency_Provenance
-                       canvas
-                       cetlib_except
-                       ${PQ}
+                       art::Framework_Core
+                       art::Framework_IO_Sources
+                       art::Framework_Principal
+                       art::Persistency_Common
+                       art::Persistency_Provenance
+                       canvas::canvas
+                       cetlib_except::cetlib_except
+                       PQ
                        ${Boost_SERIALIZATION_LIBRARY}
                        ${Boost_DATE_TIME_LIBRARY}
                        ROOT::Core
@@ -21,7 +21,7 @@ art_make(NO_PLUGINS
 simple_plugin(LArRawInputSource "source"
   lardataobj_RawData
   lardata_RawData_utils
-  ${ART_FRAMEWORK_IO_SOURCES}
+  art::Framework_IO_Sources
 )
 
 install_headers()

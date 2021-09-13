@@ -12,7 +12,7 @@
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
-#include "art/Framework/Services/Registry/ServiceMacros.h"
+#include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
 #include "art/Persistency/Provenance/ScheduleContext.h"
 #include "fhiclcpp/fwd.h"
 
@@ -96,24 +96,7 @@ namespace detinfo {
     }
 
     DetectorClocksData
-    DataFor(art::Event const& e) const override
-    {
-      auto const& config_values = fClocks.ConfigValues();
-      // Trigger times
-      double trig_time{config_values[kDefaultTrigTime]};
-      double beam_time{config_values[kDefaultBeamTime]};
-      if (auto times = trigger_times_for_event(fClocks.TrigModuleName(), e)) {
-        std::tie(trig_time, beam_time) = *times;
-      }
-
-      double g4_ref_time{config_values[kG4RefTime]};
-      if (auto sim_trig_time = g4ref_time_for_event(fClocks.G4RefCorrTrigModuleName(), e)) {
-        g4_ref_time -= trig_time;
-        g4_ref_time += *sim_trig_time;
-      }
-
-      return fClocks.DataFor(g4_ref_time, trig_time, beam_time);
-    }
+    DataFor(art::Event const& e) const override;
 
     DetectorClocksStandard fClocks;
     bool fInheritClockConfig;
@@ -125,3 +108,4 @@ DECLARE_ART_SERVICE_INTERFACE_IMPL(detinfo::DetectorClocksServiceStandard,
                                    SHARED)
 
 #endif // DETECTORCLOCKSSERVICESTANDARD_H
+

@@ -4,39 +4,38 @@
 # Author:  Gianluca Petrillo (petrillo@fnal.gov)
 # Date:    October 2nd, 2015
 # Version: 1.0
-# 
+#
 # This is a collection of services that should work for our testing geometry,
 # the "LArTPC detector" geometry.
-# 
+#
 # Changes:
 # 20151002 (petrillo@fnal.gov) [v1.0]
 #   original version
 #
 
-#include "geometry.fcl"
-#include "detectorproperties.fcl"
-#include "larproperties.fcl"
+#include "geometry_lartpcdetector.fcl"
+#include "detectorproperties_lartpcdetector.fcl"
+#include "larproperties_lartpcdetector.fcl"
 #include "larfft.fcl"
 #include "simulationservices.fcl"
 #include "magfield_larsoft.fcl"
 #include "databaseutil.fcl"
 #include "backtrackerservice.fcl"
 #include "particleinventoryservice.fcl"
-#include "detectorclocks.fcl"
+#include "detectorclocks_lartpcdetector.fcl"
 #include "channelstatus.fcl"
 
 BEGIN_PROLOG
 
 lartpcdetector_services:
 {
-  ExptGeoHelperInterface:    @local::standard_geometry_helper
-  Geometry:                  @local::standard_geo
-  DetectorPropertiesService: @local::standard_detproperties
-  LArPropertiesService:      @local::standard_properties
+                             @table::lartpcdetector_geometry_services # from `geometry_lartpcdetector.fcl`
+  DetectorPropertiesService: @local::lartpcdetector_detproperties
+  LArPropertiesService:      @local::lartpcdetector_properties
   LArFFT:                    @local::standard_larfft
   BackTrackerService:        @local::standard_backtrackerservice
   ParticleInventoryService:  @local::standard_particleinventoryservice
-  DetectorClocksService:     @local::standard_detectorclocks
+  DetectorClocksService:     @local::lartpcdetector_detectorclocks
   ChannelStatusService:      @local::standard_channelstatus
 }
 

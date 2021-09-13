@@ -80,6 +80,12 @@ namespace detsim {
         Comment("ADC readings are written relative to this number"),
         0};
 
+      fhicl::Atom<bool> SortByChannelAndTime{
+        Name("SortByChannelAndTime"),
+        Comment
+          ("waveforms are dumped in channel number order, and then timestamp"),
+        true};
+
       fhicl::Atom<std::string> TickLabel{
         Name("TickLabel"),
         Comment("write an index in front of each digit dump line; choose between:"
@@ -98,6 +104,12 @@ namespace detsim {
     void analyze(const art::Event& evt);
 
   private:
+    
+    enum class sortMode {
+      DataProductOrder, ///< Unsorted: same order as the input data product.
+      ChannelAndTime    ///< Sort by PMT channel number, then timestamp.
+    }; // sortMode
+    
     /// Base functor for printing time according to tick number.
     struct TimestampLabelMaker : public dump::raw::OpDetWaveformDumper::TimeLabelMaker {
       double tickDuration; // should this me `util::quantities::microsecond`?
@@ -118,6 +130,8 @@ namespace detsim {
     std::string fOutputCategory;      ///< Category for `mf::LogInfo` output.
     unsigned int fDigitsPerLine;      ///< ADC readings per line in the output.
     raw::ADC_Count_t fPedestal;       ///< ADC pedestal (subtracted from readings).
+    sortMode fSortByChannelAndTime; ///< How to sort the waveforms in the dump.
+    
 
     /// The object used to print tick labels.
     std::unique_ptr<dump::raw::OpDetWaveformDumper::TimeLabelMaker> fTimeLabel;
@@ -142,6 +156,9 @@ namespace detsim {
     , fOutputCategory(config().OutputCategory())
     , fDigitsPerLine(config().DigitsPerLine())
     , fPedestal(config().Pedestal())
+    , fSortByChannelAndTime(config().SortByChannelAndTime()
+        ? sortMode::ChannelAndTime: sortMode::DataProductOrder
+      )
   {
     std::string const tickLabelStr = config().TickLabel();
     if (tickLabelStr == "none") {
@@ -168,36 +185,53 @@ namespace detsim {
   {
 
     // fetch the data to be dumped on screen
-    auto Waveforms = event.getValidHandle<std::vector<raw::OpDetWaveform>>(fOpDetWaveformsTag);
+    auto const& Waveforms
+      = event.getProduct<std::vector<raw::OpDetWaveform>>(fOpDetWaveformsTag);
 
     dump::raw::OpDetWaveformDumper dump(fPedestal, fDigitsPerLine);
-    dump.setIndent("    ");
     dump.setTimeLabelMaker(fTimeLabel.get());
 
     mf::LogVerbatim(fOutputCategory) << "The event " << event.id() << " contains data for "
-                                     << Waveforms->size() << " optical detector channels";
+                                     << Waveforms.size() << " optical detector channels";
     if (fPedestal != 0) {
       mf::LogVerbatim(fOutputCategory)
         << "A pedestal of " << fPedestal << " counts will be subtracted from all ADC readings.";
     } // if pedestal
 
-    auto groupedWaveforms = groupByChannel(*Waveforms);
+    switch (fSortByChannelAndTime) {
+      case sortMode::DataProductOrder:
+        {
+          dump.setIndent("  ");
+          for (raw::OpDetWaveform const& waveform : Waveforms) {
+            mf::LogVerbatim log(fOutputCategory);
+            dump(log, waveform);
+          } // for waveforms on channel
+        }
+        break; // sortMode::DataProductOrder
+      case sortMode::ChannelAndTime:
+        {
+          dump.setIndent("    ");
 
-    for (auto& channelWaveforms : groupedWaveforms) {
-      if (channelWaveforms.empty()) continue;
+          auto groupedWaveforms = groupByChannel(Waveforms);
+          for (auto& channelWaveforms : groupedWaveforms) {
+            if (channelWaveforms.empty()) continue;
 
-      sortByTimestamp(channelWaveforms);
-      auto const channel = channelWaveforms.front()->ChannelNumber();
+            sortByTimestamp(channelWaveforms);
+            auto const channel = channelWaveforms.front()->ChannelNumber();
 
-      mf::LogVerbatim(fOutputCategory) << "  optical detector channel #" << channel << " has "
-                                       << channelWaveforms.size() << " waveforms:";
+            mf::LogVerbatim(fOutputCategory)
+              << "  optical detector channel #" << channel << " has "
+              << channelWaveforms.size() << " waveforms:";
 
-      for (raw::OpDetWaveform const* pWaveform : channelWaveforms) {
-        mf::LogVerbatim log(fOutputCategory);
-        dump(log, *pWaveform);
-      } // for waveforms on channel
+            for (raw::OpDetWaveform const* pWaveform : channelWaveforms) {
+              mf::LogVerbatim log(fOutputCategory);
+              dump(log, *pWaveform);
+            } // for waveforms on channel
 
-    } // for all channels
+          } // for all channels
+        }
+        break; // sortMode::ChannelAndTime
+    } // switch (fSortMode)
 
   } // DumpOpDetWaveforms::analyze()
 

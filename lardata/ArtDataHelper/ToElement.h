@@ -7,7 +7,7 @@
 //
 //   using lar::to_element;
 //   std::vector<art::Ptr<recob::Hit>> hits = from_somewhere();
-//   for (recob::Hit const& hit : hits | ranges::view::transform(to_element)) {
+//   for (recob::Hit const& hit : hits | ranges::views::transform(to_element)) {
 //     ...
 //   }
 

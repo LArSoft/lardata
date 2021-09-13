@@ -14,8 +14,7 @@
 
 // Boost libraries
 #define BOOST_TEST_MODULE ( RangeForWrapper_test )
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
-#include <boost/test/test_tools.hpp> // BOOST_CHECK(), BOOST_CHECK_EQUAL()
+#include <boost/test/unit_test.hpp>
 
 // C/C++ standard libraries
 #include <iterator>
@@ -27,12 +26,11 @@
 
 //------------------------------------------------------------------------------
 //--- make up a class with begin and end iterators with different types
-//--- (and provide it with begin() and end() free functions)
 //---
+
 template <typename Value>
 class base_iterator {
   using traits_t = std::iterator_traits<Value*>;
-  using content_type = Value;
     public:
   using difference_type   = typename traits_t::difference_type;
   using value_type        = typename traits_t::value_type;
@@ -40,7 +38,7 @@ class base_iterator {
   using reference         = typename traits_t::reference;
   using iterator_category = typename traits_t::iterator_category;
 
-  pointer ptr = nullptr;
+  pointer ptr;
 
   base_iterator(pointer ptr = nullptr): ptr(ptr) {}
 
@@ -57,43 +55,35 @@ class base_iterator {
 
 };
 
-
-template <typename Value>
-struct begin_iterator_base: public base_iterator<Value> {
-  using base_iterator<Value>::base_iterator;
-  begin_iterator_base<Value>& operator++ ()
-    { base_iterator<Value>::operator++(); return *this; }
-};
-
-template <typename Value>
-struct end_iterator_base: public base_iterator<Value> {
-  using base_iterator<Value>::base_iterator;
-  end_iterator_base<Value>& operator++ ()
-    { base_iterator<Value>::operator++(); return *this; }
-};
-
 template <typename ValueL, typename ValueR>
 bool operator!=(base_iterator<ValueL> const& a, base_iterator<ValueR> const& b)
   { return a.ptr != b.ptr; }
 
+struct begin_iterator_t : base_iterator<int> {};
+struct end_iterator_t : base_iterator<int> {};
 
-template <typename Value>
+struct begin_const_iterator_t : base_iterator<int const> {};
+struct end_const_iterator_t : base_iterator<int const> {};
+
+using wrapper_type = util::details::RangeForWrapperIterator<begin_iterator_t, end_iterator_t>;
+using const_wrapper_type = util::details::RangeForWrapperIterator<begin_const_iterator_t, end_const_iterator_t>;
+BOOST_TEST_DONT_PRINT_LOG_VALUE(wrapper_type)
+BOOST_TEST_DONT_PRINT_LOG_VALUE(const_wrapper_type)
+
 struct Data {
-  using value_type = Value;
+  std::vector<int> data;
 
-  std::vector<value_type> data;
+  using begin_iterator = begin_iterator_t;
+  using end_iterator = end_iterator_t;
+  using begin_const_iterator = begin_const_iterator_t;
+  using end_const_iterator = end_const_iterator_t;
 
-  using begin_iterator = begin_iterator_base<value_type>;
-  using end_iterator = end_iterator_base<value_type>;
-  using begin_const_iterator = begin_iterator_base<std::add_const_t<value_type>>;
-  using end_const_iterator = end_iterator_base<std::add_const_t<value_type>>;
+  Data(std::initializer_list<int> data): data(data) {}
 
-  Data(std::initializer_list<value_type>&& data): data(std::move(data)) {}
-
-  begin_const_iterator do_begin() const { return { &*data.cbegin() }; }
-  begin_iterator do_begin() { return { &*data.begin() }; }
-  end_const_iterator do_end() const { return { &*data.cend() }; }
-  end_iterator do_end() { return { &*data.end() }; }
+  begin_const_iterator begin() const { return { &*data.cbegin() }; }
+  begin_iterator begin() { return { &*data.begin() }; }
+  end_const_iterator end() const { return { &*data.cend() }; }
+  end_iterator end() { return { &*data.end() }; }
 
   bool empty() const { return data.empty(); }
   auto size() const { return data.size(); }
@@ -104,24 +94,6 @@ struct Data {
 
 }; // class Data
 
-template <typename Value>
-auto begin(Data<Value> const& data) { return data.do_begin(); }
-
-template <typename Value>
-auto end(Data<Value> const& data) { return data.do_end(); }
-
-template <typename Value>
-auto begin(Data<Value>&& data) { return data.do_begin(); }
-
-template <typename Value>
-auto end(Data<Value>&& data) { return data.do_end(); }
-
-template <typename Value>
-auto begin(Data<Value>& data) { return data.do_begin(); }
-
-template <typename Value>
-auto end(Data<Value>& data) { return data.do_end(); }
-
 template <typename T>
 T copy(T const& v) { return v; }
 
@@ -129,37 +101,30 @@ T copy(T const& v) { return v; }
 //------------------------------------------------------------------------------
 
 template <typename DataColl>
-void const_test
-  (DataColl const& data, typename DataColl::value_type expected_total)
+void const_test(DataColl const& data, int expected_total)
 {
-  using value_type = typename DataColl::value_type;
-
   static_assert(
     !std::is_lvalue_reference
       <decltype(copy(data) | util::range_for)>::value,
     "util::range_for on a rvalue should return a rvalue"
     );
 
-//  for (double& d: data); // this should fail compilation
+  int total = 0;
+  for (int d: data | util::range_for) total += d;
 
-  value_type total = 0;
-  for (value_type d: data | util::range_for) total += d;
-
-  BOOST_CHECK_EQUAL(total, expected_total);
+  BOOST_TEST(total == expected_total);
 
   // from a temporary
   total = 0;
-  for (value_type d: copy(data) | util::range_for) total += d;
+  for (int d: copy(data) | util::range_for) total += d;
 
-  BOOST_CHECK_EQUAL(total, expected_total);
+  BOOST_TEST(total == expected_total);
 
 } // const_test()
 
 
 template <typename DataColl>
-void test(DataColl& data, typename DataColl::value_type expected_total) {
-  using value_type = typename DataColl::value_type;
-
+void test(DataColl& data, int expected_total) {
   static_assert(
     !std::is_lvalue_reference
       <decltype(copy(data) | util::range_for)>::value,
@@ -169,42 +134,42 @@ void test(DataColl& data, typename DataColl::value_type expected_total) {
   //
   // from a lvalue
   //
-  value_type total = 0;
-  for (value_type d: data | util::range_for) total += d;
+  int total = 0;
+  for (int d: data | util::range_for) total += d;
 
-  BOOST_CHECK_EQUAL(total, expected_total);
+  BOOST_TEST(total == expected_total);
 
   //
   // from a rvalue (temporary)
   //
   total = 0;
-  for (value_type d: copy(data) | util::range_for) total += d;
+  for (int d: copy(data) | util::range_for) total += d;
 
-  BOOST_CHECK_EQUAL(total, expected_total);
+  BOOST_TEST(total == expected_total);
 
   //
   // from a temporary, which is changed
   //
   total = 0;
-  for (value_type& d: copy(data) | util::range_for) total += (d *= 3);
+  for (int& d: copy(data) | util::range_for) total += (d *= 3);
 
-  BOOST_CHECK_EQUAL(total, 3 * expected_total);
+  BOOST_TEST(total == 3 * expected_total);
 
   // original value is still unchanged
   total = 0;
-  for (value_type d: data | util::range_for) total += d;
+  for (int d: data | util::range_for) total += d;
 
-  BOOST_CHECK_EQUAL(total, expected_total);
+  BOOST_TEST(total == expected_total);
 
   //
   // from a lvalue, which is changed
   //
-  for (value_type& d: data | util::range_for) d *= 3;
+  for (int& d: data | util::range_for) d *= 3;
 
   total = 0;
-  for (value_type d: data | util::range_for) total += d;
+  for (int d: data | util::range_for) total += d;
 
-  BOOST_CHECK_EQUAL(total, 3 * expected_total);
+  BOOST_TEST(total == 3 * expected_total);
 
 } // test()
 
@@ -242,10 +207,12 @@ void iterator_tests
   BOOST_CHECK(bool(ia == iter));
 
   if (isDereferenciable) {
-    BOOST_CHECK_EQUAL(*iter, *refIter);
+    //BOOST_CHECK_EQUAL(*iter, *refIter);
+    BOOST_TEST((*iter == *refIter));
   }
   if (!isLast && !isEnd && !isSingular) {
-    BOOST_CHECK_EQUAL(*++iter, *++refIter);
+    //BOOST_CHECK_EQUAL(*++iter, *++refIter);
+    BOOST_TEST((*++iter == *++refIter));
   }
 
 } // iterator_tests()
@@ -317,8 +284,8 @@ void const_output_iterator_tests
     auto ia = iter;
     auto addr = &ia;
     if (!isSingular) {
-      BOOST_CHECK(++ia != iter);
-      BOOST_CHECK_EQUAL(&++ia, addr);
+      BOOST_CHECK((++ia != iter));
+      BOOST_TEST((&++ia == addr));
     }
   }
 
@@ -354,20 +321,20 @@ void output_iterator_tests
     // we couldn't check the result since an output operator is not expected
     // to return anything useful with *iter; but since we have already used it
     // to store the old value...
-    BOOST_CHECK_EQUAL(*iter, newValue);
+    BOOST_TEST((*iter == newValue));
 
     *iter = value;
-    BOOST_CHECK_EQUAL(*iter, value);
+    BOOST_TEST((*iter == value));
 
     auto ia = iter, ib = iter;
 
     *ia++ = newValue;
     ++ib;
-    BOOST_CHECK_EQUAL(*iter, newValue);
+    BOOST_TEST((*iter == newValue));
     BOOST_CHECK(ia == ib);
 
     *iter = value;
-    BOOST_CHECK_EQUAL(*iter, value);
+    BOOST_TEST((*iter == value));
   }
 
 } // output_iterator_tests()
@@ -405,11 +372,11 @@ void const_forward_iterator_tests
   if (isDereferenciable) {
     auto ia = iter, ib = iter;
 
-    BOOST_CHECK(ia == ib);
+    BOOST_CHECK((ia == ib));
 
-    BOOST_CHECK_EQUAL(&*ia, &*ib);
+    BOOST_TEST((&*ia == &*ib));
 
-    BOOST_CHECK(++ia == ++ib);
+    BOOST_CHECK((++ia == ++ib));
 
   }
 
@@ -438,16 +405,16 @@ void const_bidirectional_iterator_tests
 
   auto ib = ia;
   --ib;
-  BOOST_CHECK(ib != ia);
-  BOOST_CHECK_EQUAL(*ib, *std::prev(iaRef));
-  BOOST_CHECK(++ib == ia);
-  if (isDereferenciable) BOOST_CHECK_EQUAL(*ib, *iaRef);
+  BOOST_CHECK((ib != ia));
+  BOOST_TEST((*ib == *std::prev(iaRef)));
+  BOOST_CHECK((++ib == ia));
+  if (isDereferenciable) BOOST_TEST((*ib == *iaRef));
 
   ib--;
-  BOOST_CHECK(ib != ia);
-  BOOST_CHECK_EQUAL(*ib, *std::prev(iaRef));
-  BOOST_CHECK(++ib == ia);
-  if (isDereferenciable) BOOST_CHECK_EQUAL(*ib, *iaRef);
+  BOOST_CHECK((ib != ia));
+  BOOST_TEST((*ib == *std::prev(iaRef)));
+  BOOST_CHECK((++ib == ia));
+  if (isDereferenciable) BOOST_TEST((*ib == *iaRef));
 
 } // const_bidirectional_iterator_tests()
 
@@ -586,18 +553,17 @@ void iterator_test(Iter iter, RefIter refIter, RefIter refEnd) {
 template <bool IsConst>
 void RangeForWrapperIteratorStandardsTest() {
 
-  using value_type = int;
-  using base_reference_container_t = std::vector<value_type>;
+  using base_reference_container_t = std::vector<int>;
   using reference_container_t = std::conditional_t
     <IsConst, base_reference_container_t const, base_reference_container_t>;
   reference_container_t vdata = { 2, 3, 4 };
-  using basic_container_t = Data<value_type>;
+  using basic_container_t = Data;
 
-  static_assert(std::is_same<typename basic_container_t::begin_iterator::reference, value_type&>(), "!!!!");
-  static_assert(std::is_same<typename std::iterator_traits<typename basic_container_t::begin_iterator>::reference, value_type&>(), "!!!!");
+  static_assert(std::is_same<basic_container_t::begin_iterator::reference, int&>());
+  static_assert(std::is_same<typename std::iterator_traits<basic_container_t::begin_iterator>::reference, int&>());
 
-  static_assert(std::is_same<typename basic_container_t::begin_const_iterator::reference, std::add_const_t<value_type>&>(), "!!!!");
-  static_assert(std::is_same<typename std::iterator_traits<typename basic_container_t::begin_const_iterator>::reference, std::add_const_t<value_type>&>(), "!!!!");
+  static_assert(std::is_same<basic_container_t::begin_const_iterator::reference, std::add_const_t<int>&>());
+  static_assert(std::is_same<typename std::iterator_traits<basic_container_t::begin_const_iterator>::reference, std::add_const_t<int>&>());
 
   using container_t
     = std::conditional_t<IsConst, basic_container_t const, basic_container_t>;
@@ -607,14 +573,14 @@ void RangeForWrapperIteratorStandardsTest() {
   container_t data = { 2, 3, 4 };
   auto range = data | util::range_for;
   using std::begin;
-  decltype(auto) rbegin = begin(range);
   using std::end;
-  decltype(auto) rend = end(range);
+  auto rbegin = begin(range);
+  auto rend = end(range);
 
   auto vbegin = vdata.begin();
   auto vend = vdata.end();
 
-  BOOST_CHECK_EQUAL(std::distance(rbegin, rend), vdata.size());
+  BOOST_TEST((unsigned)std::distance(rbegin, rend) == vdata.size());
 
   iterator_test(rbegin, vbegin, vend);
   iterator_test(rend, vend, vend);
@@ -624,14 +590,14 @@ void RangeForWrapperIteratorStandardsTest() {
   // const iterator interface
   //
   using std::cbegin;
-  decltype(auto) rcbegin = cbegin(range);
   using std::cend;
-  decltype(auto) rcend = cend(range);
+  auto rcbegin = cbegin(range);
+  auto rcend = cend(range);
 
   auto vcbegin = vdata.cbegin();
   auto vcend = vdata.cend();
 
-  BOOST_CHECK_EQUAL(std::distance(rcbegin, rcend), vdata.size());
+  BOOST_TEST((unsigned)std::distance(rcbegin, rcend) == vdata.size());
 
   iterator_test(rcbegin, vcbegin, vcend);
   iterator_test(rcend, vcend, vcend);
@@ -639,11 +605,10 @@ void RangeForWrapperIteratorStandardsTest() {
   //
   // extra access (partial support for random access)
   //
-  BOOST_CHECK_EQUAL(range.size(), data.size());
-  BOOST_CHECK_EQUAL(range.empty(), data.empty());
+  BOOST_TEST(range.size() == data.size());
+  BOOST_TEST(range.empty() == data.empty());
   for (std::size_t i = 0; i < data.size(); ++i) {
-    decltype(auto) value = range[i];
-    BOOST_CHECK_EQUAL(value, data[i]);
+    BOOST_CHECK_EQUAL(range[i], data[i]);
   }
 
 } // RangeForWrapperIteratorStandardsTest()
@@ -652,8 +617,7 @@ void RangeForWrapperIteratorStandardsTest() {
 //-----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(RangeForWrapperSameIterator_test) {
 
-  using value_type = int;
-  std::vector<value_type> vdata = { 2, 3, 4 };
+  std::vector vdata { 2, 3, 4 };
 
   // static checks
   static_assert(std::is_same<
@@ -673,9 +637,9 @@ BOOST_AUTO_TEST_CASE(RangeForWrapperSameIterator_test) {
     "Pass-through on a rvalue should return a rvalue (or its reference)"
     );
 
-  BOOST_CHECK_EQUAL(&vdata, &(vdata | util::range_for));
+  BOOST_TEST(&vdata == &(vdata | util::range_for));
 
-  auto expected_total = std::accumulate(vdata.begin(), vdata.end(), 0);
+  auto const expected_total = std::accumulate(vdata.begin(), vdata.end(), 0);
 
   const_test(vdata, expected_total);
 
@@ -686,10 +650,9 @@ BOOST_AUTO_TEST_CASE(RangeForWrapperSameIterator_test) {
 
 BOOST_AUTO_TEST_CASE(RangeForWrapperDifferentIterator_test) {
 
-  using value_type = int;
-  std::vector<value_type> vdata = { 2, 3, 4 };
+  std::vector vdata { 2, 3, 4 };
 
-  Data<value_type> data = { 2, 3, 4 };
+  Data data { 2, 3, 4 };
 
   auto expected_total = std::accumulate(vdata.begin(), vdata.end(), 0);
 
@@ -716,4 +679,3 @@ BOOST_AUTO_TEST_CASE(RangeForWrapperIteratorStandardsTestCase) {
   RangeForWrapperIteratorStandardsTest<true>(); // constant range test
 
 } // BOOST_AUTO_TEST_CASE(RangeForWrapperIteratorStandardsTestCase)
-

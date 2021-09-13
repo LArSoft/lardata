@@ -4,8 +4,15 @@ simple_plugin( AssnAnalyzer           "module"  NO_INSTALL cetlib_except art_Per
 
 cet_test(associated_groups_test USE_BOOST_UNIT
   LIBRARIES
-    canvas
-    cetlib cetlib_except
+    canvas::canvas
+    cetlib::cetlib cetlib_except
+    ROOT::Core
+  )
+
+cet_test(associated_groups_with_left_test USE_BOOST_UNIT
+  LIBRARIES
+    canvas::canvas
+    cetlib::cetlib cetlib_except
     ROOT::Core
   )
 
@@ -48,4 +55,4 @@ cet_test(test_associatedgroupswithleft HANDBUILT
   TEST_PROPERTIES DEPENDS test_feag2
 )
 
-art_dictionary(DICTIONARY_LIBRARIES cetlib cetlib_except NO_INSTALL )
+art_dictionary(DICTIONARY_LIBRARIES cetlib::cetlib cetlib_except NO_INSTALL )

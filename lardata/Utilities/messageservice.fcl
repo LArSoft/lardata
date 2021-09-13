@@ -4,13 +4,13 @@ standard_debug:
 {
  debugModules: [ "*" ]     # list individual module names here if you only want output from specific modules
  destinations:
- {	
+ {
   debugmsg:
   {
    type:      "file"       # record the messages in a file, could also be cout, cerr, archive, dds
    filename:  "debug.log"  # name of the file in which to place the messages
    threshold: "DEBUG"      # threshold of what level of messages to use
-   categories:             # place to list named categories, if you want to customize, 
+   categories:             # place to list named categories, if you want to customize,
                            # I think the categories are what are the strings given to mf::LogXXX() commands
    {
      default:              # treat all unspecified categories using these values
@@ -26,19 +26,19 @@ standard_debug:
 
 # see comments for standard_debug configuration to figure out what each value is
 standard_info:
-{ 
+{
  destinations:
- {  
+ {
   infomsg:
   {
-   type:      "cout"	
+   type:      "cout"
    threshold: "INFO"
-   categories:                                      
+   categories:
    {
-     default:             
+     default:
      {
-      limit:       1000   
-      timespan:    600    
+      limit:       1000
+      timespan:    600
      }
      RecoBaseDefaultCtor:
      {
@@ -57,19 +57,19 @@ standard_info:
 
 # see comments for standard_debug configuration to figure out what each value is
 standard_warning:
-{ 
+{
  destinations:
- {  
+ {
   warningmsg:
   {
-   type:      "cout"	
+   type:      "cout"
    threshold: "WARNING"
-   categories: 
+   categories:
    {
-     default:             
+     default:
      {
-      limit:       1000   
-      timespan:    60    
+      limit:       1000
+      timespan:    60
      }
      RecoBaseDefaultCtor:
      {
@@ -88,16 +88,16 @@ standard_warning:
 
 # see comments for standard_debug configuration to figure out what each value is
 standard_error:
-{ 
+{
  destinations:
- {  
+ {
   errormsg:
   {
-   type:      "cerr"	
+   type:      "cerr"
    threshold: "ERROR"
-   categories: 
+   categories:
    {
-     default: {} 
+     default: {}
    } # end categories
   } # end errormsg
  } # end destinations

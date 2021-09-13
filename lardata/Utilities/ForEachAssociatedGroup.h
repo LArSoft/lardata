@@ -25,7 +25,7 @@
 #include "range/v3/algorithm/for_each.hpp"
 #include "range/v3/view/group_by.hpp"
 #include "range/v3/view/transform.hpp"
-#include "range/v3/view/map.hpp" // range::view::values
+#include "range/v3/view/map.hpp" // range::views::values
 #include "range/v3/view/all.hpp"
 
 // C/C++ standard libraries
@@ -93,9 +93,9 @@ namespace util {
   template <class A>
   auto associated_groups(A const & assns) {
      return assns |
-            ranges::view::all |
-            ranges::view::group_by([](auto a1, auto a2) { return a1.first == a2.first;}) |
-            ranges::view::transform([] (auto pairs) {return pairs | ranges::view::values | util::range_for;}) |
+            ranges::views::all |
+            ranges::views::group_by([](auto a1, auto a2) { return a1.first == a2.first;}) |
+            ranges::views::transform([] (auto pairs) {return pairs | ranges::views::values | util::range_for;}) |
             util::range_for
             ;
   } // associated_groups()
@@ -151,13 +151,13 @@ namespace util {
   template <class A>
   auto associated_groups_with_left(A const & assns) {
      return assns
-        | ranges::view::all
-        | ranges::view::group_by([](auto a1, auto a2) { return a1.first == a2.first;})
-        | ranges::view::transform([] (auto pairs)
+        | ranges::views::all
+        | ranges::views::group_by([](auto a1, auto a2) { return a1.first == a2.first;})
+        | ranges::views::transform([] (auto pairs)
            {
              return std::make_pair(
                pairs.front().first, // assuming they're all the same, pick first
-               pairs | ranges::view::values | util::range_for
+               pairs | ranges::views::values | util::range_for
                );
            })
         | util::range_for

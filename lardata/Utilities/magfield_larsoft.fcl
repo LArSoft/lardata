@@ -6,6 +6,7 @@ FieldDescriptions: [ { UseField:         0  # 0--off 1--Constant field
                                             # 2--Field map (not implemented)
                        ConstantField:    [ 0.0, 0.0, 0.0 ]
                        MagnetizedVolume: "volWorld" } ]
+service_provider:  MagneticFieldServiceStandard
 }
 
 no_mag_larsoft: @local::no_mag

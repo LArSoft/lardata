@@ -22,7 +22,7 @@ namespace gshf{
   void MarqFitAlg::dgauss(const float p[], const int npar, const int ndat, std::vector<float> &dydp){
     #if defined WITH_OPENMP
     //#pragma GCC ivdep
-     #pragma omp simd 
+     #pragma omp simd
     #endif
     for(int i=0;i<ndat;i++){
       for(int j=0;j<npar;j+=3){
@@ -44,14 +44,14 @@ namespace gshf{
     for(i=0;i<ndat;i++){
       xi2+=res[i]*res[i];
     }
-    return xi2;  
+    return xi2;
   }
 
   /* setup the beta and  (curvature) matrices */
   void MarqFitAlg::setup_matrix(const std::vector<float> &res, const std::vector<float> &dydp, const int npar, const int ndat, std::vector<float> &beta, std::vector<float> &alpha)
   {
     int i,j,k;
-  
+
     /* ... Calculate beta */
     #if defined WITH_OPENMP
      #pragma omp simd
@@ -130,7 +130,7 @@ namespace gshf{
   float MarqFitAlg::invrt_matrix(std::vector<float> &alphaf, const int npar)
   {
     /*
-     Inverts the curvature matrix alpha using Gauss-Jordan elimination and 
+     Inverts the curvature matrix alpha using Gauss-Jordan elimination and
      returns the determinant.  This is based on the implementation in "Data
      Reduction and Error Analysis for the Physical Sciences" by P. R. Bevington.
      That implementation, in turn, uses the algorithm of the subroutine MINV,
@@ -147,7 +147,7 @@ namespace gshf{
     std::vector<int> jk(npar);
     double aMax, save, det;
     float detf;
- 
+
     for (i=0; i<npar*npar; i++){
       alpha[i]=alphaf[i];
     }
@@ -160,7 +160,7 @@ namespace gshf{
 	for (j = k; j < npar;j++){
 
 	  //	  alpha[i*npar+j]=alphaf[i*npar+j];
-	  
+
 	  if  (fabs(alpha[i*npar+j]) > fabs(aMax)){
 	    aMax = alpha[i*npar+j];
 	    ik[k] = i;
@@ -231,10 +231,10 @@ namespace gshf{
     for (i=0; i<npar*npar; i++){
       alphaf[i]=alpha[i];
     }
-    
+
     detf=det;
     return(detf);
-  
+
   }
 
   /* Calculate parameter errors */
@@ -267,7 +267,7 @@ namespace gshf{
 	perr[i]=alpha[i*nParam+i];
       }
     }
-  
+
     return 0;
   }
 
@@ -348,7 +348,7 @@ namespace gshf{
 	solve_matrix(beta, alpha, nParam, dp);
       }
     } while(rho<0.);
-    lambda=lambda*fmax(0.333333,1.-pow(2.*rho-1.,3));  
+    lambda=lambda*fmax(0.333333,1.-pow(2.*rho-1.,3));
     dchiSqr=chiSqr-chiSq0;
     return 0;
 

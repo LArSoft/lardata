@@ -21,7 +21,7 @@ class LArFFTWPlan {
     void *fOut;
     void *rIn;
     void *rOut;
-    
+
   private:
     static std::mutex mutex_;
     int fSize;		// size of transform

@@ -3,7 +3,7 @@
 # Purpose: test loading of DetectorProperties service with Bo configuration
 # Author:  Gianluca Petrillo (petrillo@fnal.gov)
 # Date:    December 2nd, 2015
-# Version: 1.0
+# Version: 1.1
 # 
 # Description:
 # Test to load DetectorPropertiesService (or its provider).
@@ -17,6 +17,8 @@
 #   - Geometry service and its dependencies
 # 
 # Changes:
+# 20200712 (petrillo@slac.stanford.edu) [v1.1]
+#   geometry configuration now refers to a bundle
 # 20160506 (petrillo@fnal.gov) [v1.0]
 #   first version
 #
@@ -29,8 +31,7 @@
 process_name: DetPropStandardTest
 
 services: {
-  ExptGeoHelperInterface:    @local::bo_geometry_helper
-  Geometry:                  @local::bo_geo
+                             @table::bo_geometry_services
   LArPropertiesService:      @local::bo_properties
   DetectorClocksService:     @local::bo_detectorclocks
   DetectorPropertiesService: @local::bo_detproperties

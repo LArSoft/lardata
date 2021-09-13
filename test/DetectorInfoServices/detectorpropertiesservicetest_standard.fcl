@@ -14,6 +14,7 @@
 # - DetectorProperties service and its dependencies
 #   - Geometry
 #     - ExptGeoHelperInterface
+#     - GeometryConfigurationWriter
 #   - LArProperties
 #   - DetectorClocks
 # 
@@ -30,9 +31,7 @@
 process_name: DetPropStandardTest
 
 services: {
-  ExptGeoHelperInterface:    @local::standard_geometry_helper
-  Geometry:                  @local::standard_geo
+                             @table::standard_geometry_services # from `geometry.fcl` 
   DetectorPropertiesService: @local::standard_detproperties
   LArPropertiesService:      @local::standard_properties
-  DetectorClocksService:     @local::standard_detectorclocks
-}
+  DetectorClocksService:     @local::standard_detectorclocks}

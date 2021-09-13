@@ -18,15 +18,15 @@
 #
 #   - standard_resourcetrackers: runs memory and CPU time tracking services.
 #       Use as:
-#       
+#
 #       services: {
-#         
+#
 #         @table::standard_resourcetrackers
-#         
+#
 #         # ...
-#         
+#
 #       } # services
-#       
+#
 #
 # Changes:
 # 20160811 (petrillo@fnal.gov) [v1.0]
@@ -47,22 +47,22 @@ BEGIN_PROLOG
 # All summaries are printed (by service default).
 #
 standard_memorytracker: {
-  
+
   # do not report memory increase from the first event
   # (this is guaranteed to be a large, but necessary, jump)
-  #ignoreTotal: 1 
-  
+  #ignoreTotal: 1
+
   dbOutput: {
-    
+
     filename: "memory.db"
-    
+
     # (re)create a new database file on each job
     # (the output of merged job tends to be confusing)
     overwrite: true
-    
+
   } # dbOutput
-  
-  
+
+
 } # standard_memorytracker
 
 
@@ -73,20 +73,20 @@ standard_memorytracker: {
 # - writes a report on the standard message facility output channel
 #
 standard_timetracker: {
-  
+
   printSummary: true
-  
+
   dbOutput: {
-    
+
     filename: "cputime.db"
-    
+
     # (re)create a new database file on each job
     # (the output of merged job tends to be confusing)
     overwrite: true
-    
+
   } # dbOutput
-  
-  
+
+
 } # standard_timetracker
 
 

@@ -28,8 +28,7 @@ process_name: ServicePackTest
 
 
 services: {
-  ExptGeoHelperInterface:    @local::lartpcdetector_geometry_helper # geometry_lartpcdetector.fcl
-  Geometry:                  @local::lartpcdetector_geometry        # geometry_lartpcdetector.fcl
+                             @table::lartpcdetector_geometry_services # geometry_lartpcdetector.fcl
   LArPropertiesService:      @local::lartpcdetector_properties      # larproperties_lartpcdetector.fcl
   DetectorClocksService:     @local::lartpcdetector_detectorclocks  # detectorclocks_lartpcdetector.fcl
   DetectorPropertiesService: @local::lartpcdetector_detproperties   # detectorproperties_lartpcdetector.fcl

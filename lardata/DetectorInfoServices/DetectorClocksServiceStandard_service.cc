@@ -4,8 +4,8 @@
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
+#include "art/Framework/Services/Registry/ServiceDefinitionMacros.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
-#include "art/Framework/Services/Registry/ServiceMacros.h"
 #include "art/Persistency/Provenance/ScheduleContext.h"
 #include "art_root_io/RootDB/SQLite3Wrapper.h"
 #include "canvas/Persistency/Provenance/FileFormatVersion.h"
@@ -13,10 +13,9 @@
 #include "canvas/Persistency/Provenance/rootNames.h"
 #include "cetlib_except/exception.h"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "lardataalg/DetectorInfo/DetectorClocksStandard.h"
-#include "lardataalg/DetectorInfo/DetectorClocksStandardTriggerLoader.h"
+#include "lardataalg/DetectorInfo/DetectorClocksStandardDataFor.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -93,7 +92,7 @@ namespace detinfo {
 
       for (auto const& psEntry : psetMap) {
         fhicl::ParameterSet ps;
-        fhicl::make_ParameterSet(psEntry.second.pset_, ps);
+        ps = fhicl::ParameterSet::make(psEntry.second.pset_);
         if (!fClocks.IsRightConfig(ps)) { continue; }
 
         count_configuration_changes(ps);
@@ -105,11 +104,12 @@ namespace detinfo {
       sqlite3_prepare_v2(sqliteDB, "SELECT PSetBlob from ParameterSets;", -1, &stmt, nullptr);
       while (sqlite3_step(stmt) == SQLITE_ROW) {
         fhicl::ParameterSet ps;
-        fhicl::make_ParameterSet(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)), ps);
+        ps = fhicl::ParameterSet::make(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
         if (!fClocks.IsRightConfig(ps)) { continue; }
 
         count_configuration_changes(ps);
       }
+      sqlite3_finalize(stmt);
     }
 
     for (size_t i = 0; i < kConfigTypeMax; ++i) {
@@ -121,7 +121,13 @@ namespace detinfo {
       fClocks.SetConfigValue(i, config_value[i]);
     }
     fClocks.ApplyParams();
-  }
+  } // DetectorClocksServiceStandard::postOpenFile()
+  
+  
+  DetectorClocksData DetectorClocksServiceStandard::DataFor
+    (art::Event const& e) const
+    { return detinfo::detectorClocksStandardDataFor(fClocks, e); }
+  
 
 } // namespace detinfo
 

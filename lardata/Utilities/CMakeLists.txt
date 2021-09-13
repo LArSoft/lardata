@@ -1,45 +1,30 @@
 include_directories(${FFTW_INCLUDE_DIR})
-cet_find_library(FFTW_LIBRARY NAMES fftw3 fftw3-3 PATHS $ENV{FFTW_DIR}/$ENV{FFTW_FQ}/lib )
-set(FFTW_LIBRARIES ${FFTW_LIBRARY})
+cet_find_library(FFTW_LIBRARY NAMES fftw3 fftw3-3 PATHS ENV FFTW_LIBRARY )
 
 art_make(NO_PLUGINS
          LIB_LIBRARIES
             lardata_Utilities_LArFFT_service
-            lardata_Utilities_LArPropertiesServiceArgoNeuT_service
             lardataobj_RecoBase
             larcorealg_Geometry
-            canvas
-            ${MF_MESSAGELOGGER}
-            cetlib_except
-            ${FFTW_LIBRARIES})
+              art::Framework_Core
+              art::Framework_Principal
+              art::Persistency_Provenance
+            canvas::canvas
+            messagefacility::MF_MessageLogger
+            cetlib_except::cetlib_except
+            FFTW_LIBRARY)
 
 simple_plugin(DatabaseUtil "service"
-              ${MF_MESSAGELOGGER}
-              ${PQ}
-              ${ART_FRAMEWORK_CORE}
-              ${ART_FRAMEWORK_PRINCIPAL}
+              messagefacility::MF_MessageLogger
+              PQ
+              art::Framework_Core
+              art::Framework_Principal
               ${ART_ROOT_IO_ROOTDB}
-              art_Persistency_Provenance)
-
-simple_plugin(LArPropertiesServiceArgoNeuT "service"
-              lardata_Utilities_DatabaseUtil_service
-              ${MF_MESSAGELOGGER})
-
-simple_plugin(DetectorPropertiesServiceArgoNeuT "service"
-              lardata_Utilities_LArPropertiesServiceArgoNeuT_service
-              lardata_Utilities
-              lardata_Utilities_DatabaseUtil_service
-              larcore_Geometry_Geometry_service
-              larcorealg_Geometry
-              ${ART_ROOT_IO_ROOTDB}
-              ${SQLITE3}
-              ${MF_MESSAGELOGGER}
-              ROOT::Core
-              ROOT::RIO)
+              art::Persistency_Provenance)
 
 simple_plugin(LArFFT "service"
               lardataalg_DetectorInfo
-              ${MF_MESSAGELOGGER}
+              messagefacility::MF_MessageLogger
               ROOT::Core
               ROOT::FFTW
               ROOT::Hist
@@ -47,7 +32,7 @@ simple_plugin(LArFFT "service"
               ROOT::Physics)
 
 simple_plugin(ComputePi "module"
-              ${MF_MESSAGELOGGER})
+              messagefacility::MF_MessageLogger)
 
 include(FindOpenMP)
 if(OPENMP_FOUND)
@@ -63,8 +48,9 @@ if(OPENMP_FOUND)
   endif()
 endif(OPENMP_FOUND)
 
-add_library (gshf_MarqFitAlg STATIC MarqFitAlg.cxx)
-set_property(TARGET gshf_MarqFitAlg PROPERTY POSITION_INDEPENDENT_CODE ON)
+## Problematic with cetbuildtools 8 and does not appear to be used
+##add_library (gshf_MarqFitAlg STATIC MarqFitAlg.cxx)
+##set_property(TARGET gshf_MarqFitAlg PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 install_headers()
 install_fhicl()

@@ -10,7 +10,7 @@
 #define DETECTORCLOCKSSERVICE_H
 
 #include "art/Framework/Principal/fwd.h"
-#include "art/Framework/Services/Registry/ServiceMacros.h"
+#include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
 #include "larcore/CoreUtils/ServiceUtil.h"
 #include "lardataalg/DetectorInfo/DetectorClocks.h"
 #include "lardataalg/DetectorInfo/DetectorClocksData.h"
