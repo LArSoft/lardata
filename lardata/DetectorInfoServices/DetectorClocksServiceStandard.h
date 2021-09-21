@@ -47,10 +47,10 @@ namespace detinfo {
    *
    * This service manager honors the `InheritClockConfig` configuration option
    * in the following way:
-   * # if the past jobs (explicitly excluding the current job) had inconsistent
+   * -# if the past jobs (explicitly excluding the current job) had inconsistent
    *     configuration, an exception is thrown claiming an "historical
    *     disagreement"
-   * # after the verification that the past configuration is consistent, the
+   * -# after the verification that the past configuration is consistent, the
    *     values from that configurations override the ones in the configuration
    *     of the current job; a value from the configuration of the current job
    *     is retained only if it was not present in the past (i.e. it is a new
@@ -67,12 +67,12 @@ namespace detinfo {
    * The trigger and beam gate times are set by this service before each event
    * is processed.
    * The logic is the following:
-   * # if the event contains a raw trigger (`raw::Trigger`) data product with
+   * -# if the event contains a raw trigger (`raw::Trigger`) data product with
    *     input tag `TriggerName()` (from the configuration), that data product
    *     is read and the trigger and beam gate times stored in it are imported
    *     in the current service provider configuration; if there are more than
    *     one `raw::Trigger` objects in the data product, an exception is thrown
-   * # if no raw trigger is found with the specified label, the configuration
+   * -# if no raw trigger is found with the specified label, the configuration
    *     of the service provider is updated using the default values of trigger
    *     and beam times specified in the service configuration
    *
