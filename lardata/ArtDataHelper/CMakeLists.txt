@@ -3,14 +3,14 @@ art_make(LIB_LIBRARIES lardataobj_RawData
                        lardataobj_AnalysisBase
                        larcorealg_Geometry
                        larcore_Geometry_Geometry_service
-                       ${ART_FRAMEWORK_CORE}
-                       ${ART_FRAMEWORK_PRINCIPAL}
-                       ${ART_FRAMEWORK_SERVICES_REGISTRY}
-                       art_Persistency_Common
-                       art_Persistency_Provenance
-                       art_Utilities
-                       canvas
-                       cetlib_except
+                       art::Framework_Core
+                       art::Framework_Principal
+                       art::Framework_Services_Registry
+                       art::Persistency_Common
+                       art::Persistency_Provenance
+                       art::Utilities
+                       canvas::canvas
+                       cetlib_except::cetlib_except
                        ROOT::Core
                        ROOT::GenVector)
 

@@ -1,5 +1,7 @@
 #include "lardata/DetectorInfoServices/LArPropertiesServiceStandard.h"
 
+#include "art/Framework/Services/Registry/ServiceDefinitionMacros.h"
+
 //------------------------------------------------
 /// \todo these values should eventually come from a database
 //-----------------------------------------------

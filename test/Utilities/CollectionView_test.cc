@@ -41,10 +41,10 @@ BOOST_AUTO_TEST_CASE(VectorTestCase) {
   //
   // iterators
   //
-  BOOST_CHECK(cv.cbegin() == c.cbegin());
-  BOOST_CHECK(cv.cend() == c.cend());
-  BOOST_CHECK(cv.crbegin() == c.crbegin());
-  BOOST_CHECK(cv.crend() == c.crend());
+  BOOST_CHECK((cv.cbegin() == c.cbegin()));
+  BOOST_CHECK((cv.cend() == c.cend()));
+  BOOST_CHECK((cv.crbegin() == c.crbegin()));
+  BOOST_CHECK((cv.crend() == c.crend()));
 
   //
   // elements
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(VectorTestCase) {
     ++i;
     ++ic;
   } // for
-  BOOST_CHECK(ic == cend);
+  BOOST_CHECK((ic == cend));
 
 } // BOOST_AUTO_TEST_CASE(VectorTestCase)
 
@@ -96,10 +96,10 @@ BOOST_AUTO_TEST_CASE(DequeTestCase) {
   //
   // iterators
   //
-  BOOST_CHECK(cv.cbegin() == c.cbegin());
-  BOOST_CHECK(cv.cend() == c.cend());
-  BOOST_CHECK(cv.crbegin() == c.crbegin());
-  BOOST_CHECK(cv.crend() == c.crend());
+  BOOST_CHECK((cv.cbegin() == c.cbegin()));
+  BOOST_CHECK((cv.cend() == c.cend()));
+  BOOST_CHECK((cv.crbegin() == c.crbegin()));
+  BOOST_CHECK((cv.crend() == c.crend()));
 
   //
   // elements
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(DequeTestCase) {
     ++i;
     ++ic;
   } // for
-  BOOST_CHECK(ic == cend);
+  BOOST_CHECK((ic == cend));
 
 } // BOOST_AUTO_TEST_CASE(DequeTestCase)
 
@@ -146,10 +146,10 @@ BOOST_AUTO_TEST_CASE(ListTestCase) {
   //
   // iterators
   //
-  BOOST_CHECK(cv.cbegin() == c.cbegin());
-  BOOST_CHECK(cv.cend() == c.cend());
-  BOOST_CHECK(cv.crbegin() == c.crbegin());
-  BOOST_CHECK(cv.crend() == c.crend());
+  BOOST_CHECK((cv.cbegin() == c.cbegin()));
+  BOOST_CHECK((cv.cend() == c.cend()));
+  BOOST_CHECK((cv.crbegin() == c.crbegin()));
+  BOOST_CHECK((cv.crend() == c.crend()));
 
   //
   // elements
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(ListTestCase) {
 
     ++ic;
   } // for
-  BOOST_CHECK(ic == cend);
+  BOOST_CHECK((ic == cend));
 
 } // BOOST_AUTO_TEST_CASE(ListTestCase)
 
@@ -189,8 +189,8 @@ BOOST_AUTO_TEST_CASE(ForwardListTestCase) {
   //
   // iterators
   //
-  BOOST_CHECK(cv.cbegin() == c.cbegin());
-  BOOST_CHECK(cv.cend() == c.cend());
+  BOOST_CHECK((cv.cbegin() == c.cbegin()));
+  BOOST_CHECK((cv.cend() == c.cend()));
 
   //
   // elements
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(ForwardListTestCase) {
 
     ++ic;
   } // for
-  BOOST_CHECK(ic == cend);
+  BOOST_CHECK((ic == cend));
 
 } // BOOST_AUTO_TEST_CASE(ForwardListTestCase)
 

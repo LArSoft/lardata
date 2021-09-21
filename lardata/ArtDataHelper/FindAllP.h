@@ -257,8 +257,9 @@ namespace lar {
       {
 
         // read all the associations between source and destination class types
-        std::vector<art::Handle<Assns_t>> assns_list;
-        event.getManyByType(assns_list);
+        //std::vector<art::Handle<Assns_t>> assns_list;
+        //event.getManyByType(assns_list);
+        auto assns_list = event.getMany<Assns_t>();
 
         MF_LOG_DEBUG("FindAllP") << "Read(): read " << assns_list.size()
           << " association sets";

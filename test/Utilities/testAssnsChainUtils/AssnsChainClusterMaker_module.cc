@@ -28,6 +28,7 @@
 #include <utility> // std::move()
 #include <memory> // std::make_unique()
 #include <cmath> // std::sqrt()
+#include <numeric> // std::accumulate()
 
 
 namespace lar {

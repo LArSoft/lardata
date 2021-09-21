@@ -12,6 +12,7 @@
 
 // LArSoft includes
 #include "lardata/Utilities/DatabaseUtil.h"
+#include "art/Framework/Services/Registry/ServiceDefinitionMacros.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "cetlib_except/exception.h"
 

@@ -28,8 +28,8 @@ art_make(NO_PLUGINS LIB_LIBRARIES lardataobj_RecoBase)
 foreach(Dumper IN LISTS RawDataDumpers)
   simple_plugin(${Dumper} "module"
       lardataobj_RawData
-      ${ART_FRAMEWORK_SERVICES_REGISTRY}
-      ${MF_MESSAGELOGGER})
+      art::Framework_Services_Registry
+      messagefacility::MF_MessageLogger)
 endforeach()
 
 
@@ -38,7 +38,7 @@ foreach(Dumper IN LISTS RecoBaseDumpers)
       lardataobj_RecoBase
       lardata_ArtDataHelper_Dumpers
       lardata_RecoBaseProxy
-      ${MF_MESSAGELOGGER})
+      messagefacility::MF_MessageLogger)
 endforeach()
 
 
@@ -46,7 +46,7 @@ foreach(Dumper IN LISTS SimulationDumpers)
   simple_plugin(${Dumper} "module"
       lardataalg_MCDumpers
       lardataobj_Simulation
-      ${MF_MESSAGELOGGER}
+      messagefacility::MF_MessageLogger
       ROOT::GenVector
       ROOT::Core)
 endforeach(Dumper IN LISTS SimulationDumpers)

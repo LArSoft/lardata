@@ -9,8 +9,8 @@ product         version
 lardataalg	v09_05_01
 lardataobj	v09_02_00
 larcore 	v09_02_04
-range		v3_0_10_0b
-cetbuildtools	v7_17_01	-	only_for_build
+range		v3_0_11_0
+cetbuildtools	v8_15_00	-	only_for_build
 end_product_list
 
 
