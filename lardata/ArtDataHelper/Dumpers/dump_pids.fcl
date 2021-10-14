@@ -1,0 +1,79 @@
+#
+# File:     DumpParticleIDs.fcl
+# Purpose:  Dump on screen particle ID content
+# Author:   H. Greenlee
+# Date:     Oct. 14, 2021
+# Version:  1.0
+#
+# Service dependencies:
+# - message facility
+#
+
+process_name: DumpParticleIDs
+
+services: {
+  
+  message: {
+  #   debugModules: [ "*" ]
+    destinations: {
+      
+      # grab all the "DumpParticleIDs" messages and put them in DumpPIDs.log
+      DumpParticleIDs: {
+        append: false
+        categories: {
+          DumpParticleIDs: { limit: -1 }
+          default: { limit: 0 }
+        }
+        filename: "DumpPIDs.log"
+        threshold: "INFO"
+        type: "file"
+      } # DumpParticleIDs
+      
+      LogStandardOut: {
+        categories: {
+          AnaBaseDefaultCtor: { limit: 0 }
+          GeometryBadInputPoint: {
+            limit: 5
+            timespan: 1000
+          }
+          RecoBaseDefaultCtor: { limit: 0 }
+          DumpParticleIDs: { limit: 0 }
+          default: {}
+        }
+        threshold: "WARNING"
+        type: "cout"
+      } # LogStandardOut
+      
+    } # destinations
+  } # message
+} # services
+
+
+source: {
+  module_type: RootInput
+  maxEvents:  -1            # number of events to read
+} # source
+
+
+physics: {
+  producers:{}
+  filters:  {}
+  analyzers: {
+    dumppids: {
+      module_label: dumppids
+      module_type:  DumpParticleIDs
+      
+      # output category ("DumpParticleIDs" by default), useful for filtering (see above)
+      OutputCategory: "DumpParticleIDs"
+      
+      # specify the label of the anab::ParticleID producer
+      ParticleIDModuleLabel:  "pandoraKalmanShowerpid"
+      
+    } # dumppids
+  } # analyzers
+  
+  ana:  [ dumppids ]
+  
+  trigger_paths: []
+  end_paths:     [  ana ]
+} # physics
