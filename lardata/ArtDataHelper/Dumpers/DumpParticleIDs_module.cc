@@ -17,7 +17,6 @@
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
-#include "canvas/Persistency/Common/FindOne.h"
 #include "canvas/Utilities/InputTag.h"
 
 // ... plus see below ...
@@ -66,12 +65,12 @@ namespace pid {
     explicit DumpParticleIDs(Parameters const& config);
 
     /// Does the printing
-    void analyze (const art::Event& evt);
+    void analyze (const art::Event& evt) override;
 
       private:
 
-    art::InputTag fParticleIDsModuleLabel; ///< name of module that produced the pids
-    std::string fOutputCategory;    ///< category for LogInfo output
+    art::InputTag const fParticleIDsModuleLabel; ///< name of module that produced the pids
+    std::string const fOutputCategory;    ///< category for LogInfo output
 
   }; // class DumpParticleIDs
 
@@ -108,32 +107,32 @@ namespace pid {
   void DumpParticleIDs::analyze(const art::Event& evt) {
 
     // fetch the data to be dumped on screen
-    auto ParticleIDs = evt.getValidHandle<std::vector<anab::ParticleID>>(fParticleIDsModuleLabel);
+    auto const& ParticleIDs = evt.getProduct<std::vector<anab::ParticleID>>(fParticleIDsModuleLabel);
 
     mf::LogInfo(fOutputCategory)
-      << "The event contains " << ParticleIDs->size() << " '"
+      << "The event contains " << ParticleIDs.size() << " '"
       << fParticleIDsModuleLabel.encode() << "' particle IDs";
 
     unsigned int ipid = 0;
-    for (const anab::ParticleID& pid: *ParticleIDs) {
+    for (const anab::ParticleID& pid: ParticleIDs) {
 
       // print a header for the cluster
       mf::LogVerbatim log(fOutputCategory);
       log << "ParticleID #" << ipid << '\n';
       if(pid.PlaneID()) {
-	log << "  Plane ID    = " << pid.PlaneID() << '\n'
-	    << "  NDF         = " << pid.Ndf() << '\n'
-	    << "  MinChi2     = " << pid.MinChi2() << '\n'
-	    << "  DeltaChi2   = " << pid.DeltaChi2() << '\n'
-	    << "  Chi2Proton  = " << pid.Chi2Proton() << '\n'
-	    << "  Chi2Kaon    = " << pid.Chi2Kaon() << '\n'
-	    << "  Chi2Muon    = " << pid.Chi2Muon() << '\n'
-	    << "  MissingE    = " << pid.MissingE() << '\n'
-	    << "  MissingEavg = " << pid.MissingEavg() << '\n'
-	    << "  PIDA        = " << pid.PIDA() << std::endl;
+        log << "  Plane ID    = " << pid.PlaneID() << '\n'
+            << "  NDF         = " << pid.Ndf() << '\n'
+            << "  MinChi2     = " << pid.MinChi2() << '\n'
+            << "  DeltaChi2   = " << pid.DeltaChi2() << '\n'
+            << "  Chi2Proton  = " << pid.Chi2Proton() << '\n'
+            << "  Chi2Kaon    = " << pid.Chi2Kaon() << '\n'
+            << "  Chi2Muon    = " << pid.Chi2Muon() << '\n'
+            << "  MissingE    = " << pid.MissingE() << '\n'
+            << "  MissingEavg = " << pid.MissingEavg() << '\n'
+            << "  PIDA        = " << pid.PIDA() << std::endl;
       }
       else
-	log << "  Invalid" << '\n';
+        log << "  Invalid" << '\n';
 
       ++ipid;
     } // for pids

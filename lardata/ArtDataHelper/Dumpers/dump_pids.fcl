@@ -14,7 +14,6 @@ process_name: DumpParticleIDs
 services: {
   
   message: {
-  #   debugModules: [ "*" ]
     destinations: {
       
       # grab all the "DumpParticleIDs" messages and put them in DumpPIDs.log
