@@ -26,8 +26,7 @@
  * (for example, a random seed).
  */
 #define BOOST_TEST_MODULE ( BulkAllocator_test )
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
-#include <boost/test/test_tools.hpp> // BOOST_CHECK()
+#include "boost/test/unit_test.hpp"
 
 // LArSoft libraries
 #include "lardata/Utilities/BulkAllocator.h"
@@ -123,7 +122,7 @@ void RunHoughTransformTreeTest() {
     break;
   } // for
 
-  BOOST_CHECK(bSame);
+  BOOST_TEST(bSame);
 
 } // RunHoughTransformTreeTest()
 

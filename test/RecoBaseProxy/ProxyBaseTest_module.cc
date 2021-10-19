@@ -35,7 +35,7 @@
 #include "fhiclcpp/types/Comment.h"
 
 // Boost libraries
-#include <boost/test/test_tools.hpp> // BOOST_CHECK()
+#include "boost/test/unit_test.hpp"
 
 // C/C++ libraries
 #include <algorithm> // std::for_each(), std::find()
@@ -245,7 +245,7 @@ auto ProxyBaseTest::getLongTracks
 void ProxyBaseTest::testProxyComposition(art::Event const& event) const {
 
   auto const& expectedTracks
-    = *(event.getValidHandle<std::vector<recob::Track>>(tracksTag));
+    = event.getProduct<std::vector<recob::Track>>(tracksTag);
 
   mf::LogInfo("ProxyBaseTest")
     << "Starting test on " << expectedTracks.size() << " tracks from '"
@@ -266,8 +266,8 @@ void ProxyBaseTest::testProxyComposition(art::Event const& event) const {
       (tracksTag, proxy::withParallelData<std::vector<recob::Track>>())
     */
     );
-  BOOST_CHECK_EQUAL
-    (tracks.get<tag::TrackSubproxy>().data(), std::addressof(directTracks));
+  BOOST_TEST
+    (tracks.get<tag::TrackSubproxy>().data() == std::addressof(directTracks));
 
   static_assert(
     std::is_lvalue_reference<decltype(tracks.get<tag::TrackSubproxy>())>(),
@@ -284,29 +284,29 @@ void ProxyBaseTest::testProxyComposition(art::Event const& event) const {
     auto const& expectedTrackFitInfo = expectedFitHitInfo[iExpectedTrack];
 
     auto directTrackProxy = trackProxy.get<tag::TrackSubproxy>();
-    BOOST_CHECK_EQUAL
-      (std::addressof(*directTrackProxy), std::addressof(expectedTrack));
-    BOOST_CHECK_EQUAL(directTrackProxy->ID(), expectedTrack.ID());
-    BOOST_CHECK_EQUAL(directTrackProxy->Length(), expectedTrack.Length());
+    BOOST_TEST
+      (std::addressof(*directTrackProxy) == std::addressof(expectedTrack));
+    BOOST_TEST(directTrackProxy->ID() == expectedTrack.ID());
+    BOOST_TEST(directTrackProxy->Length() == expectedTrack.Length());
 
-    BOOST_CHECK_EQUAL(
+    BOOST_TEST(
       std::addressof
-        (directTrackProxy.get<std::vector<recob::TrackFitHitInfo>>()),
+        (directTrackProxy.get<std::vector<recob::TrackFitHitInfo>>()) ==
       std::addressof(expectedTrackFitInfo)
       );
     /*
     auto fitInfoProxy = trackProxy.get<tag::FitInfoProxy>();
-    BOOST_CHECK_EQUAL
-      (std::addressof(*fitInfoProxy), std::addressof(expectedFitHitInfo));
-    BOOST_CHECK_EQUAL(
-      std::addressof(fitInfoProxy.get<recob::Track>()),
+    BOOST_TEST
+      (std::addressof(*fitInfoProxy) == std::addressof(expectedFitHitInfo));
+    BOOST_TEST(
+      std::addressof(fitInfoProxy.get<recob::Track>()) ==
       std::addressof(expectedTrack)
       );
     */
     ++iExpectedTrack;
   } // for
 
-  BOOST_CHECK_EQUAL(iExpectedTrack, expectedTracks.size());
+  BOOST_TEST(iExpectedTrack == expectedTracks.size());
 
 } // ProxyBaseTest::testProxyComposition()
 
@@ -362,44 +362,44 @@ void ProxyBaseTest::testTracks(art::Event const& event) const {
   //
   static_assert(!tracks.has<recob::SpacePoint>(),
     "Track proxy does NOT have space points available!!!");
-  
+
   static_assert(
     tracks.has<std::vector<recob::TrackFitHitInfo>>(),
     "recob::TrackFitHitInfo not found!!!"
     );
 
 
-  BOOST_CHECK_EQUAL(tracks.empty(), expectedTracks.empty());
-  BOOST_CHECK_EQUAL(tracks.size(), expectedTracks.size());
+  BOOST_TEST(tracks.empty() == expectedTracks.empty());
+  BOOST_TEST(tracks.size() == expectedTracks.size());
 
-  BOOST_CHECK_EQUAL(tracks.size(), expectedTrackFitHitInfo.size());
+  BOOST_TEST(tracks.size() == expectedTrackFitHitInfo.size());
   decltype(auto) allFitHitInfo
     = tracks.get<std::vector<recob::TrackFitHitInfo>>();
   static_assert(
     std::is_lvalue_reference<decltype(allFitHitInfo)>(),
     "Copy of parallel data!"
     );
-  BOOST_CHECK_EQUAL
-    (allFitHitInfo.data(), std::addressof(expectedTrackFitHitInfo));
+  BOOST_TEST
+    (allFitHitInfo.data() == std::addressof(expectedTrackFitHitInfo));
 
-  BOOST_CHECK_EQUAL(
-    tracks.get<tag::DirectFitInfo>().data(),
+  BOOST_TEST(
+    tracks.get<tag::DirectFitInfo>().data() ==
     std::addressof(expectedTrackFitHitInfo)
     );
 
-  BOOST_CHECK_EQUAL(
-    directTracks.get<std::vector<recob::TrackFitHitInfo>>().data(),
+  BOOST_TEST(
+    directTracks.get<std::vector<recob::TrackFitHitInfo>>().data() ==
     std::addressof(expectedTrackFitHitInfo)
     );
 
-  BOOST_CHECK_EQUAL(
-    tracks.get<tag::TrackSubproxy>().data(),
+  BOOST_TEST(
+    tracks.get<tag::TrackSubproxy>().data() ==
     std::addressof(directTracks)
     );
 
   auto fitHitInfoSize
     = std::distance(allFitHitInfo.begin(), allFitHitInfo.end());
-  BOOST_CHECK_EQUAL(fitHitInfoSize, expectedTrackFitHitInfo.size());
+  BOOST_TEST(fitHitInfoSize == expectedTrackFitHitInfo.size());
 
 
   std::size_t iExpectedTrack = 0;
@@ -415,33 +415,33 @@ void ProxyBaseTest::testTracks(art::Event const& event) const {
 
     // proxies deliver temporary objects as elements, each time a new one
     // (although an exceedingly smart compiler might decide otherwise)
-    BOOST_CHECK
+    BOOST_TEST
       (!areSameObject(tracks[iExpectedTrack], tracks[iExpectedTrack]));
 
     recob::Track const& trackRef = *trackProxy;
 
     auto const trackProxyCopy = trackProxy;
-    BOOST_CHECK_NE(std::addressof(trackProxyCopy), std::addressof(trackProxy));
+    BOOST_TEST(std::addressof(trackProxyCopy) != std::addressof(trackProxy));
 
-    BOOST_CHECK_EQUAL
-      (std::addressof(trackRef), std::addressof(expectedTrack));
-    BOOST_CHECK_EQUAL
-      (std::addressof(*trackProxy), std::addressof(expectedTrack));
+    BOOST_TEST
+      (std::addressof(trackRef) == std::addressof(expectedTrack));
+    BOOST_TEST
+      (std::addressof(*trackProxy) == std::addressof(expectedTrack));
 
     // hits
-    BOOST_CHECK_EQUAL(trackProxy.get<recob::Hit>().size(), expectedHits.size());
+    BOOST_TEST(trackProxy.get<recob::Hit>().size() == expectedHits.size());
     for (art::Ptr<recob::Hit> const& hitPtr: trackProxy.get<recob::Hit>()) {
 
       // with this check we just ask the hit is there
       // (the order is not guaranteed to be the same in expected and fetched)
-      BOOST_CHECK_NE(
-        indexOf(expectedHits, hitPtr),
+      BOOST_TEST(
+        indexOf(expectedHits, hitPtr) !=
         std::numeric_limits<std::size_t>::max()
         );
 
     } // for hit
 
-    BOOST_CHECK_EQUAL(trackProxy.index(), iExpectedTrack);
+    BOOST_TEST(trackProxy.index() == iExpectedTrack);
 
     std::vector<recob::TrackFitHitInfo> const& fitHitInfo
       = trackProxy.get<std::vector<recob::TrackFitHitInfo>>();
@@ -449,40 +449,40 @@ void ProxyBaseTest::testTracks(art::Event const& event) const {
       std::is_lvalue_reference<decltype(fitHitInfo)>(),
       "Copy of parallel data element!"
       );
-    BOOST_CHECK_EQUAL
-      (std::addressof(fitHitInfo), std::addressof(expectedFitHitInfo));
-    BOOST_CHECK_EQUAL(fitHitInfo.size(), expectedFitHitInfo.size());
+    BOOST_TEST
+      (std::addressof(fitHitInfo) == std::addressof(expectedFitHitInfo));
+    BOOST_TEST(fitHitInfo.size() == expectedFitHitInfo.size());
 
-    BOOST_CHECK_EQUAL(
-      std::addressof(trackProxy.get<tag::DirectFitInfo>()),
+    BOOST_TEST(
+      std::addressof(trackProxy.get<tag::DirectFitInfo>()) ==
       std::addressof(expectedTrackFitHitInfo[iExpectedTrack])
       );
 
-    BOOST_CHECK_EQUAL(
-      std::addressof(trackProxyCopy.get<tag::DirectFitInfo>()),
+    BOOST_TEST(
+      std::addressof(trackProxyCopy.get<tag::DirectFitInfo>()) ==
       std::addressof(trackProxy.get<tag::DirectFitInfo>())
       );
 
     // subproxy elements are typically temporaries
-    BOOST_CHECK_NE(
-      std::addressof(trackProxyCopy.get<tag::TrackSubproxy>()),
+    BOOST_TEST(
+      std::addressof(trackProxyCopy.get<tag::TrackSubproxy>()) !=
       std::addressof(trackProxy.get<tag::TrackSubproxy>())
       );
 
     auto directTrackProxy = trackProxy.get<tag::TrackSubproxy>();
-    BOOST_CHECK_EQUAL
-      (std::addressof(*directTrackProxy), std::addressof(expectedTrack));
-    BOOST_CHECK_EQUAL(directTrackProxy->ID(), expectedTrack.ID());
-    BOOST_CHECK_EQUAL(directTrackProxy->Length(), expectedTrack.Length());
-    BOOST_CHECK_EQUAL(
+    BOOST_TEST
+      (std::addressof(*directTrackProxy) == std::addressof(expectedTrack));
+    BOOST_TEST(directTrackProxy->ID() == expectedTrack.ID());
+    BOOST_TEST(directTrackProxy->Length() == expectedTrack.Length());
+    BOOST_TEST(
       std::addressof
-        (directTrackProxy.get<std::vector<recob::TrackFitHitInfo>>()),
+        (directTrackProxy.get<std::vector<recob::TrackFitHitInfo>>()) ==
       std::addressof(fitHitInfo)
       );
 
     // "special" hits
-    BOOST_CHECK_EQUAL
-      (trackProxy.get<tag::SpecialHits>().size(), expectedHits.size());
+    BOOST_TEST
+      (trackProxy.get<tag::SpecialHits>().size() == expectedHits.size());
     for (auto const& hitPtr: trackProxy.get<tag::SpecialHits>()) {
       // hitPtr is actually not a art::Ptr, but it can be compared to one
 
@@ -492,12 +492,12 @@ void ProxyBaseTest::testTracks(art::Event const& event) const {
         "Expected no metadata for tag::SpecialHits"
         );
       // easier when non-static:
-      BOOST_CHECK(!hitPtr.hasMetadata());
+      BOOST_TEST(!hitPtr.hasMetadata());
 
       // with this check we just ask the hit is there
       // (the order is not guaranteed to be the same in expected and fetched)
-      BOOST_CHECK_NE(
-        indexOf(expectedHits, hitPtr),
+      BOOST_TEST(
+        indexOf(expectedHits, hitPtr) !=
         std::numeric_limits<std::size_t>::max()
         );
 
@@ -505,7 +505,7 @@ void ProxyBaseTest::testTracks(art::Event const& event) const {
 
     // hits with metadata
     auto const& hits = trackProxy.get<tag::MetadataHits>();
-    BOOST_CHECK_EQUAL(hits.size(), expectedHits.size());
+    BOOST_TEST(hits.size() == expectedHits.size());
     // - range-for loop
     unsigned int nSpecialHits = 0U;
     for (auto const& hitInfo: hits) {
@@ -518,7 +518,7 @@ void ProxyBaseTest::testTracks(art::Event const& event) const {
         std::decay_t<decltype(hitInfo)>::hasMetadata(),
         "Expected metadata for tag::MetadataHits"
         );
-      BOOST_CHECK(hitInfo.hasMetadata());
+      BOOST_TEST(hitInfo.hasMetadata());
 
       // conversion, as reference
       art::Ptr<recob::Hit> const& hitPtr = hitInfo;
@@ -526,44 +526,44 @@ void ProxyBaseTest::testTracks(art::Event const& event) const {
       // with this check we just ask the hit is there
       // (the order is not guaranteed to be the same in expected and fetched)
       auto const index = indexOf(expectedHits, hitPtr);
-      BOOST_CHECK_NE(index, std::numeric_limits<std::size_t>::max());
+      BOOST_TEST(index != std::numeric_limits<std::size_t>::max());
 
-      BOOST_CHECK_EQUAL(&(hitInfo.main()), &expectedTrack);
-      BOOST_CHECK_EQUAL(hitInfo.mainPtr(), expectedTrackPtr);
+      BOOST_TEST(&(hitInfo.main()) == &expectedTrack);
+      BOOST_TEST(hitInfo.mainPtr() == expectedTrackPtr);
 
       if (index < expectedHitMeta.size()) {
         art::Ptr<recob::Hit> const& expectedHitPtr = expectedHits.at(index);
         auto const& expectedMetadata = expectedHitMeta.at(index);
 
-        BOOST_CHECK_EQUAL(hitInfo.valuePtr(), hitPtr);
-        BOOST_CHECK_EQUAL
-          (std::addressof(hitInfo.value()), std::addressof(*hitPtr));
-        BOOST_CHECK_EQUAL(hitInfo.key(), hitPtr.key());
-        BOOST_CHECK_EQUAL(hitInfo.id(), hitPtr.id());
+        BOOST_TEST(hitInfo.valuePtr() == hitPtr);
+        BOOST_TEST
+          (std::addressof(hitInfo.value()) == std::addressof(*hitPtr));
+        BOOST_TEST(hitInfo.key() == hitPtr.key());
+        BOOST_TEST(hitInfo.id() == hitPtr.id());
 
         if (expectedHitPtr) {
-          BOOST_CHECK(hitPtr);
-          BOOST_CHECK_EQUAL(hitInfo.operator->(), hitPtr);
+          BOOST_TEST(hitPtr);
+          BOOST_TEST(hitInfo.operator->() == hitPtr);
           recob::Hit const& hit = *expectedHitPtr;
-          BOOST_CHECK_EQUAL(std::addressof(*hitInfo), std::addressof(hit));
+          BOOST_TEST(std::addressof(*hitInfo) == std::addressof(hit));
         }
 
-        BOOST_CHECK_EQUAL(hitInfo.dataPtr(), expectedMetadata);
-        BOOST_CHECK_EQUAL(&(hitInfo.data()), expectedMetadata);
+        BOOST_TEST(hitInfo.dataPtr() == expectedMetadata);
+        BOOST_TEST(&(hitInfo.data()) == expectedMetadata);
 
         auto hitInfoCopy = hitInfo; // copy
-        BOOST_CHECK_EQUAL
-          (static_cast<art::Ptr<recob::Hit> const&>(hitInfo), hitPtr);
-        BOOST_CHECK_EQUAL
-          (&(static_cast<art::Ptr<recob::Hit> const&>(hitInfo)), &hitPtr);
+        BOOST_TEST
+          (static_cast<art::Ptr<recob::Hit> const&>(hitInfo) == hitPtr);
+        BOOST_TEST
+          (&(static_cast<art::Ptr<recob::Hit> const&>(hitInfo)) == &hitPtr);
 
         art::Ptr<recob::Hit> hitPtrMoved = std::move(hitInfoCopy);
-        BOOST_CHECK_EQUAL(hitPtrMoved, hitPtr);
+        BOOST_TEST(hitPtrMoved == hitPtr);
 
       } // if the hit is correct
 
     } // for special hit
-    BOOST_CHECK_EQUAL(nSpecialHits, expectedHits.size());
+    BOOST_TEST(nSpecialHits == expectedHits.size());
     // - iterator loop
     nSpecialHits = 0U;
     for (auto iHit = hits.begin(); iHit != hits.end(); ++iHit) {
@@ -577,49 +577,49 @@ void ProxyBaseTest::testTracks(art::Event const& event) const {
       // with this check we just ask the hit is there
       // (the order is not guaranteed to be the same in expected and fetched)
       auto const index = indexOf(expectedHits, hitPtr);
-      BOOST_CHECK_NE(index, std::numeric_limits<std::size_t>::max());
+      BOOST_TEST(index != std::numeric_limits<std::size_t>::max());
 
-      BOOST_CHECK_EQUAL(&(iHit.main()), &expectedTrack);
-      BOOST_CHECK_EQUAL(iHit.mainPtr(), expectedTrackPtr);
+      BOOST_TEST(&(iHit.main()) == &expectedTrack);
+      BOOST_TEST(iHit.mainPtr() == expectedTrackPtr);
 
       if (index < expectedHitMeta.size()) {
         art::Ptr<recob::Hit> const& expectedHitPtr = expectedHits.at(index);
         auto const* expectedMetadata = expectedHitMeta.at(index);
 
-        BOOST_CHECK_EQUAL(iHit.valuePtr(), hitPtr);
-        BOOST_CHECK_EQUAL
-          (std::addressof(iHit.value()), std::addressof(*hitPtr));
+        BOOST_TEST(iHit.valuePtr() == hitPtr);
+        BOOST_TEST
+          (std::addressof(iHit.value()) == std::addressof(*hitPtr));
 
-        BOOST_CHECK_EQUAL(iHit.dataPtr(), expectedMetadata);
-        BOOST_CHECK_EQUAL(std::addressof(iHit.data()), expectedMetadata);
+        BOOST_TEST(iHit.dataPtr() == expectedMetadata);
+        BOOST_TEST(std::addressof(iHit.data()) == expectedMetadata);
 
-        BOOST_CHECK_EQUAL(iHit.valuePtr(), expectedHitPtr);
-        BOOST_CHECK_EQUAL(iHit.dataPtr(), expectedMetadata);
+        BOOST_TEST(iHit.valuePtr() == expectedHitPtr);
+        BOOST_TEST(iHit.dataPtr() == expectedMetadata);
 
       } // if the hit is correct
 
     } // for special hit (iterator)
-    BOOST_CHECK_EQUAL(nSpecialHits, expectedHits.size());
+    BOOST_TEST(nSpecialHits == expectedHits.size());
 
-    BOOST_CHECK_EQUAL
-      (trackProxy.get<tag::DirectHitAssns>().size(), expectedHits.size());
+    BOOST_TEST
+      (trackProxy.get<tag::DirectHitAssns>().size() == expectedHits.size());
 
     // direct interface to recob::Track
-    BOOST_CHECK_EQUAL(trackProxy->NPoints(), expectedTrack.NPoints());
+    BOOST_TEST(trackProxy->NPoints() == expectedTrack.NPoints());
 
     // trajectory?
-    BOOST_CHECK_EQUAL
-      (trackProxy.has<recob::TrackTrajectory>(), !expectedTrajPtr.isNull());
+    BOOST_TEST
+      (trackProxy.has<recob::TrackTrajectory>() == !expectedTrajPtr.isNull());
     if (expectedTrajPtr.isNull()) {
-      BOOST_CHECK(!(trackProxy.get<recob::TrackTrajectory>()));
+      BOOST_TEST(!(trackProxy.get<recob::TrackTrajectory>()));
     }
     else {
-      BOOST_CHECK_EQUAL
+      BOOST_TEST
         (trackProxy.get<recob::TrackTrajectory>(), expectedTrajPtr);
     }
     ++iExpectedTrack;
   } // for
-  BOOST_CHECK_EQUAL(iExpectedTrack, expectedTracks.size());
+  BOOST_TEST(iExpectedTrack == expectedTracks.size());
 
 } // ProxyBaseTest::testTracks()
 
