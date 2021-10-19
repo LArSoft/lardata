@@ -19,6 +19,7 @@ set(RecoBaseDumpers
 set(SimulationDumpers
   "DumpSimPhotonsLite"
   "DumpSimEnergyDeposits"
+  "DumpParticleIDs"
   )
 set(MCDumper)
 
