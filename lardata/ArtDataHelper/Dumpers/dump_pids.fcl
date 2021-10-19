@@ -31,11 +31,6 @@ services: {
       LogStandardOut: {
         categories: {
           AnaBaseDefaultCtor: { limit: 0 }
-          GeometryBadInputPoint: {
-            limit: 5
-            timespan: 1000
-          }
-          RecoBaseDefaultCtor: { limit: 0 }
           DumpParticleIDs: { limit: 0 }
           default: {}
         }
@@ -59,7 +54,6 @@ physics: {
   filters:  {}
   analyzers: {
     dumppids: {
-      module_label: dumppids
       module_type:  DumpParticleIDs
       
       # output category ("DumpParticleIDs" by default), useful for filtering (see above)
@@ -73,6 +67,4 @@ physics: {
   
   ana:  [ dumppids ]
   
-  trigger_paths: []
-  end_paths:     [  ana ]
 } # physics
