@@ -66,12 +66,12 @@ namespace pid {
     explicit DumpParticleIDs(Parameters const& config);
 
     /// Does the printing
-    void analyze (const art::Event& evt);
+    void analyze (const art::Event& evt) override;
 
       private:
 
-    art::InputTag fParticleIDsModuleLabel; ///< name of module that produced the pids
-    std::string fOutputCategory;    ///< category for LogInfo output
+    art::InputTag const fParticleIDsModuleLabel; ///< name of module that produced the pids
+    std::string const fOutputCategory;    ///< category for LogInfo output
 
   }; // class DumpParticleIDs
 
@@ -120,18 +120,19 @@ namespace pid {
       // print a header for the cluster
       mf::LogVerbatim log(fOutputCategory);
       log << "ParticleID #" << ipid << '\n';
+      log << "Plane ID = " << pid.PlaneID() << '\n';
       auto scores = pid.ParticleIDAlgScores();
       log << "Number of algorithms = " << scores.size() << '\n';
       int ialg = 0;
       for(const anab::sParticleIDAlgScores score: scores) {
-	log << "  ParticleID #" << ipid << ", Algorithm " << ialg << '\n'
-	    << "    Algorithm name = " << score.fAlgName << '\n'
-	    << "    Variable type  = " << score.fVariableType << '\n'
-	    << "    TrackDirection = " << score.fTrackDir << '\n'
-	    << "    NDF            = " << score.fNdf << '\n'
-	    << "    Assumed PDG    = " << score.fAssumedPdg << '\n'
-	    << "    Value          = " << score.fValue << '\n'
-	    << "    Plane Mask     = " << score.fPlaneMask << '\n';
+        log << "  ParticleID #" << ipid << ", Algorithm " << ialg << '\n'
+            << "    Algorithm name = " << score.fAlgName << '\n'
+            << "    Variable type  = " << score.fVariableType << '\n'
+            << "    TrackDirection = " << score.fTrackDir << '\n'
+            << "    NDF            = " << score.fNdf << '\n'
+            << "    Assumed PDG    = " << score.fAssumedPdg << '\n'
+            << "    Value          = " << score.fValue << '\n'
+            << "    Plane Mask     = " << score.fPlaneMask << '\n';
         ++ialg;
       }
 
