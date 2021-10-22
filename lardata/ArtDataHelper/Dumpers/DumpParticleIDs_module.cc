@@ -17,7 +17,6 @@
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
-#include "canvas/Persistency/Common/FindOne.h"
 #include "canvas/Utilities/InputTag.h"
 
 // ... plus see below ...
@@ -108,14 +107,14 @@ namespace pid {
   void DumpParticleIDs::analyze(const art::Event& evt) {
 
     // fetch the data to be dumped on screen
-    auto ParticleIDs = evt.getValidHandle<std::vector<anab::ParticleID>>(fParticleIDsModuleLabel);
+    auto const& ParticleIDs = evt.getProduct<std::vector<anab::ParticleID>>(fParticleIDsModuleLabel);
 
     mf::LogInfo(fOutputCategory)
-      << "The event contains " << ParticleIDs->size() << " '"
+      << "The event contains " << ParticleIDs.size() << " '"
       << fParticleIDsModuleLabel.encode() << "' particle IDs";
 
     unsigned int ipid = 0;
-    for (const anab::ParticleID& pid: *ParticleIDs) {
+    for (const anab::ParticleID& pid: ParticleIDs) {
 
       // print a header for the cluster
       mf::LogVerbatim log(fOutputCategory);

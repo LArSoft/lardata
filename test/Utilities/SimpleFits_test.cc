@@ -34,9 +34,9 @@
  * (for example, a random seed).
  */
 #define BOOST_TEST_MODULE ( SimpleFits_test )
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
-#include <boost/test/test_tools.hpp> // BOOST_CHECK(), BOOST_CHECK_EQUAL()
-#include <boost/test/tools/floating_point_comparison.hpp> // BOOST_CHECK_CLOSE()
+#include "boost/test/unit_test.hpp"
+
+using boost::test_tools::tolerance;
 
 // LArSoft libraries
 #include "lardata/Utilities/SimpleFits.h"
@@ -114,34 +114,34 @@ void CheckLinearFit(
   int NDF
 ) {
 
-  BOOST_CHECK_EQUAL(fitter.N(), n);
+  BOOST_TEST(fitter.N() == n);
   if (n == 0) {
-    BOOST_CHECK(!fitter.isValid());
+    BOOST_TEST(!fitter.isValid());
     BOOST_CHECK_THROW(fitter.Slope(), std::range_error);
     BOOST_CHECK_THROW(fitter.Intercept(), std::range_error);
     BOOST_CHECK_THROW(fitter.SlopeError(), std::range_error);
     BOOST_CHECK_THROW(fitter.InterceptError(), std::range_error);
     BOOST_CHECK_THROW(fitter.InterceptSlopeCovariance(), std::range_error);
     BOOST_CHECK_THROW(fitter.ChiSquare(), std::range_error);
-    BOOST_CHECK_EQUAL(fitter.NDF(), -2);
+    BOOST_TEST(fitter.NDF() == -2);
   }
   else {
-    BOOST_CHECK(fitter.isValid());
+    BOOST_TEST(fitter.isValid());
 
     PrintFitterInfo(fitter);
 
-    BOOST_CHECK_CLOSE(double(fitter.Intercept()), double(intercept), 0.1);
-    BOOST_CHECK_CLOSE(double(fitter.Slope()), double(slope), 0.1);
-    BOOST_CHECK_CLOSE
-      (double(fitter.InterceptError()), double(intercept_error), 0.1);
-    BOOST_CHECK_CLOSE(double(fitter.SlopeError()), double(slope_error), 0.1);
-    BOOST_CHECK_CLOSE(double(fitter.InterceptSlopeCovariance()),
-      double(intercept_slope_covariance), 0.1);
+    BOOST_TEST(double(fitter.Intercept()) == double(intercept), 0.1% tolerance());
+    BOOST_TEST(double(fitter.Slope()) == double(slope), 0.1% tolerance());
+    BOOST_TEST
+      (double(fitter.InterceptError()) == double(intercept_error), 0.1% tolerance());
+    BOOST_TEST(double(fitter.SlopeError()) == double(slope_error), 0.1% tolerance());
+    BOOST_TEST(double(fitter.InterceptSlopeCovariance()) ==
+      double(intercept_slope_covariance), 0.1% tolerance());
     if (double(chisq) == 0.)
-      BOOST_CHECK_SMALL(double(fitter.ChiSquare()), 1e-5);
+      BOOST_TEST(double(fitter.ChiSquare()) == 0, 1e-5% tolerance());
     else
-      BOOST_CHECK_CLOSE(double(fitter.ChiSquare()), double(chisq), 0.1);
-    BOOST_CHECK_EQUAL(fitter.NDF(), NDF);
+      BOOST_TEST(double(fitter.ChiSquare()) == double(chisq), 0.1% tolerance());
+    BOOST_TEST(fitter.NDF() == NDF);
   }
 
 } // CheckLinearFit<>()
@@ -157,9 +157,9 @@ void CheckQuadraticFit(
   int NDF
 ) {
 
-  BOOST_CHECK_EQUAL(fitter.N(), n);
+  BOOST_TEST(fitter.N() == n);
   if (n == 0) {
-    BOOST_CHECK(!fitter.isValid());
+    BOOST_TEST(!fitter.isValid());
     BOOST_CHECK_THROW(fitter.FitParameter(0), std::range_error);
     BOOST_CHECK_THROW(fitter.FitParameter(1), std::range_error);
     BOOST_CHECK_THROW(fitter.FitParameter(2), std::range_error);
@@ -167,28 +167,28 @@ void CheckQuadraticFit(
     BOOST_CHECK_THROW(fitter.FitParameterError(1), std::range_error);
     BOOST_CHECK_THROW(fitter.FitParameterError(2), std::range_error);
     BOOST_CHECK_THROW(fitter.ChiSquare(), std::range_error);
-    BOOST_CHECK_EQUAL(fitter.NDF(), -3);
+    BOOST_TEST(fitter.NDF() == -3);
   }
   else {
-    BOOST_CHECK(fitter.isValid());
+    BOOST_TEST(fitter.isValid());
 
     PrintFitterInfo(fitter);
 
     // tolerance: 0.1%
-    BOOST_CHECK_CLOSE(double(fitter.FitParameter(0)), double(solution[0]), 0.1);
-    BOOST_CHECK_CLOSE(double(fitter.FitParameter(1)), double(solution[1]), 0.1);
-    BOOST_CHECK_CLOSE(double(fitter.FitParameter(2)), double(solution[2]), 0.1);
-    BOOST_CHECK_CLOSE
-      (double(fitter.FitParameterError(0)), std::sqrt(double(error2[0])), 0.1);
-    BOOST_CHECK_CLOSE
-      (double(fitter.FitParameterError(1)), std::sqrt(double(error2[1])), 0.1);
-    BOOST_CHECK_CLOSE
-      (double(fitter.FitParameterError(2)), std::sqrt(double(error2[2])), 0.1);
+    BOOST_TEST(double(fitter.FitParameter(0)) == double(solution[0]), 0.1% tolerance());
+    BOOST_TEST(double(fitter.FitParameter(1)) == double(solution[1]), 0.1% tolerance());
+    BOOST_TEST(double(fitter.FitParameter(2)) == double(solution[2]), 0.1% tolerance());
+    BOOST_TEST
+      (double(fitter.FitParameterError(0)) == std::sqrt(double(error2[0])), 0.1% tolerance());
+    BOOST_TEST
+      (double(fitter.FitParameterError(1)) == std::sqrt(double(error2[1])), 0.1% tolerance());
+    BOOST_TEST
+      (double(fitter.FitParameterError(2)) == std::sqrt(double(error2[2])), 0.1% tolerance());
     if (double(chisq) == 0.)
-      BOOST_CHECK_SMALL(double(fitter.ChiSquare()), 1e-5);
+      BOOST_TEST(double(fitter.ChiSquare()) == 0, 1e-5% tolerance());
     else
-      BOOST_CHECK_CLOSE(double(fitter.ChiSquare()), double(chisq), 0.1);
-    BOOST_CHECK_EQUAL(fitter.NDF(), NDF);
+      BOOST_TEST(double(fitter.ChiSquare()) == double(chisq), 0.1% tolerance());
+    BOOST_TEST(fitter.NDF() == NDF);
   }
 
 } // CheckQuadraticFit<>()
@@ -204,16 +204,16 @@ void CheckGaussianFit(
   int NDF
 ) {
 
-  BOOST_CHECK_EQUAL(fitter.N(), n);
+  BOOST_TEST(fitter.N() == n);
   if (n == 0) {
-    BOOST_CHECK(!fitter.isValid());
+    BOOST_TEST(!fitter.isValid());
     BOOST_CHECK_THROW(fitter.FitParameters(), std::runtime_error);
     BOOST_CHECK_THROW(fitter.FitParameterErrors(), std::runtime_error);
     BOOST_CHECK_THROW(fitter.ChiSquare(), std::runtime_error);
-    BOOST_CHECK_EQUAL(fitter.NDF(), -3);
+    BOOST_TEST(fitter.NDF() == -3);
   }
   else {
-    BOOST_CHECK(fitter.isValid());
+    BOOST_TEST(fitter.isValid());
 
     using FitParameters_t = typename lar::util::GaussianFit<T>::FitParameters_t;
 
@@ -226,17 +226,17 @@ void CheckGaussianFit(
     /* FitParameters_t perrors = */ fitter.FitParameterErrors();
 
     // tolerance: 0.1%
-    BOOST_CHECK_CLOSE(double(params[0]), double(solution[0]), 0.1);
-    BOOST_CHECK_CLOSE(double(params[1]), double(solution[1]), 0.1);
-    BOOST_CHECK_CLOSE(double(params[2]), double(solution[2]), 0.1);
-  //  BOOST_CHECK_CLOSE(double(perrors[0]), std::sqrt(double(error2[0])), 0.1);
-  //  BOOST_CHECK_CLOSE(double(perrors[1]), std::sqrt(double(error2[1])), 0.1);
-  //  BOOST_CHECK_CLOSE(double(perrors[2]), std::sqrt(double(error2[2])), 0.1);
+    BOOST_TEST(double(params[0]) == double(solution[0]), 0.1% tolerance());
+    BOOST_TEST(double(params[1]) == double(solution[1]), 0.1% tolerance());
+    BOOST_TEST(double(params[2]) == double(solution[2]), 0.1% tolerance());
+  //  BOOST_TEST(double(perrors[0]) == std::sqrt(double(error2[0])), 0.1% tolerance());
+  //  BOOST_TEST(double(perrors[1]) == std::sqrt(double(error2[1])), 0.1% tolerance());
+  //  BOOST_TEST(double(perrors[2]) == std::sqrt(double(error2[2])), 0.1% tolerance());
     if (double(chisq) == 0.)
-      BOOST_CHECK_SMALL(double(fitter.ChiSquare()), 1e-5);
+      BOOST_TEST(double(fitter.ChiSquare()) == 0, 1e-5% tolerance());
     else
-      BOOST_CHECK_CLOSE(double(fitter.ChiSquare()), double(chisq), 0.1);
-    BOOST_CHECK_EQUAL(fitter.NDF(), NDF);
+      BOOST_TEST(double(fitter.ChiSquare()) == double(chisq), 0.1% tolerance());
+    BOOST_TEST(fitter.NDF() == NDF);
   }
 
 } // CheckGaussianFit<>()
@@ -693,4 +693,3 @@ BOOST_AUTO_TEST_CASE(QuadraticFitRealTest) {
 BOOST_AUTO_TEST_CASE(GaussianFitRealTest) {
   GaussianFitTest<double>();
 }
-
