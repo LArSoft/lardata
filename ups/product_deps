@@ -6,8 +6,8 @@ defaultqual	e20
 fcldir product_dir job
 #
 product         version
-lardataalg	v09_07_00
-lardataobj	v09_03_03
+lardataalg	v09_07_01
+lardataobj	v09_03_04
 larcore 	v09_03_01
 range		v3_0_11_0
 cetbuildtools	v8_18_05	-	only_for_build
