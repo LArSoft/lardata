@@ -15,7 +15,7 @@ art_make(NO_PLUGINS
 
 simple_plugin(DatabaseUtil "service"
               messagefacility::MF_MessageLogger
-              PQ
+              PostgreSQL::PostgreSQL
               art::Framework_Core
               art::Framework_Principal
               art_root_io::RootDB

@@ -10,7 +10,7 @@ art_make(NO_PLUGINS
                        art::Persistency_Provenance
                        canvas::canvas
                        cetlib_except::cetlib_except
-                       PQ
+                       PostgreSQL::PostgreSQL
                        Boost::serialization
                        Boost::date_time
                        ROOT::Core
