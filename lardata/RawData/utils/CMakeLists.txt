@@ -11,8 +11,8 @@ art_make(NO_PLUGINS
                        canvas::canvas
                        cetlib_except::cetlib_except
                        PQ
-                       ${Boost_SERIALIZATION_LIBRARY}
-                       ${Boost_DATE_TIME_LIBRARY}
+                       Boost::serialization
+                       Boost::date_time
                        ROOT::Core
                        ROOT::RIO
                        ROOT::Tree
