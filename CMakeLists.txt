@@ -19,23 +19,23 @@ cet_cmake_env()
 cet_set_compiler_flags(DIAGS CAUTIOUS
   WERROR
   NO_UNDEFINED
-  EXTRA_FLAGS -pedantic -I $ENV{CLANG_FQ_DIR}/include/c++/v1
+  EXTRA_FLAGS -pedantic
 )
 
 cet_report_compiler_flags()
 
-find_package(Range-v3 REQUIRED)
-find_package(cetlib_except REQUIRED)
-find_package(cetlib REQUIRED)
-find_package(messagefacility REQUIRED)
-find_package(canvas REQUIRED)
+find_package(Range-v3 REQUIRED PUBLIC)
+find_package(cetlib_except REQUIRED PUBLIC)
+find_package(cetlib REQUIRED PUBLIC)
+find_package(messagefacility REQUIRED PUBLIC)
+find_package(canvas REQUIRED PUBLIC)
 find_package(canvas_root_io REQUIRED)
-find_package(art REQUIRED)
-find_package(art_root_io REQUIRED)
+find_package(art REQUIRED PUBLIC)
+find_package(art_root_io REQUIRED PUBLIC)
 find_package(nusimdata REQUIRED PUBLIC)
-find_package(FFTW3 REQUIRED)
-find_package(Boost COMPONENTS serialization date_time REQUIRED)
-find_package(ROOT COMPONENTS Core GenVector RIO Tree FFTW Hist MathCore Physics REQUIRED)
+find_package(FFTW3 REQUIRED PUBLIC)
+find_package(Boost COMPONENTS serialization date_time REQUIRED PUBLIC)
+find_package(ROOT COMPONENTS Core GenVector RIO Tree FFTW Hist MathCore Physics REQUIRED PUBLIC)
 find_package(PostgreSQL REQUIRED PUBLIC)
 
 find_ups_product( larcoreobj )
