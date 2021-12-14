@@ -4,9 +4,9 @@ simple_plugin(DetectorClocksServiceStandard "service"
               lardataobj_RawData
               art::Framework_Core
               art::Framework_Principal
-              ${ART_ROOT_IO_ROOTDB}
+              art_root_io::RootDB
               art::Persistency_Provenance
-              ${SQLITE3}
+              SQLite::SQLite3
               ROOT::Core
               ROOT::RIO
               ROOT::Tree)
@@ -15,8 +15,8 @@ simple_plugin(DetectorPropertiesServiceStandard "service"
               lardataalg_DetectorInfo
               larcore_Geometry_Geometry_service
               larcorealg_Geometry
-              ${ART_ROOT_IO_ROOTDB}
-              ${SQLITE3}
+              art_root_io::RootDB
+              SQLite::SQLite3
               messagefacility::MF_MessageLogger
               ROOT::Core
               ROOT::RIO)

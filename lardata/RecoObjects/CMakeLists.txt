@@ -6,7 +6,7 @@ art_make(LIB_LIBRARIES
            larcorealg_Geometry
            art::Framework_Core
            art::Framework_Services_Registry
-           ${ART_UTILITIES}
+           art::Utilities
            canvas::canvas
            fhiclcpp::fhiclcpp
            cetlib_except::cetlib_except

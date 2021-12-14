@@ -1,5 +1,3 @@
-include_directories(${FFTW_INCLUDE_DIR})
-cet_find_library(FFTW_LIBRARY NAMES fftw3 fftw3-3 PATHS ENV FFTW_LIBRARY )
 
 art_make(NO_PLUGINS
          LIB_LIBRARIES
@@ -12,14 +10,15 @@ art_make(NO_PLUGINS
             canvas::canvas
             messagefacility::MF_MessageLogger
             cetlib_except::cetlib_except
-            FFTW_LIBRARY)
+            FFTW3::FFTW3
+          )
 
 simple_plugin(DatabaseUtil "service"
               messagefacility::MF_MessageLogger
-              PQ
+              PostgreSQL::PostgreSQL
               art::Framework_Core
               art::Framework_Principal
-              ${ART_ROOT_IO_ROOTDB}
+              art_root_io::RootDB
               art::Persistency_Provenance)
 
 simple_plugin(LArFFT "service"

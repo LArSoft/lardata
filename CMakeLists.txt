@@ -8,12 +8,10 @@
 
 cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
-project(lardata VERSION 09.04.00 LANGUAGES CXX)
+project(lardata VERSION 09.05.00 LANGUAGES CXX)
 
 # cetbuildtools contains our cmake modules
 find_package(cetbuildtools REQUIRED)
-
-list(APPEND CMAKE_MODULE_PATH $ENV{CANVAS_ROOT_IO_DIR}/Modules $ENV{ART_DIR}/Modules)
 
 include(CetCMakeEnv)
 cet_cmake_env()
@@ -21,32 +19,31 @@ cet_cmake_env()
 cet_set_compiler_flags(DIAGS CAUTIOUS
   WERROR
   NO_UNDEFINED
-  EXTRA_FLAGS -pedantic -I $ENV{CLANG_FQ_DIR}/include/c++/v1
+  EXTRA_FLAGS -pedantic
 )
 
 cet_report_compiler_flags()
 
-# these are minimum required versions, not the actual product versions
-find_ups_product( nusimdata )
+find_package(Range-v3 REQUIRED PUBLIC)
+find_package(cetlib_except REQUIRED PUBLIC)
+find_package(cetlib REQUIRED PUBLIC)
+find_package(messagefacility REQUIRED PUBLIC)
+find_package(canvas REQUIRED PUBLIC)
+find_package(canvas_root_io REQUIRED)
+find_package(art REQUIRED PUBLIC)
+find_package(art_root_io REQUIRED PUBLIC)
+find_package(nusimdata REQUIRED PUBLIC)
+find_package(FFTW3 REQUIRED PUBLIC)
+find_package(Boost COMPONENTS serialization date_time REQUIRED PUBLIC)
+find_package(ROOT COMPONENTS Core GenVector RIO Tree FFTW Hist MathCore Physics REQUIRED PUBLIC)
+find_package(PostgreSQL REQUIRED PUBLIC)
+
 find_ups_product( larcoreobj )
 find_ups_product( larcorealg )
 find_ups_product( lardataobj )
 find_ups_product( lardataalg )
 find_ups_product( larcore  )
-find_ups_product( art  )
-find_ups_product(art_root_io)
-find_ups_product( postgresql  )
-find_ups_product( range )
-find_ups_product( fftw )
-find_ups_product( canvas  )
-find_ups_product(messagefacility)
-find_ups_product(cetlib)
-find_ups_product(cetlib_except)
-find_ups_product( clhep  )
 
-#  Find all the libraries needed by our dependent CMakeList.txt files
-# cet_find_library( NUSIMDATA_SIMULATIONBASE NAMES nusimdata_SimulationBase PATHS ENV NUSIMDATA_LIB NO_DEFAULT_PATH )
-cet_find_library( PQ                  NAMES pq                  PATHS ENV POSTGRESQL_LIBRARIES NO_DEFAULT_PATH )
 
 # macros for artdaq_dictionary and simple_plugin
 include(ArtDictionary)
