@@ -43,6 +43,7 @@ find_ups_product( larcorealg )
 find_ups_product( lardataobj )
 find_ups_product( lardataalg )
 find_ups_product( larcore  )
+find_ups_product( larvecutils  )
 
 
 # macros for artdaq_dictionary and simple_plugin
