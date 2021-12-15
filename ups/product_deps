@@ -6,6 +6,7 @@ defaultqual	e20
 fcldir product_dir job
 #
 product         version
+larvecutils     v09_00_00
 lardataalg	v09_09_00
 lardataobj	v09_04_00
 larcore 	v09_04_00
@@ -14,13 +15,13 @@ cetbuildtools	v8_18_09	-	only_for_build
 end_product_list
 
 
-qualifier        larcore          lardataobj	lardataalg	range	notes
-e20:debug        e20:debug        e20:debug	e20:debug	-nq-
-e20:prof         e20:prof         e20:prof	e20:prof	-nq-
-e19:debug        e19:debug        e19:debug	e19:debug	-nq-
-e19:prof         e19:prof         e19:prof	e19:prof	-nq-
-c7:debug         c7:debug         c7:debug	c7:debug	-nq-
-c7:prof          c7:prof          c7:prof	c7:prof		-nq-
+qualifier   larcore    lardataalg  larvecutils  range	notes
+e20:debug   e20:debug  e20:debug   e20:debug    -nq-
+e20:prof    e20:prof   e20:prof    e20:prof     -nq-
+e19:debug   e19:debug  e19:debug   e19:debug    -nq-
+e19:prof    e19:prof   e19:prof    e19:prof     -nq-
+c7:debug    c7:debug   c7:debug    c7:debug     -nq-
+c7:prof     c7:prof    c7:prof     c7:prof      -nq-
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:
