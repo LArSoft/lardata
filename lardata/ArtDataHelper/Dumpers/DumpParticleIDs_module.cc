@@ -119,20 +119,21 @@ namespace pid {
       // print a header for the cluster
       mf::LogVerbatim log(fOutputCategory);
       log << "ParticleID #" << ipid << '\n';
-      if(pid.PlaneID()) {
-        log << "  Plane ID    = " << pid.PlaneID() << '\n'
-            << "  NDF         = " << pid.Ndf() << '\n'
-            << "  MinChi2     = " << pid.MinChi2() << '\n'
-            << "  DeltaChi2   = " << pid.DeltaChi2() << '\n'
-            << "  Chi2Proton  = " << pid.Chi2Proton() << '\n'
-            << "  Chi2Kaon    = " << pid.Chi2Kaon() << '\n'
-            << "  Chi2Muon    = " << pid.Chi2Muon() << '\n'
-            << "  MissingE    = " << pid.MissingE() << '\n'
-            << "  MissingEavg = " << pid.MissingEavg() << '\n'
-            << "  PIDA        = " << pid.PIDA() << std::endl;
+      log << "Plane ID = " << pid.PlaneID() << '\n';
+      auto scores = pid.ParticleIDAlgScores();
+      log << "Number of algorithms = " << scores.size() << '\n';
+      int ialg = 0;
+      for(const anab::sParticleIDAlgScores score: scores) {
+        log << "  ParticleID #" << ipid << ", Algorithm " << ialg << '\n'
+            << "    Algorithm name = " << score.fAlgName << '\n'
+            << "    Variable type  = " << score.fVariableType << '\n'
+            << "    TrackDirection = " << score.fTrackDir << '\n'
+            << "    NDF            = " << score.fNdf << '\n'
+            << "    Assumed PDG    = " << score.fAssumedPdg << '\n'
+            << "    Value          = " << score.fValue << '\n'
+            << "    Plane Mask     = " << score.fPlaneMask << '\n';
+        ++ialg;
       }
-      else
-        log << "  Invalid" << '\n';
 
       ++ipid;
     } // for pids
