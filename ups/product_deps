@@ -7,7 +7,7 @@ fcldir product_dir job
 #
 product         version
 larvecutils     v09_00_00
-lardataalg	v09_09_00
+lardataalg	v09_09_01
 larcore 	v09_04_00
 range		v3_0_11_0
 cetbuildtools	v8_18_09	-	only_for_build
