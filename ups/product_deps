@@ -6,11 +6,11 @@ defaultqual	e20
 fcldir product_dir job
 #
 product         version
-larvecutils     v09_00_01
-lardataalg	v09_09_02
-larcore 	v09_04_00
+larvecutils     v09_01_00
+lardataalg	v09_10_00
+larcore 	v09_04_01
 range		v3_0_11_0
-cetbuildtools	v8_18_09	-	only_for_build
+cetbuildtools	v8_19_02	-	only_for_build
 end_product_list
 
 
