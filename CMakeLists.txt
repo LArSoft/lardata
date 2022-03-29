@@ -7,7 +7,6 @@
 # ======================================================================
 
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
-# cmake_policy(VERSION 3.19) ### MIGRATE-ACTION-COMPATIBILITY (migrate-3.09.01) - Uncomment to preserve compatibility with older CMake versions
 
 find_package(cetmodules REQUIRED)
 project(lardata VERSION 09.07.02 LANGUAGES CXX)
@@ -23,14 +22,14 @@ cet_set_compiler_flags(DIAGS CAUTIOUS
   EXTRA_FLAGS -pedantic
 )
 
-cet_report_compiler_flags() ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - add args: REPORT_THRESHOLD VERBOSE
+cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
 find_package(Range-v3 REQUIRED EXPORT)
 find_package(cetlib_except REQUIRED EXPORT)
 find_package(cetlib REQUIRED EXPORT)
 find_package(messagefacility REQUIRED EXPORT)
 find_package(canvas REQUIRED EXPORT)
-find_package(canvas_root_io REQUIRED)
+#find_package(canvas_root_io REQUIRED)
 find_package(art REQUIRED EXPORT)
 find_package(art_root_io REQUIRED EXPORT)
 find_package(nusimdata REQUIRED EXPORT)
@@ -38,14 +37,12 @@ find_package(FFTW3 REQUIRED EXPORT)
 find_package(Boost COMPONENTS serialization date_time REQUIRED EXPORT)
 find_package(ROOT COMPONENTS Core GenVector RIO Tree FFTW Hist MathCore Physics REQUIRED EXPORT)
 find_package(PostgreSQL REQUIRED EXPORT)
-
-find_package( larcoreobj REQUIRED )
-find_package( larcorealg REQUIRED )
-find_package( lardataobj REQUIRED )
-find_package( lardataalg REQUIRED )
-find_package( larcore  REQUIRED )
-find_package( larvecutils  REQUIRED )
-
+find_package( larcoreobj REQUIRED EXPORT)
+find_package( larcorealg REQUIRED EXPORT)
+find_package( lardataobj REQUIRED EXPORT)
+find_package( lardataalg REQUIRED EXPORT)
+find_package( larcore  REQUIRED EXPORT)
+find_package( larvecutils  REQUIRED EXPORT)
 
 # macros for artdaq_dictionary and simple_plugin
 include(ArtDictionary)
