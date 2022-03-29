@@ -9,7 +9,7 @@ simple_plugin(DetectorClocksServiceStandard "service"
               SQLite::SQLite3
               ROOT::Core
               ROOT::RIO
-              ROOT::Tree)
+              ROOT::Tree) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 
 simple_plugin(DetectorPropertiesServiceStandard "service"
               lardataalg_DetectorInfo
@@ -19,11 +19,11 @@ simple_plugin(DetectorPropertiesServiceStandard "service"
               SQLite::SQLite3
               messagefacility::MF_MessageLogger
               ROOT::Core
-              ROOT::RIO)
+              ROOT::RIO) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 
 simple_plugin(LArPropertiesServiceStandard "service"
               lardataalg_DetectorInfo
-              art::Framework_Principal)
+              art::Framework_Principal) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 
 install_headers()
 install_fhicl()

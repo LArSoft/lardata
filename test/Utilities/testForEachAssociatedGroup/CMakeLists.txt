@@ -1,11 +1,11 @@
-simple_plugin( AssnProducer1          "module"  NO_INSTALL cetlib_except art_Persistency_Provenance)
-simple_plugin( AssnProducer2          "module"  NO_INSTALL cetlib_except art_Persistency_Provenance)
+simple_plugin( AssnProducer1          "module"  NO_INSTALL cetlib_except art_Persistency_Provenance) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+simple_plugin( AssnProducer2          "module"  NO_INSTALL cetlib_except art_Persistency_Provenance) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 simple_plugin( AssnAnalyzer           "module"  NO_INSTALL
                LIBRARIES PRIVATE
                cetlib_except::cetlib_except
                art::Persistency_Provenance
                range-v3::range-v3
-             )
+             ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 
 cet_test(associated_groups_test USE_BOOST_UNIT
   LIBRARIES

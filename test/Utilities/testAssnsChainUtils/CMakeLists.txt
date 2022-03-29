@@ -8,7 +8,7 @@ simple_plugin(
     fhiclcpp::fhiclcpp
     cetlib_except::cetlib_except
   NO_INSTALL
-  )
+  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 simple_plugin(
   AssnsChainClusterMaker "module"
     lardataobj_RecoBase
@@ -19,7 +19,7 @@ simple_plugin(
     fhiclcpp::fhiclcpp
     cetlib_except::cetlib_except
   NO_INSTALL
-  )
+  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 simple_plugin(
   AssnsChainPFParticleMaker "module"
     lardataobj_RecoBase
@@ -30,7 +30,7 @@ simple_plugin(
     fhiclcpp::fhiclcpp
     cetlib_except::cetlib_except
   NO_INSTALL
-  )
+  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 simple_plugin(
   AssnsChainShowerMaker "module"
     lardataobj_RecoBase
@@ -41,7 +41,7 @@ simple_plugin(
     fhiclcpp::fhiclcpp
     cetlib_except::cetlib_except
   NO_INSTALL
-  )
+  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 simple_plugin(
   AssnsChainTest "module"
     lardataobj_RecoBase
@@ -52,7 +52,7 @@ simple_plugin(
     fhiclcpp::fhiclcpp
     cetlib_except::cetlib_except
     ROOT::Core
-  )
+  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 
 cet_test(AssnsChainUtil_test HANDBUILT
   TEST_EXEC lar

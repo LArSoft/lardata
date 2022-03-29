@@ -24,13 +24,13 @@ set(SimulationDumpers
 set(MCDumper)
 
 
-art_make(NO_PLUGINS LIB_LIBRARIES lardataobj_RecoBase)
+art_make(NO_PLUGINS LIB_LIBRARIES lardataobj_RecoBase) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use art_make_library(), art_dictonary(), and cet_build_plugin() with explicit source lists and plugin base types
 
 foreach(Dumper IN LISTS RawDataDumpers)
   simple_plugin(${Dumper} "module"
       lardataobj_RawData
       art::Framework_Services_Registry
-      messagefacility::MF_MessageLogger)
+      messagefacility::MF_MessageLogger) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 endforeach()
 
 
@@ -39,7 +39,7 @@ foreach(Dumper IN LISTS RecoBaseDumpers)
       lardataobj_RecoBase
       lardata_ArtDataHelper_Dumpers
       lardata_RecoBaseProxy
-      messagefacility::MF_MessageLogger)
+      messagefacility::MF_MessageLogger) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 endforeach()
 
 
@@ -49,12 +49,12 @@ foreach(Dumper IN LISTS SimulationDumpers)
       lardataobj_Simulation
       messagefacility::MF_MessageLogger
       ROOT::GenVector
-      ROOT::Core)
+      ROOT::Core) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 endforeach(Dumper IN LISTS SimulationDumpers)
 
 
 foreach(Dumper IN LISTS MCDumpers)
-  simple_plugin(${Dumper} "module" lardataobj_MCBase)
+  simple_plugin(${Dumper} "module" lardataobj_MCBase) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
 endforeach()
 
 

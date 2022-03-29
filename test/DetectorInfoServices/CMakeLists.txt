@@ -5,7 +5,7 @@ art_make(
     art::Framework_Services_Registry
     messagefacility::MF_MessageLogger
     ROOT::Core
-)
+) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use art_make_library(), art_dictonary(), and cet_build_plugin() with explicit source lists and plugin base types
 
 cet_test(LarProp HANDBUILT
   DATAFILES lartest.fcl
