@@ -1,18 +1,28 @@
-art_make(LIB_LIBRARIES lardataobj_RawData
-                       lardataobj_RecoBase
-                       lardataobj_AnalysisBase
-                       larcorealg_Geometry
-                       larcore_Geometry_Geometry_service
+cet_make_library(
+          SOURCE HitCreator.cxx
+                 HitUtils.cxx
+                 MVAReader.cxx
+                 MVAWrapperBase.cxx
+                 MVAWriter.cxx
+                 TrackUtils.cxx
+                 WireCreator.cxx
+          LIBRARIES PUBLIC
+                       lardataobj::RawData
+                       lardataobj::RecoBase
+                       lardataobj::AnalysisBase
+                       larcorealg::Geometry
+                       larcore::Geometry_Geometry_service
                        art::Framework_Core
                        art::Framework_Principal
                        art::Framework_Services_Registry
                        art::Persistency_Common
                        art::Persistency_Provenance
                        art::Utilities
+                    PRIVATE
                        canvas::canvas
                        cetlib_except::cetlib_except
                        ROOT::Core
-                       ROOT::GenVector) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use art_make_library(), art_dictonary(), and cet_build_plugin() with explicit source lists and plugin base types
+                       ROOT::GenVector)
 
 add_subdirectory(Dumpers)
 

@@ -24,37 +24,44 @@ set(SimulationDumpers
 set(MCDumper)
 
 
-art_make(NO_PLUGINS LIB_LIBRARIES lardataobj_RecoBase) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use art_make_library(), art_dictonary(), and cet_build_plugin() with explicit source lists and plugin base types
+cet_make_library( SOURCE PCAxisDumpers.cc
+                         SpacePointDumpers.cc
+    LIBRARIES PUBLIC lardataobj::RecoBase)
 
 foreach(Dumper IN LISTS RawDataDumpers)
-  simple_plugin(${Dumper} "module"
-      lardataobj_RawData
+  cet_build_plugin(${Dumper} art::module
+    LIBRARIES REG
+      lardataobj::RawData
       art::Framework_Services_Registry
-      messagefacility::MF_MessageLogger) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+      messagefacility::MF_MessageLogger)
 endforeach()
 
 
 foreach(Dumper IN LISTS RecoBaseDumpers)
-  simple_plugin(${Dumper} "module"
-      lardataobj_RecoBase
+  cet_build_plugin(${Dumper} art::module
+    LIBRARIES REG
+      lardataobj::RecoBase
       lardata_ArtDataHelper_Dumpers
       lardata_RecoBaseProxy
-      messagefacility::MF_MessageLogger) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+      messagefacility::MF_MessageLogger)
 endforeach()
 
 
 foreach(Dumper IN LISTS SimulationDumpers)
-  simple_plugin(${Dumper} "module"
+  cet_build_plugin(${Dumper} art::module
+    LIBRARIES REG
       lardataalg_MCDumpers
-      lardataobj_Simulation
+      lardataobj::Simulation
       messagefacility::MF_MessageLogger
       ROOT::GenVector
-      ROOT::Core) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+      ROOT::Core)
 endforeach(Dumper IN LISTS SimulationDumpers)
 
 
 foreach(Dumper IN LISTS MCDumpers)
-  simple_plugin(${Dumper} "module" lardataobj_MCBase) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+  cet_build_plugin(${Dumper} art::module
+    LIBRARIES REG
+                   lardataobj::MCBase)
 endforeach()
 
 
