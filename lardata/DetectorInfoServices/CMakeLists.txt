@@ -1,29 +1,34 @@
-simple_plugin(DetectorClocksServiceStandard "service"
-              art_root_io_detail
-              lardataalg_DetectorInfo
-              lardataobj_RawData
+cet_build_plugin(DetectorClocksServiceStandard art::service
+  LIBRARIES PUBLIC
+              lardataalg::DetectorInfo
+              lardataobj::RawData
               art::Framework_Core
               art::Framework_Principal
               art_root_io::RootDB
               art::Persistency_Provenance
+            PRIVATE
+              art_root_io::detail
               SQLite::SQLite3
               ROOT::Core
               ROOT::RIO
-              ROOT::Tree) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+              ROOT::Tree)
 
-simple_plugin(DetectorPropertiesServiceStandard "service"
-              lardataalg_DetectorInfo
-              larcore_Geometry_Geometry_service
-              larcorealg_Geometry
+cet_build_plugin(DetectorPropertiesServiceStandard art::service
+  LIBRARIES PUBLIC
+              lardataalg::DetectorInfo
+              larcore::Geometry_Geometry_service
+              larcorealg::Geometry
               art_root_io::RootDB
+            PRIVATE
               SQLite::SQLite3
               messagefacility::MF_MessageLogger
               ROOT::Core
-              ROOT::RIO) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+              ROOT::RIO)
 
-simple_plugin(LArPropertiesServiceStandard "service"
-              lardataalg_DetectorInfo
-              art::Framework_Principal) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+cet_build_plugin(LArPropertiesServiceStandard art::service
+  LIBRARIES PUBLIC
+              lardataalg::DetectorInfo
+              art::Framework_Principal)
 
 install_headers()
 install_fhicl()
