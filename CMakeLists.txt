@@ -44,8 +44,8 @@ find_package( lardataalg REQUIRED EXPORT)
 find_package( larcore  REQUIRED EXPORT)
 find_package( larvecutils  REQUIRED EXPORT)
 
-# macros for artdaq_dictionary and simple_plugin
 include(ArtDictionary)
+include(BasicPlugin)
 
 # source
 add_subdirectory(lardata)
