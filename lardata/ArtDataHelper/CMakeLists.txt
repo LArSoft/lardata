@@ -6,6 +6,7 @@ cet_make_library(
                  MVAWriter.cxx
                  TrackUtils.cxx
                  WireCreator.cxx
+                 ChargedSpacePointCreator.cpp
           LIBRARIES PUBLIC
                        lardataobj::RawData
                        lardataobj::RecoBase
