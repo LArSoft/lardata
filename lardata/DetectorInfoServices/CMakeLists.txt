@@ -6,12 +6,12 @@ cet_build_plugin(DetectorClocksServiceStandard art::service
               art::Framework_Principal
               art_root_io::RootDB
               art::Persistency_Provenance
-            PRIVATE
-              art_root_io::detail
-              SQLite::SQLite3
               ROOT::Core
               ROOT::RIO
-              ROOT::Tree)
+              ROOT::Tree
+            PRIVATE
+              art_root_io::detail
+              SQLite::SQLite3)
 
 cet_build_plugin(DetectorPropertiesServiceStandard art::service
   LIBRARIES PUBLIC
