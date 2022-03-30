@@ -3,15 +3,15 @@
 ###
 add_subdirectory(ProxyBase)
 
-simple_plugin(ProxyBaseTest "module"
+cet_build_plugin(ProxyBaseTest art::module
+  LIBRARIES PRIVATE
   lardata_RecoBaseProxy
-  lardataobj_RecoBase
+  lardataobj::RecoBase
   art::Persistency_Provenance
   messagefacility::MF_MessageLogger
-
   ROOT::GenVector
   USE_BOOST_UNIT
-  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+  )
 
 cet_test(ProxyBase_test
   HANDBUILT
@@ -25,29 +25,30 @@ cet_test(ProxyBase_test
 ###############################################################################
 ###  TrackProxy tests
 ###
-simple_plugin(TrackProxyTest "module"
+cet_build_plugin(TrackProxyTest art::module
+  LIBRARIES PRIVATE
   lardata_RecoBaseProxy
-  lardataobj_RecoBase
+  lardataobj::RecoBase
   art::Persistency_Provenance
   messagefacility::MF_MessageLogger
-
   ROOT::GenVector
   USE_BOOST_UNIT
-  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+  )
 
-simple_plugin(TrackProxyHitMaker "module"
-  lardataobj_RecoBase
+cet_build_plugin(TrackProxyHitMaker art::module
+  LIBRARIES PRIVATE
+  lardataobj::RecoBase
   art::Persistency_Provenance
   messagefacility::MF_MessageLogger
+  )
 
-  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
-
-simple_plugin(TrackProxyTrackMaker "module"
-  lardataobj_RecoBase
+cet_build_plugin(TrackProxyTrackMaker art::module
+  LIBRARIES PRIVATE
+  lardataobj::RecoBase
   art::Persistency_Provenance
   messagefacility::MF_MessageLogger
   ROOT::Core
-  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+  )
 
 cet_test(TrackProxy_test
   HANDBUILT
@@ -60,23 +61,24 @@ cet_test(TrackProxy_test
 ###############################################################################
 ###  ChargedSpacePointProxy tests
 ###
-simple_plugin(ChargedSpacePointProxyTest "module"
+cet_build_plugin(ChargedSpacePointProxyTest art::module
+  LIBRARIES PRIVATE
   lardata_RecoBaseProxy
-  lardataobj_RecoBase
+  lardataobj::RecoBase
   art::Persistency_Provenance
   messagefacility::MF_MessageLogger
-
   ROOT::GenVector
   USE_BOOST_UNIT
-  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+  )
 
-simple_plugin(ChargedSpacePointProxyInputMaker "module"
-  lardataobj_RecoBase
+cet_build_plugin(ChargedSpacePointProxyInputMaker art::module
+  LIBRARIES PRIVATE
+  lardata_ArtDataHelper
+  lardataobj::RecoBase
   lardata_ArtDataHelper
   messagefacility::MF_MessageLogger
-
   USE_BOOST_UNIT
-  ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+  )
 
 cet_test(ChargedSpacePointProxy_test
   HANDBUILT

@@ -1,11 +1,21 @@
-art_make(
-  MODULE_LIBRARIES
-    larcorealg_Geometry
-    lardataalg_DetectorInfo
+
+cet_build_plugin ( LArPropTest art::module
+                   LIBRARIES PRIVATE
+    larcorealg::Geometry
+    lardataalg::DetectorInfo
     art::Framework_Services_Registry
     messagefacility::MF_MessageLogger
     ROOT::Core
-) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use art_make_library(), art_dictonary(), and cet_build_plugin() with explicit source lists and plugin base types
+)
+
+cet_build_plugin ( ServicePackTest art::module
+                   LIBRARIES PRIVATE
+    larcorealg::Geometry
+    lardataalg::DetectorInfo
+    art::Framework_Services_Registry
+    messagefacility::MF_MessageLogger
+    ROOT::Core
+)
 
 cet_test(LarProp HANDBUILT
   DATAFILES lartest.fcl
@@ -70,6 +80,5 @@ cet_test( DetectorPropertiesServiceBo_test
 # ------------------------------------------------------------------------------
 
 
-install_headers()
 install_fhicl()
 install_source()

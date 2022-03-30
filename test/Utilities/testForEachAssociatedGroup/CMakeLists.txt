@@ -1,11 +1,13 @@
-simple_plugin( AssnProducer1          "module"  NO_INSTALL cetlib_except art_Persistency_Provenance) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
-simple_plugin( AssnProducer2          "module"  NO_INSTALL cetlib_except art_Persistency_Provenance) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
-simple_plugin( AssnAnalyzer           "module"  NO_INSTALL
+cet_build_plugin( AssnProducer1          art::module  NO_INSTALL
+  LIBRARIES PRIVATE cetlib_except::cetlib_except art::Persistency_Provenance)
+cet_build_plugin( AssnProducer2          art::module  NO_INSTALL
+  LIBRARIES PRIVATE cetlib_except::cetlib_except art::Persistency_Provenance)
+cet_build_plugin( AssnAnalyzer           art::module  NO_INSTALL
                LIBRARIES PRIVATE
                cetlib_except::cetlib_except
                art::Persistency_Provenance
                range-v3::range-v3
-             ) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use cet_build_plugin() with explicit source lists and plugin base types
+             )
 
 cet_test(associated_groups_test USE_BOOST_UNIT
   LIBRARIES
@@ -64,4 +66,4 @@ cet_test(test_associatedgroupswithleft HANDBUILT
   TEST_PROPERTIES DEPENDS test_feag2
 )
 
-art_dictionary(DICTIONARY_LIBRARIES cetlib::cetlib cetlib_except NO_INSTALL )
+art_dictionary(DICTIONARY_LIBRARIES cetlib::cetlib cetlib_except::cetlib_except NO_INSTALL )

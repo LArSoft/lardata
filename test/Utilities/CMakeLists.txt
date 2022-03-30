@@ -31,6 +31,5 @@ cet_test(timingreference_test HANDBUILT
 )
 
 
-install_headers()
 install_fhicl()
 install_source()

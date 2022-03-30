@@ -1,12 +1,21 @@
-art_make(
-  MODULE_LIBRARIES
+
+cet_build_plugin ( HitCollectionCreatorTest art::module
+                   LIBRARIES PRIVATE
     lardata_ArtDataHelper
-    lardataobj_RecoBase
+    lardataobj::RecoBase
     messagefacility::MF_MessageLogger
-    
     fhiclcpp::fhiclcpp
     cetlib_except::cetlib_except
-) ### MIGRATE-ACTION-RECOMMENDED (migrate-3.09.01) - deprecated: use art_make_library(), art_dictonary(), and cet_build_plugin() with explicit source lists and plugin base types
+)
+
+cet_build_plugin ( HitDataProductChecker art::module
+                   LIBRARIES PRIVATE
+    lardata_ArtDataHelper
+    lardataobj::RecoBase
+    messagefacility::MF_MessageLogger
+    fhiclcpp::fhiclcpp
+    cetlib_except::cetlib_except
+)
 
 cet_test(HitCollectorTest HANDBUILT
   DATAFILES hitcollectioncreator_test.fcl
@@ -14,7 +23,6 @@ cet_test(HitCollectorTest HANDBUILT
   TEST_ARGS --rethrow-all --config ./hitcollectioncreator_test.fcl
   )
 
-install_headers()
 install_fhicl()
 install_source()
 
