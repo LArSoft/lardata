@@ -29,7 +29,7 @@ find_package(cetlib_except REQUIRED EXPORT)
 find_package(cetlib REQUIRED EXPORT)
 find_package(messagefacility REQUIRED EXPORT)
 find_package(canvas REQUIRED EXPORT)
-#find_package(canvas_root_io REQUIRED)
+find_package(canvas_root_io REQUIRED)
 find_package(art REQUIRED EXPORT)
 find_package(art_root_io REQUIRED EXPORT)
 find_package(nusimdata REQUIRED EXPORT)
@@ -46,8 +46,6 @@ find_package( larvecutils  REQUIRED EXPORT)
 
 # macros for artdaq_dictionary and simple_plugin
 include(ArtDictionary)
-include(ArtMake)
-include(BuildPlugins)
 
 # source
 add_subdirectory(lardata)
