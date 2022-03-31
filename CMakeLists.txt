@@ -48,6 +48,8 @@ include(ArtDictionary)
 include(ArtMake)
 include(BasicPlugin)
 
+cet_cmake_module_directories(Modules BINARY)
+
 # source
 add_subdirectory(lardata)
 
