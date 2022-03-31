@@ -45,6 +45,7 @@ find_package( larcore  REQUIRED EXPORT)
 find_package( larvecutils  REQUIRED EXPORT)
 
 include(ArtDictionary)
+include(ArtMake)
 include(BasicPlugin)
 
 # source
