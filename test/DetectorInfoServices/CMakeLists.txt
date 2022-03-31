@@ -3,6 +3,7 @@ cet_build_plugin ( LArPropTest art::module
                    LIBRARIES PRIVATE
     larcorealg::Geometry
     lardataalg::DetectorInfo
+    larcore::headers
     art::Framework_Services_Registry
     messagefacility::MF_MessageLogger
     ROOT::Core
@@ -12,6 +13,7 @@ cet_build_plugin ( ServicePackTest art::module
                    LIBRARIES PRIVATE
     larcorealg::Geometry
     lardataalg::DetectorInfo
+    larcore::headers
     art::Framework_Services_Registry
     messagefacility::MF_MessageLogger
     ROOT::Core

@@ -7,6 +7,7 @@ cet_build_plugin(ProxyBaseTest art::module
   LIBRARIES PRIVATE
   lardata_RecoBaseProxy
   lardataobj::RecoBase
+  lardataalg::UtilitiesHeaders
   art::Persistency_Provenance
   messagefacility::MF_MessageLogger
   ROOT::GenVector

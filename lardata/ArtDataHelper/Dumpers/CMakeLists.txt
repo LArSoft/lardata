@@ -33,6 +33,8 @@ foreach(Dumper IN LISTS RawDataDumpers)
     LIBRARIES REG
       larcorealg::CoreUtils
       lardataobj::RawData
+      lardataalg::UtilitiesHeaders
+      larcore::headers
       art::Framework_Services_Registry
       messagefacility::MF_MessageLogger)
 endforeach()
@@ -42,6 +44,7 @@ foreach(Dumper IN LISTS RecoBaseDumpers)
   cet_build_plugin(${Dumper} art::module
     LIBRARIES REG
       lardataobj::RecoBase
+      lardataalg::UtilitiesHeaders
       lardata_ArtDataHelper_Dumpers
       lardata_RecoBaseProxy
       messagefacility::MF_MessageLogger)

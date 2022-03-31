@@ -2,6 +2,8 @@ cet_build_plugin(DetectorClocksServiceStandard art::service
   LIBRARIES PUBLIC
               lardataalg::DetectorInfo
               lardataobj::RawData
+              lardataalg::UtilitiesHeaders
+              larcore::headers
               art::Framework_Core
               art::Framework_Principal
               art_root_io::RootDB
@@ -18,6 +20,7 @@ cet_build_plugin(DetectorPropertiesServiceStandard art::service
               lardataalg::DetectorInfo
               larcore::Geometry_Geometry_service
               larcorealg::Geometry
+              larcore::headers
               art_root_io::RootDB
             PRIVATE
               SQLite::SQLite3

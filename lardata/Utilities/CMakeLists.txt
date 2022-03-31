@@ -12,7 +12,9 @@ cet_make_library(
             lardata_Utilities_LArFFT_service
             lardataobj::RecoBase
             larcorealg::Geometry
+            lardataalg::UtilitiesHeaders
             larvecutils::MarqFitAlg
+            larcore::headers
             art::Framework_Core
             art::Framework_Principal
             art::Persistency_Provenance
@@ -36,6 +38,7 @@ cet_build_plugin(DatabaseUtil art::service
 cet_build_plugin(LArFFT art::service
          LIBRARIES PUBLIC
               lardataalg::DetectorInfo
+              larcore::headers
            PRIVATE
               messagefacility::MF_MessageLogger
               ROOT::Core
