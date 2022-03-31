@@ -20,7 +20,7 @@ cet_test(GridContainers_test USE_BOOST_UNIT)
 cet_test(RangeForWrapper_test USE_BOOST_UNIT)
 cet_test(filterRangeFor_test USE_BOOST_UNIT)
 cet_test(CollectionView_test USE_BOOST_UNIT)
-cet_test(TupleLookupByTag_test)
+cet_test(TupleLookupByTag_test LIBRARIES larcorealg::CoreUtils)
 
 # run a FHiCL file with only ComputePi inside
 cet_test(timingreference_test HANDBUILT

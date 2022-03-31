@@ -31,6 +31,7 @@ cet_make_library( SOURCE PCAxisDumpers.cc
 foreach(Dumper IN LISTS RawDataDumpers)
   cet_build_plugin(${Dumper} art::module
     LIBRARIES REG
+      larcorealg::CoreUtils
       lardataobj::RawData
       art::Framework_Services_Registry
       messagefacility::MF_MessageLogger)
@@ -50,7 +51,8 @@ endforeach()
 foreach(Dumper IN LISTS SimulationDumpers)
   cet_build_plugin(${Dumper} art::module
     LIBRARIES REG
-      lardataalg_MCDumpers
+      larcorealg::CoreUtils
+      lardataalg::MCDumpers
       lardataobj::Simulation
       messagefacility::MF_MessageLogger
       ROOT::GenVector

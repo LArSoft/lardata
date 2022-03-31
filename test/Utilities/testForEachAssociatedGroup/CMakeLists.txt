@@ -20,6 +20,7 @@ cet_test(associated_groups_test USE_BOOST_UNIT
 
 cet_test(associated_groups_with_left_test USE_BOOST_UNIT
   LIBRARIES
+    larcorealg::CoreUtils
     canvas::canvas
     cetlib::cetlib
     cetlib_except::cetlib_except

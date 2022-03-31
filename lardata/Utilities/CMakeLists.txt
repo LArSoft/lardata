@@ -12,6 +12,7 @@ cet_make_library(
             lardata_Utilities_LArFFT_service
             lardataobj::RecoBase
             larcorealg::Geometry
+            larvecutils::MarqFitAlg
             art::Framework_Core
             art::Framework_Principal
             art::Persistency_Provenance

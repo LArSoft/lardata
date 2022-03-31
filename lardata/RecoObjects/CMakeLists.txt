@@ -36,7 +36,7 @@ cet_make_library(
            lardataobj::RecoBase
            lardataalg::DetectorInfo
            larcore::Geometry_Geometry_service
-           larcorealg_Geometry
+           larcorealg::Geometry
            art::Framework_Core
            art::Framework_Services_Registry
            art::Utilities
