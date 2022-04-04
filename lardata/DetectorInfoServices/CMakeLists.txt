@@ -20,7 +20,7 @@ endfunction()
 
 make_simple_service_builder(DetectorClocks lardataalg::DetectorInfo)
 make_simple_service_builder(DetectorProperties lardataalg::DetectorInfo)
-make_simple_service_builder(LArProperties lardataalg::headers)
+make_simple_service_builder(LArProperties lardataalg::DetectorInfo)
 
 cet_collect_plugin_builders(${builder_dest} lar::DetectorInfoServiceBuilders)
 
