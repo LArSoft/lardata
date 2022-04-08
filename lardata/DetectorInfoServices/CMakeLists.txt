@@ -18,9 +18,9 @@ function(make_simple_service_builder STEM)
     LIBRARIES CONDITIONAL lardata::${STEM}Service)
 endfunction()
 
-make_simple_service_builder(DetectorClocks lardataalg::DetectorInfo)
-make_simple_service_builder(DetectorProperties lardataalg::DetectorInfo)
-make_simple_service_builder(LArProperties lardataalg::DetectorInfo)
+make_simple_service_builder(DetectorClocks lardataalg::DetectorInfo larcore::ServiceUtil)
+make_simple_service_builder(DetectorProperties lardataalg::DetectorInfo larcore::ServiceUtil)
+make_simple_service_builder(LArProperties lardataalg::DetectorInfo larcore::headers)
 
 cet_collect_plugin_builders(${builder_dest} lar::DetectorInfoServiceBuilders)
 
