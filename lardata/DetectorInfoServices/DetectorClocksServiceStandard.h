@@ -9,15 +9,18 @@
 #ifndef DETECTORCLOCKSSERVICESTANDARD_H
 #define DETECTORCLOCKSSERVICESTANDARD_H
 
+#include "lardata/DetectorInfoServices/DetectorClocksService.h"
+#include "lardataalg/DetectorInfo/DetectorClocksStandard.h"
+
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
 #include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
 #include "art/Persistency/Provenance/ScheduleContext.h"
-#include "fhiclcpp/fwd.h"
 
-#include "lardata/DetectorInfoServices/DetectorClocksService.h"
-#include "lardataalg/DetectorInfo/DetectorClocksStandard.h"
+namespace fhicl {
+  class ParameterSet;
+}
 
 namespace detinfo {
 

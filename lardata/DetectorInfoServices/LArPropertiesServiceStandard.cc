@@ -1,5 +1,6 @@
 #include "lardata/DetectorInfoServices/LArPropertiesServiceStandard.h"
 
+#include "art/Framework/Principal/Run.h"
 
 //------------------------------------------------
 /// \todo these values should eventually come from a database

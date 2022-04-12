@@ -27,22 +27,33 @@ cet_collect_plugin_builders(${builder_dest} lar::DetectorInfoServiceBuilders)
 include(lar::DetectorInfoServiceBuilders)
 
 cet_build_plugin(DetectorClocksServiceStandard lar::DetectorClocksService
-  LIBRARIES PRIVATE art_root_io::RootDB art_root_io::detail
-  )
+  LIBRARIES PRIVATE
+  art_root_io::RootDB
+  art_root_io::detail
+  canvas::canvas
+  fhiclcpp::fhiclcpp
+  cetlib_except::cetlib_except
+  ROOT::Hist
+  ROOT::RIO
+)
 
 cet_build_plugin(DetectorPropertiesServiceStandard lar::DetectorPropertiesService
-  LIBRARIES PRIVATE
+  LIBRARIES
+  PUBLIC
+  fhiclcpp::types
+  fhiclcpp::fhiclcpp
+  PRIVATE
   lardata::LArPropertiesService
+  lardata::ServicePack
   art_root_io::RootDB
   messagefacility::MF_MessageLogger
+  ROOT::Tree
   ROOT::RIO
-  )
+)
 
 cet_build_plugin(LArPropertiesServiceStandard lar::LArPropertiesService
-  LIBRARIES PRIVATE
-  lardataalg::DetectorInfo
-  art::Framework_Principal
-  )
+  LIBRARIES PRIVATE art::Framework_Principal
+)
 
 install_headers()
 install_fhicl()

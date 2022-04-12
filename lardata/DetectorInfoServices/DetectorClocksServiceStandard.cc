@@ -1,28 +1,29 @@
 #include "lardata/DetectorInfoServices/DetectorClocksServiceStandard.h"
 // vim: set sw=2 expandtab :
 
+#include "lardata/DetectorInfoServices/DetectorClocksService.h"
+#include "lardataalg/DetectorInfo/DetectorClocksStandard.h"
+#include "lardataalg/DetectorInfo/DetectorClocksStandardDataFor.h"
+
+#include "art_root_io/Inputfwd.h"
+#include "art_root_io/RootDB/SQLite3Wrapper.h"
+#include "art_root_io/detail/readMetadata.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "art/Persistency/Provenance/ScheduleContext.h"
-#include "art_root_io/RootDB/SQLite3Wrapper.h"
 #include "canvas/Persistency/Provenance/FileFormatVersion.h"
 #include "canvas/Persistency/Provenance/ParameterSetMap.h"
 #include "canvas/Persistency/Provenance/rootNames.h"
-#include "cetlib_except/exception.h"
 #include "fhiclcpp/ParameterSet.h"
-#include "lardata/DetectorInfoServices/DetectorClocksService.h"
-#include "lardataalg/DetectorInfo/DetectorClocksStandard.h"
-#include "lardataalg/DetectorInfo/DetectorClocksStandardDataFor.h"
+#include "cetlib_except/exception.h"
 
 #include "TFile.h"
 #include "TTree.h"
 
-#include "art_root_io/Inputfwd.h"
-#include "art_root_io/detail/readMetadata.h"
-
 #include <bitset>
+#include <memory>
 #include <string>
 #include <vector>
 
