@@ -1,3 +1,17 @@
+cet_make_library(LIBRARY_NAME SimpleFits INTERFACE
+  SOURCE SimpleFits.h
+  LIBRARIES INTERFACE
+  lardataalg::UtilitiesHeaders
+)
+
+cet_make_library(LIBRARY_NAME AssociationUtil INTERFACE
+  SOURCE AssociationUtil.h
+  LIBRARIES INTERFACE
+  art::Framework_Principal
+  art::Persistency_Common
+  canvas::canvas
+  messagefacility::MF_MessageLogger
+)
 
 cet_make_library(SOURCE
   GeometryUtilities.cxx
@@ -12,7 +26,6 @@ cet_make_library(SOURCE
   lardata_Utilities_LArFFT_service
   lardataobj::RecoBase
   larcorealg::Geometry
-  lardataalg::UtilitiesHeaders
   larvecutils::MarqFitAlg
   larcore::headers
   art::Framework_Core

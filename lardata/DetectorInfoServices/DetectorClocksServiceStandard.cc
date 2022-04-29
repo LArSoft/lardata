@@ -5,6 +5,10 @@
 #include "lardataalg/DetectorInfo/DetectorClocksStandard.h"
 #include "lardataalg/DetectorInfo/DetectorClocksStandardDataFor.h"
 
+#include "TFile.h"
+// Must precede include of art_root_io/detail/readMetadata.h
+#include "TTree.h"
+
 #include "art_root_io/Inputfwd.h"
 #include "art_root_io/RootDB/SQLite3Wrapper.h"
 #include "art_root_io/detail/readMetadata.h"
@@ -18,9 +22,6 @@
 #include "canvas/Persistency/Provenance/rootNames.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "cetlib_except/exception.h"
-
-#include "TFile.h"
-#include "TTree.h"
 
 #include <bitset>
 #include <memory>

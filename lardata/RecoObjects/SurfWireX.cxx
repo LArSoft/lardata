@@ -8,6 +8,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////
 
+#include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "lardata/RecoObjects/SurfWireX.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcorealg/Geometry/WireGeo.h"

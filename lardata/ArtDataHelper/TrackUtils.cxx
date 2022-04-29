@@ -11,6 +11,7 @@
 #include "lardata/ArtDataHelper/TrackUtils.h"
 
 // LArSoft libraries
+#include "larcore/CoreUtils/ServiceUtil.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcorealg/Geometry/GeometryCore.h"
 #include "larcorealg/Geometry/TPCGeo.h"
