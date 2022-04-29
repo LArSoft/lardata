@@ -52,7 +52,8 @@ cet_build_plugin(DetectorPropertiesServiceStandard lar::DetectorPropertiesServic
 )
 
 cet_build_plugin(LArPropertiesServiceStandard lar::LArPropertiesService
-  LIBRARIES PRIVATE art::Framework_Principal
+  LIBRARIES PRIVATE
+  art::Framework_Principal
 )
 
 install_headers()
