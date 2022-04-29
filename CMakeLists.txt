@@ -8,7 +8,7 @@
 
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-find_package(cetmodules REQUIRED)
+find_package(cetmodules 3.12.00 REQUIRED)
 project(lardata VERSION 09.08.02 LANGUAGES CXX)
 
 # cetbuildtools contains our cmake modules

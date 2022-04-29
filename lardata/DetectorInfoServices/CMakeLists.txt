@@ -7,22 +7,30 @@ cet_make_library(LIBRARY_NAME ServicePack INTERFACE
 
 # Service interfaces.
 set(builder_dest Modules)
+set(builders)
 function(make_simple_service_builder STEM)
   # Define an interface library for services and modules that use this
   # service interface.
   cet_make_library(LIBRARY_NAME ${STEM}Service INTERFACE
     SOURCE ${STEM}Service.h
-    LIBRARIES INTERFACE ${ARGN})
+    LIBRARIES INTERFACE ${ARGN}
+  )
   # Make a plugin builder for services of this type.
-  cet_make_plugin_builder(lar::${STEM}Service art::service ${builder_dest}
-    LIBRARIES CONDITIONAL lardata::${STEM}Service)
+  cet_write_plugin_builder(lar::${STEM}Service art::service ${builder_dest}
+    INSTALL_BUILDER
+    LIBRARIES CONDITIONAL lardata::${STEM}Service
+  )
+  list(APPEND builders lar::${STEM}Service)
+  set(builders ${builders} PARENT_SCOPE)
 endfunction()
 
 make_simple_service_builder(DetectorClocks lardataalg::DetectorInfo)
 make_simple_service_builder(DetectorProperties lardataalg::DetectorInfo)
 make_simple_service_builder(LArProperties lardataalg::DetectorInfo)
 
-cet_collect_plugin_builders(${builder_dest} lar::DetectorInfoServiceBuilders)
+cet_collect_plugin_builders(${builder_dest} lar::DetectorInfoServiceBuilders
+  LIST ${builders}
+)
 
 include(lar::DetectorInfoServiceBuilders)
 
