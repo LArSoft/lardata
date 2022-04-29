@@ -1,19 +1,19 @@
-cet_build_plugin(IntVectorProducer art::module NO_INSTALL
+cet_build_plugin(IntVectorProducer art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   cetlib_except::cetlib_except
   art::Persistency_Provenance
 )
-cet_build_plugin(PtrMakerProducer art::module NO_INSTALL
+cet_build_plugin(PtrMakerProducer art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   cetlib_except::cetlib_except
   art::Persistency_Provenance
 )
-cet_build_plugin(PtrMakerProducer2 art::module NO_INSTALL
+cet_build_plugin(PtrMakerProducer2 art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   cetlib_except::cetlib_except
   art::Persistency_Provenance
 )
-cet_build_plugin(PtrMakerAnalyzer art::module NO_INSTALL
+cet_build_plugin(PtrMakerAnalyzer art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   cetlib_except::cetlib_except
   art::Persistency_Provenance

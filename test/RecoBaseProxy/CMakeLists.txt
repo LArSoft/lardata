@@ -3,7 +3,7 @@
 ###
 add_subdirectory(ProxyBase)
 
-cet_build_plugin(ProxyBaseTest art::module USE_BOOST_UNIT NO_INSTALL
+cet_build_plugin(ProxyBaseTest art::EDAnalyzer USE_BOOST_UNIT NO_INSTALL
   LIBRARIES PRIVATE
   lardata_RecoBaseProxy
   lardataobj::RecoBase
@@ -23,7 +23,7 @@ cet_test(ProxyBase_test HANDBUILT
 ###############################################################################
 ###  TrackProxy tests
 ###
-cet_build_plugin(TrackProxyTest art::module USE_BOOST_UNIT NO_INSTALL
+cet_build_plugin(TrackProxyTest art::EDAnalyzer USE_BOOST_UNIT NO_INSTALL
   LIBRARIES PRIVATE
   lardata_RecoBaseProxy
   lardataobj::RecoBase
@@ -32,14 +32,14 @@ cet_build_plugin(TrackProxyTest art::module USE_BOOST_UNIT NO_INSTALL
   ROOT::GenVector
 )
 
-cet_build_plugin(TrackProxyHitMaker art::module NO_INSTALL
+cet_build_plugin(TrackProxyHitMaker art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   lardataobj::RecoBase
   art::Persistency_Provenance
   messagefacility::MF_MessageLogger
 )
 
-cet_build_plugin(TrackProxyTrackMaker art::module NO_INSTALL
+cet_build_plugin(TrackProxyTrackMaker art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   lardataobj::RecoBase
   art::Persistency_Provenance

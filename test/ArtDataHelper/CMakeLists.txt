@@ -1,5 +1,5 @@
 
-cet_build_plugin(HitCollectionCreatorTest art::module NO_INSTALL
+cet_build_plugin(HitCollectionCreatorTest art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   lardata_ArtDataHelper
   lardataobj::RecoBase
@@ -8,7 +8,7 @@ cet_build_plugin(HitCollectionCreatorTest art::module NO_INSTALL
   cetlib_except::cetlib_except
 )
 
-cet_build_plugin(HitDataProductChecker art::module NO_INSTALL
+cet_build_plugin(HitDataProductChecker art::EDAnalyzer NO_INSTALL
   LIBRARIES PRIVATE
   lardata_ArtDataHelper
   lardataobj::RecoBase

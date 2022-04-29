@@ -1,4 +1,4 @@
-cet_build_plugin(LArPropTest art::module NO_INSTALL
+cet_build_plugin(LArPropTest art::EDAnalyzer NO_INSTALL
   LIBRARIES PRIVATE
   larcorealg::Geometry
   lardataalg::DetectorInfo
@@ -8,7 +8,7 @@ cet_build_plugin(LArPropTest art::module NO_INSTALL
   ROOT::Core
 )
 
-cet_build_plugin(ServicePackTest art::module NO_INSTALL
+cet_build_plugin(ServicePackTest art::EDAnalyzer NO_INSTALL
   LIBRARIES PRIVATE
   larcorealg::Geometry
   lardataalg::DetectorInfo

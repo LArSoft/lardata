@@ -1,4 +1,4 @@
-cet_build_plugin(AssnsChainHitMaker art::module NO_INSTALL
+cet_build_plugin(AssnsChainHitMaker art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   lardataobj::RecoBase
   art::Framework_Core
@@ -8,7 +8,7 @@ cet_build_plugin(AssnsChainHitMaker art::module NO_INSTALL
   fhiclcpp::fhiclcpp
   cetlib_except::cetlib_except
 )
-cet_build_plugin(AssnsChainClusterMaker art::module NO_INSTALL
+cet_build_plugin(AssnsChainClusterMaker art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   lardataobj::RecoBase
   art::Framework_Core
@@ -18,7 +18,7 @@ cet_build_plugin(AssnsChainClusterMaker art::module NO_INSTALL
   fhiclcpp::fhiclcpp
   cetlib_except::cetlib_except
 )
-cet_build_plugin(AssnsChainPFParticleMaker art::module NO_INSTALL
+cet_build_plugin(AssnsChainPFParticleMaker art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   lardataobj::RecoBase
   art::Framework_Core
@@ -28,7 +28,7 @@ cet_build_plugin(AssnsChainPFParticleMaker art::module NO_INSTALL
   fhiclcpp::fhiclcpp
   cetlib_except::cetlib_except
 )
-cet_build_plugin(AssnsChainShowerMaker art::module NO_INSTALL
+cet_build_plugin(AssnsChainShowerMaker art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   lardataobj::RecoBase
   art::Framework_Core
@@ -38,7 +38,7 @@ cet_build_plugin(AssnsChainShowerMaker art::module NO_INSTALL
   fhiclcpp::fhiclcpp
   cetlib_except::cetlib_except
 )
-cet_build_plugin(AssnsChainTest art::module NO_INSTALL
+cet_build_plugin(AssnsChainTest art::EDAnalyzer NO_INSTALL
   LIBRARIES PRIVATE
   lardataobj::RecoBase
   art::Framework_Core

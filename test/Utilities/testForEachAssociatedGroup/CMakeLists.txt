@@ -1,14 +1,14 @@
-cet_build_plugin(AssnProducer1 art::module NO_INSTALL
+cet_build_plugin(AssnProducer1 art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   cetlib_except::cetlib_except
   art::Persistency_Provenance
 )
-cet_build_plugin(AssnProducer2 art::module NO_INSTALL
+cet_build_plugin(AssnProducer2 art::EDProducer NO_INSTALL
   LIBRARIES PRIVATE
   cetlib_except::cetlib_except
   art::Persistency_Provenance
 )
-cet_build_plugin(AssnAnalyzer art::module NO_INSTALL
+cet_build_plugin(AssnAnalyzer art::EDAnalyzer NO_INSTALL
   LIBRARIES PRIVATE
   cetlib_except::cetlib_except
   art::Persistency_Provenance
