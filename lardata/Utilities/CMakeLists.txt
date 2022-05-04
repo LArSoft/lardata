@@ -1,9 +1,3 @@
-cet_make_library(LIBRARY_NAME SimpleFits INTERFACE
-  SOURCE SimpleFits.h
-  LIBRARIES INTERFACE
-  lardataalg::UtilitiesHeaders
-)
-
 cet_make_library(LIBRARY_NAME AssociationUtil INTERFACE
   SOURCE AssociationUtil.h
   LIBRARIES INTERFACE
@@ -11,6 +5,18 @@ cet_make_library(LIBRARY_NAME AssociationUtil INTERFACE
   art::Persistency_Common
   canvas::canvas
   messagefacility::MF_MessageLogger
+)
+
+cet_make_library(LIBRARY_NAME ForEachAssociatedGroup INTERFACE
+  SOURCE ForEachAssociatedGroup.h
+  LIBRARIES INTERFACE
+  canvas::AssnsAlgorithms
+)
+
+cet_make_library(LIBRARY_NAME SimpleFits INTERFACE
+  SOURCE SimpleFits.h
+  LIBRARIES INTERFACE
+  lardataalg::UtilitiesHeaders
 )
 
 cet_make_library(SOURCE
