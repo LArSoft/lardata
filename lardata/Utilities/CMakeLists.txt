@@ -25,6 +25,7 @@ cet_make_library(SOURCE
   LArFFTWPlan.cxx
   PxHitConverter.cxx
   Range.cxx
+  SignalShaper.cxx
   SignalShaping.cxx
   UniqueRangeSet.cxx
   UtilException.cxx
