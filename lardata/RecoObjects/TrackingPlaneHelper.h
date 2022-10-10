@@ -39,10 +39,10 @@ namespace recob {
     /// helper function to construct a recob::tracking::Plane from a geo::WireGeo object. The plane will contain the wire and the x axis, assumed to be the drift direction (to be generalized).
     inline Plane makePlane(geo::WireGeo const& wgeom)
     {
-      double xyz[3] = {0.};
-      wgeom.GetCenter(xyz);
-      double phi = TMath::PiOver2() - wgeom.ThetaZ();
-      return Plane(Point_t(0., xyz[1], xyz[2]), Vector_t(0, -std::sin(phi), std::cos(phi)));
+      auto xyz = wgeom.GetCenter<Point_t>();
+      xyz.SetX(0.);
+      double const phi = TMath::PiOver2() - wgeom.ThetaZ();
+      return Plane{xyz, Vector_t{0, -std::sin(phi), std::cos(phi)}};
     }
 
   }

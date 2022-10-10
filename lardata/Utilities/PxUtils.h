@@ -16,6 +16,7 @@ namespace util {
       //	std::cout<< "This is the default point ctor." << std::endl;
     }
 
+    // FIXME: changed order wrt. data member declarations
     PxPoint(unsigned int pp, double ww, double tt)
     {
       plane = pp;
