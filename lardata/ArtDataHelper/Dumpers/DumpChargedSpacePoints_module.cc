@@ -10,18 +10,17 @@
 #include "lardataobj/RecoBase/SpacePoint.h"
 
 // art libraries
-#include "canvas/Utilities/InputTag.h"
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
+#include "canvas/Utilities/InputTag.h"
 
 // support libraries
-#include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/types/Atom.h" // also pulls in fhicl::Name and fhicl::Comment
+#include "messagefacility/MessageLogger/MessageLogger.h"
 
 // C//C++ standard libraries
 #include <string>
-
 
 namespace recob {
 
@@ -44,63 +43,55 @@ namespace recob {
    *   category used for the output (useful for filtering)
    *
    */
-  class DumpChargedSpacePoints: public art::EDAnalyzer {
-      public:
-
+  class DumpChargedSpacePoints : public art::EDAnalyzer {
+  public:
     /// Configuration parameters
     struct Config {
       using Name = fhicl::Name;
       using Comment = fhicl::Comment;
 
-      fhicl::Atom<art::InputTag> SpacePointTag {
-        Name   ("SpacePointLabel"),
-        Comment(
-          "label of the producer used to create"
-          " the recob::SpacePoint collection to be dumped"
-          )
-        };
-      fhicl::Atom<std::string> OutputCategory {
-        Name   ("OutputCategory"),
+      fhicl::Atom<art::InputTag> SpacePointTag{
+        Name("SpacePointLabel"),
+        Comment("label of the producer used to create"
+                " the recob::SpacePoint collection to be dumped")};
+      fhicl::Atom<std::string> OutputCategory{
+        Name("OutputCategory"),
         Comment("the category used for the output (useful for filtering)"),
         "DumpChargedSpacePoints" /* default value */
-        };
+      };
 
     }; // struct Config
 
     using Parameters = art::EDAnalyzer::Table<Config>;
 
-
     /// Constructor.
     explicit DumpChargedSpacePoints(Parameters const& config);
 
     /// Does the printing.
-    virtual void analyze (art::Event const& event) override;
+    virtual void analyze(art::Event const& event) override;
 
-      private:
-
-    art::InputTag fInputTag; ///< Input tag of the SpacePoint product.
+  private:
+    art::InputTag fInputTag;     ///< Input tag of the SpacePoint product.
     std::string fOutputCategory; ///< Category for LogInfo output.
 
   }; // class DumpChargedSpacePoints
 
 } // namespace recob
 
-
 //==============================================================================
 //===  Implementation section
 //==============================================================================
 
 //----------------------------------------------------------------------------
-recob::DumpChargedSpacePoints::DumpChargedSpacePoints
-  (art::EDAnalyzer::Table<Config> const& config)
+recob::DumpChargedSpacePoints::DumpChargedSpacePoints(art::EDAnalyzer::Table<Config> const& config)
   : EDAnalyzer(config)
   , fInputTag(config().SpacePointTag())
   , fOutputCategory(config().OutputCategory())
-  {}
-
+{}
 
 //----------------------------------------------------------------------------
-void recob::DumpChargedSpacePoints::analyze(art::Event const& event) {
+void recob::DumpChargedSpacePoints::analyze(art::Event const& event)
+{
 
   //
   // collect all the available information
@@ -110,15 +101,12 @@ void recob::DumpChargedSpacePoints::analyze(art::Event const& event) {
 
   size_t const nPoints = points.size();
   mf::LogVerbatim log(fOutputCategory);
-  log
-    << "The event " << event.id()
-    << " contains " << nPoints
-    << " space points from '" << fInputTag.encode() << "'";
+  log << "The event " << event.id() << " contains " << nPoints << " space points from '"
+      << fInputTag.encode() << "'";
 
-  for (auto const& point: points) {
+  for (auto const& point : points) {
 
-    log << "\n [#" << point.index() << "] "
-      << point.point() << " " << point.charge();
+    log << "\n [#" << point.index() << "] " << point.point() << " " << point.charge();
 
   } // for
 
@@ -126,9 +114,7 @@ void recob::DumpChargedSpacePoints::analyze(art::Event const& event) {
 
 } // DumpChargedSpacePoints::analyze()
 
-
 //----------------------------------------------------------------------------
 DEFINE_ART_MODULE(recob::DumpChargedSpacePoints)
-
 
 //----------------------------------------------------------------------------

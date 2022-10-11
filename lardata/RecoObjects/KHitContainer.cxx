@@ -14,13 +14,10 @@
 
 namespace trkf {
 
-  void
-  fill(const art::PtrVector<recob::Hit>& hits, int only_plane)
-  {}
+  void fill(const art::PtrVector<recob::Hit>& hits, int only_plane) {}
 
   /// Clear all lists.
-  void
-  KHitContainer::clear()
+  void KHitContainer::clear()
   {
     fSorted.clear();
     fUnsorted.clear();
@@ -28,8 +25,7 @@ namespace trkf {
   }
 
   /// Move all objects to unsorted list (from sorted and unused lists).
-  void
-  KHitContainer::reset()
+  void KHitContainer::reset()
   {
     fUnsorted.splice(fUnsorted.end(), fSorted);
     fUnsorted.splice(fUnsorted.end(), fUnused);
@@ -44,11 +40,10 @@ namespace trkf {
   /// prop        - Propagator.
   /// dir         - Propagation direction.
   ///
-  void
-  KHitContainer::sort(const KTrack& trk,
-                      bool addUnsorted,
-                      const Propagator& prop,
-                      Propagator::PropDirection dir)
+  void KHitContainer::sort(const KTrack& trk,
+                           bool addUnsorted,
+                           const Propagator& prop,
+                           Propagator::PropDirection dir)
   {
     // Maybe transfer all objects in unsorted list to the sorted list.
 
@@ -96,8 +91,7 @@ namespace trkf {
   }
 
   /// Return the plane with the most KHitGroups in the unsorted list.
-  unsigned int
-  KHitContainer::getPreferredPlane() const
+  unsigned int KHitContainer::getPreferredPlane() const
   {
     // Count hits in each plane.
 

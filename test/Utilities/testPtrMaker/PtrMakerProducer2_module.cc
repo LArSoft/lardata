@@ -10,44 +10,41 @@
 #include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
-#include "fhiclcpp/ParameterSet.h"
 #include "art/Persistency/Common/PtrMaker.h"
+#include "fhiclcpp/ParameterSet.h"
 #include <memory>
 
 class PtrMakerProducer2;
 
-
 class PtrMakerProducer2 : public art::EDProducer {
 public:
-  typedef  std::vector<int>     intvector_t;
-  typedef  art::PtrVector<int>  intPtrvector_t;
-  explicit PtrMakerProducer2(fhicl::ParameterSet const & p);
+  typedef std::vector<int> intvector_t;
+  typedef art::PtrVector<int> intPtrvector_t;
+  explicit PtrMakerProducer2(fhicl::ParameterSet const& p);
   // The compiler-generated destructor is fine for non-base
   // classes without bare pointers or other resource use.
 
   // Plugins should not be copied or assigned.
-  PtrMakerProducer2(PtrMakerProducer2 const &) = delete;
-  PtrMakerProducer2(PtrMakerProducer2 &&) = delete;
-  PtrMakerProducer2 & operator = (PtrMakerProducer2 const &) = delete;
-  PtrMakerProducer2 & operator = (PtrMakerProducer2 &&) = delete;
+  PtrMakerProducer2(PtrMakerProducer2 const&) = delete;
+  PtrMakerProducer2(PtrMakerProducer2&&) = delete;
+  PtrMakerProducer2& operator=(PtrMakerProducer2 const&) = delete;
+  PtrMakerProducer2& operator=(PtrMakerProducer2&&) = delete;
 
   // Required functions.
-  void produce(art::Event & e) override;
+  void produce(art::Event& e) override;
 
 private:
-
   int nvalues;
 };
 
+PtrMakerProducer2::PtrMakerProducer2(fhicl::ParameterSet const& p)
+  : EDProducer{p}, nvalues(p.get<int>("nvalues"))
+{
+  produces<intvector_t>();
+  produces<intPtrvector_t>();
+}
 
-PtrMakerProducer2::PtrMakerProducer2(fhicl::ParameterSet const & p)
-  : EDProducer{p}, nvalues( p.get<int>("nvalues") )
-  {
-    produces<intvector_t>();
-    produces<intPtrvector_t>();
-  }
-
-void PtrMakerProducer2::produce(art::Event & e)
+void PtrMakerProducer2::produce(art::Event& e)
 {
   std::cerr << "PtrMakerProducer 2 is running!\n";
   int value_ = e.id().event();
@@ -55,7 +52,7 @@ void PtrMakerProducer2::produce(art::Event & e)
   auto intptrs = std::make_unique<intPtrvector_t>();
   art::PtrMaker<int> make_intptr(e);
 
-  for( int i = 0; i != nvalues; ++i ) {
+  for (int i = 0; i != nvalues; ++i) {
     intvector->push_back(value_ * i);
     auto p = make_intptr(i);
     intptrs->push_back(p);

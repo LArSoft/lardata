@@ -25,16 +25,14 @@
 #ifndef KHITSTRACK_H
 #define KHITSTRACK_H
 
-#include <memory>
 #include "lardata/RecoObjects/KFitTrack.h"
 #include "lardata/RecoObjects/KHitBase.h"
+#include <memory>
 
 namespace trkf {
 
-  class KHitTrack : public KFitTrack
-  {
+  class KHitTrack : public KFitTrack {
   public:
-
     /// Default constructor.
     KHitTrack();
 
@@ -50,18 +48,17 @@ namespace trkf {
     // Accessor.
 
     /// Measurement.
-    const std::shared_ptr<const KHitBase>& getHit() const {return fHit;}
+    const std::shared_ptr<const KHitBase>& getHit() const { return fHit; }
 
     // Modifiers.
 
     /// Set measurement.
-    void setHit(const std::shared_ptr<const KHitBase>& hit) {fHit = hit;}
+    void setHit(const std::shared_ptr<const KHitBase>& hit) { fHit = hit; }
 
     /// Printout
     virtual std::ostream& Print(std::ostream& out, bool doTitle = true) const;
 
   private:
-
     // Attributes.
 
     /// Measurement.

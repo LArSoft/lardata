@@ -90,83 +90,39 @@ namespace trkf {
     // Modifiers.
 
     /// Set measurement vector.
-    void
-    setMeasVector(const typename KVector<N>::type& mvec)
-    {
-      fMvec = mvec;
-    }
+    void setMeasVector(const typename KVector<N>::type& mvec) { fMvec = mvec; }
 
     /// Set measurement error.
-    void
-    setMeasError(const typename KSymMatrix<N>::type& merr)
-    {
-      fMerr = merr;
-    }
+    void setMeasError(const typename KSymMatrix<N>::type& merr) { fMerr = merr; }
 
     // Accessors.
 
     /// Measurement vector.
-    const typename KVector<N>::type&
-    getMeasVector() const
-    {
-      return fMvec;
-    }
+    const typename KVector<N>::type& getMeasVector() const { return fMvec; }
 
     /// Measurement error matrix.
-    const typename KSymMatrix<N>::type&
-    getMeasError() const
-    {
-      return fMerr;
-    }
+    const typename KSymMatrix<N>::type& getMeasError() const { return fMerr; }
 
     /// Prediction vector.
-    const typename KVector<N>::type&
-    getPredVector() const
-    {
-      return fPvec;
-    }
+    const typename KVector<N>::type& getPredVector() const { return fPvec; }
 
     /// Prediction matrix.
-    const typename KSymMatrix<N>::type&
-    getPredError() const
-    {
-      return fPerr;
-    }
+    const typename KSymMatrix<N>::type& getPredError() const { return fPerr; }
 
     /// Residual vector.
-    const typename KVector<N>::type&
-    getResVector() const
-    {
-      return fRvec;
-    }
+    const typename KVector<N>::type& getResVector() const { return fRvec; }
 
     /// Residual error matrix.
-    const typename KSymMatrix<N>::type&
-    getResError() const
-    {
-      return fRerr;
-    }
+    const typename KSymMatrix<N>::type& getResError() const { return fRerr; }
 
     /// Residual inv. error matrix.
-    const typename KSymMatrix<N>::type&
-    getResInvError() const
-    {
-      return fRinv;
-    }
+    const typename KSymMatrix<N>::type& getResInvError() const { return fRinv; }
 
     /// Kalman H-matrix.
-    const typename KHMatrix<N>::type&
-    getH() const
-    {
-      return fH;
-    }
+    const typename KHMatrix<N>::type& getH() const { return fH; }
 
     /// Incremental chisquare.
-    double
-    getChisq() const
-    {
-      return fChisq;
-    }
+    double getChisq() const { return fChisq; }
 
     // Overrides.
     // Implementation of overrides is found at the bottom of this header.
@@ -248,8 +204,7 @@ namespace trkf {
   /// ref  - Reference track.
   ///
   template <int N>
-  bool
-  KHit<N>::predict(const KETrack& tre, const Propagator& prop, const KTrack* ref) const
+  bool KHit<N>::predict(const KETrack& tre, const Propagator& prop, const KTrack* ref) const
   {
     // Update the prediction surface to be the track surface.
 
@@ -356,8 +311,7 @@ namespace trkf {
   /// tre - Track to be updated.
   ///
   template <int N>
-  void
-  KHit<N>::update(KETrack& tre) const
+  void KHit<N>::update(KETrack& tre) const
   {
     // Make sure that the track surface and the prediction surface are the same.
     // Throw an exception if they are not.
@@ -400,8 +354,7 @@ namespace trkf {
 
   /// Printout
   template <int N>
-  std::ostream&
-  KHit<N>::Print(std::ostream& out, bool doTitle) const
+  std::ostream& KHit<N>::Print(std::ostream& out, bool doTitle) const
   {
     if (doTitle) out << "KHit<" << N << ">:\n";
 

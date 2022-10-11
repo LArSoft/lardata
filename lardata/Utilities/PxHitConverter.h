@@ -61,8 +61,7 @@ namespace util {
 //***  Template implementation
 //***
 template <typename HitObj>
-util::PxHit
-util::PxHitConverter::ToPxHit(HitObj const& hit) const
+util::PxHit util::PxHitConverter::ToPxHit(HitObj const& hit) const
 {
   // check that the argument is an object convertible to a recob::Hit,
   // or it is a pointer to such an object
@@ -73,8 +72,7 @@ util::PxHitConverter::ToPxHit(HitObj const& hit) const
 } // PxHitConverter::ToPxHit()
 
 template <typename Cont, typename Hit /* = typename Cont::value_type */>
-std::vector<util::PxHit>
-util::PxHitConverter::ToPxHitVector(Cont const& hits) const
+std::vector<util::PxHit> util::PxHitConverter::ToPxHitVector(Cont const& hits) const
 {
   std::vector<PxHit> pxhits;
   pxhits.reserve(hits.size());

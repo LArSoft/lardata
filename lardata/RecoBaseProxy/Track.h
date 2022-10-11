@@ -229,14 +229,13 @@
 #ifndef LARDATA_RECOBASEPROXY_TRACK_H
 #define LARDATA_RECOBASEPROXY_TRACK_H
 
-
 // LArSoft libraries
 #include "lardata/RecoBaseProxy/ProxyBase.h" // proxy namespace
 #include "lardata/Utilities/filterRangeFor.h"
-#include "lardataobj/RecoBase/Track.h"
-#include "lardataobj/RecoBase/TrackTrajectory.h"
 #include "lardataobj/RecoBase/Hit.h"
+#include "lardataobj/RecoBase/Track.h"
 #include "lardataobj/RecoBase/TrackFitHitInfo.h"
+#include "lardataobj/RecoBase/TrackTrajectory.h"
 
 // framework libraries
 #include "canvas/Persistency/Common/Ptr.h"
@@ -268,46 +267,30 @@ namespace proxy {
     struct StaticAsserts;
 
     template <typename Data>
-    struct StaticAsserts<TrackPointWrapper<Data>>: public std::true_type {
+    struct StaticAsserts<TrackPointWrapper<Data>> : public std::true_type {
       using Wrapper_t = TrackPointWrapper<Data>;
 
       static_assert(sizeof(Wrapper_t) == 1U, "Wrapper carries data!");
 
-      static_assert(std::is_same<
-        std::decay_t<decltype(std::declval<Wrapper_t>().position())>,
-        recob::Track::Point_t
-        >(),
-        "position() is not a recob::Track::Point_t"
-        );
-      static_assert(std::is_same<
-        std::decay_t<decltype(std::declval<Wrapper_t>().momentum())>,
-        recob::Track::Vector_t
-        >(),
-        "momentum() is not a recob::Track::Vector_t"
-          );
-      static_assert(std::is_same<
-        std::decay_t<decltype(std::declval<Wrapper_t>().flags())>,
-        recob::Track::PointFlags_t
-        >(),
-        "flags() is not a recob::Track::PointFlags_t"
-        );
-      static_assert(std::is_same<
-        std::decay_t<decltype(std::declval<Wrapper_t>().hitPtr())>,
-        art::Ptr<recob::Hit>
-        >(),
-        "hit() is not a art::Ptr<recob::Hit>"
-        );
-      static_assert(std::is_same<
-        std::decay_t<decltype(std::declval<Wrapper_t>().index())>,
-        std::size_t
-        >(),
-        "index() is not a std::size_t"
-        );
+      static_assert(std::is_same<std::decay_t<decltype(std::declval<Wrapper_t>().position())>,
+                                 recob::Track::Point_t>(),
+                    "position() is not a recob::Track::Point_t");
+      static_assert(std::is_same<std::decay_t<decltype(std::declval<Wrapper_t>().momentum())>,
+                                 recob::Track::Vector_t>(),
+                    "momentum() is not a recob::Track::Vector_t");
+      static_assert(std::is_same<std::decay_t<decltype(std::declval<Wrapper_t>().flags())>,
+                                 recob::Track::PointFlags_t>(),
+                    "flags() is not a recob::Track::PointFlags_t");
+      static_assert(std::is_same<std::decay_t<decltype(std::declval<Wrapper_t>().hitPtr())>,
+                                 art::Ptr<recob::Hit>>(),
+                    "hit() is not a art::Ptr<recob::Hit>");
+      static_assert(
+        std::is_same<std::decay_t<decltype(std::declval<Wrapper_t>().index())>, std::size_t>(),
+        "index() is not a std::size_t");
 
     }; // StaticAsserts<TrackPointWrapper<Data>>
 
   } // namespace details
-
 
   //----------------------------------------------------------------------------
 
@@ -518,8 +501,6 @@ namespace proxy {
 
   }; // struct Tracks
 
-
-
   //----------------------------------------------------------------------------
   //---  track point information
   //---
@@ -548,12 +529,8 @@ namespace proxy {
    * track proxy which created it.
    *
    */
-  using TrackPointData = std::tuple<
-    recob::Track const*,
-    art::Ptr<recob::Hit>,
-    recob::TrackFitHitInfo const*,
-    std::size_t
-    >;
+  using TrackPointData = std::
+    tuple<recob::Track const*, art::Ptr<recob::Hit>, recob::TrackFitHitInfo const*, std::size_t>;
 
   /**
    * @brief Wrapper for a track data proxy.
@@ -588,43 +565,46 @@ namespace proxy {
     using This_t = TrackPointWrapper<Data>;
     using Wrapped_t = std::add_const_t<Data>;
 
-    static constexpr std::size_t TrackIndex      = 0;
-    static constexpr std::size_t HitIndex        = 1;
+    static constexpr std::size_t TrackIndex = 0;
+    static constexpr std::size_t HitIndex = 1;
     static constexpr std::size_t FitHitInfoIndex = 2;
-    static constexpr std::size_t IndexIndex      = 3;
-    static constexpr std::size_t NIndices        = 4;
+    static constexpr std::size_t IndexIndex = 3;
+    static constexpr std::size_t NIndices = 4;
 
-    static_assert(std::tuple_size<Data>::value == NIndices,
-      "Unexpected data size.");
+    static_assert(std::tuple_size<Data>::value == NIndices, "Unexpected data size.");
 
-    Wrapped_t const& base() const
-      { return reinterpret_cast<Wrapped_t const&>(*this); }
+    Wrapped_t const& base() const { return reinterpret_cast<Wrapped_t const&>(*this); }
 
     template <std::size_t N>
-    auto get() const -> decltype(auto) { return std::get<N>(base()); }
+    auto get() const -> decltype(auto)
+    {
+      return std::get<N>(base());
+    }
 
-      protected:
+  protected:
     TrackPointWrapper() = default;
     TrackPointWrapper(TrackPointWrapper const&) = default;
     TrackPointWrapper(TrackPointWrapper&&) = default;
     TrackPointWrapper& operator=(TrackPointWrapper const&) = default;
     TrackPointWrapper& operator=(TrackPointWrapper&&) = default;
 
-      public:
-
+  public:
     /// Returns the track this point belongs to.
-    recob::Track const& track() const
-      { return *get<TrackIndex>(); }
+    recob::Track const& track() const { return *get<TrackIndex>(); }
 
     /// Returns the position of the trajectory point.
     /// @see `recob::Track::LocationAtPoint()`
     auto position() const -> decltype(auto)
-      { return track().Trajectory().LocationAtPoint(index()); }
+    {
+      return track().Trajectory().LocationAtPoint(index());
+    }
 
     /// Returns the momentum vector of the trajectory point.
     /// @see `recob::Track::MomentumVectorAtPoint()`
     auto momentum() const -> decltype(auto)
-      { return track().Trajectory().MomentumVectorAtPoint(index()); }
+    {
+      return track().Trajectory().MomentumVectorAtPoint(index());
+    }
 
     /**
      * @{
@@ -633,8 +613,7 @@ namespace proxy {
 
     /// Returns the flags associated with the trajectory point.
     /// @see `recob::Track::FlagsAtPoint()`
-    auto flags() const -> decltype(auto)
-      { return track().Trajectory().FlagsAtPoint(index()); }
+    auto flags() const -> decltype(auto) { return track().Trajectory().FlagsAtPoint(index()); }
 
     /**
      * @brief Returns whether the trajectory point is valid.
@@ -661,18 +640,19 @@ namespace proxy {
      * The fit information is extracted using the tag in
      * `proxy::Tracks::TrackFitHitInfoTag`.
      */
-    recob::TrackFitHitInfo const* fitInfoPtr() const
-      { return get<FitHitInfoIndex>(); }
+    recob::TrackFitHitInfo const* fitInfoPtr() const { return get<FitHitInfoIndex>(); }
 
     /// Returns the index of this point in the trajectory.
-    auto index() const -> decltype(auto) { return get<IndexIndex   >(); }
+    auto index() const -> decltype(auto) { return get<IndexIndex>(); }
 
     /// Returns a pointer to the hit on the trajectory point, if any.
     recob::Hit const* hit() const
-      { decltype(auto) ptr = hitPtr(); return ptr? ptr.get(): nullptr; }
+    {
+      decltype(auto) ptr = hitPtr();
+      return ptr ? ptr.get() : nullptr;
+    }
 
   }; // TrackPointWrapper<>
-
 
   /**
    * @brief Type of track point information.
@@ -681,19 +661,15 @@ namespace proxy {
    *
    * For its interface, see `proxy::TrackPointWrapper`.
    */
-  struct TrackPoint
-    : private TrackPointData
-    , public TrackPointWrapper<TrackPointData>
-  {
+  struct TrackPoint : private TrackPointData, public TrackPointWrapper<TrackPointData> {
     using TrackPointData::TrackPointData;
-    TrackPoint(TrackPointData const& data): TrackPointData(data) {}
-    TrackPoint(TrackPointData&& data): TrackPointData(std::move(data)) {}
+    TrackPoint(TrackPointData const& data) : TrackPointData(data) {}
+    TrackPoint(TrackPointData&& data) : TrackPointData(std::move(data)) {}
 
-      private:
-    static constexpr bool asserts
-      = details::StaticAsserts<TrackPointWrapper<TrackPointData>>::value;
+  private:
+    static constexpr bool asserts =
+      details::StaticAsserts<TrackPointWrapper<TrackPointData>>::value;
   }; // class TrackPoint
-
 
   /**
    * @brief Returns an object with information about the specified track point.
@@ -705,18 +681,11 @@ namespace proxy {
    * For an interface to the point information, see `TrackPointWrapper`.
    */
   template <typename TrackProxy>
-  TrackPointData makeTrackPointData
-    (TrackProxy const& track, std::size_t index)
-    {
-      static_assert(details::isTrackProxy<TrackProxy>(), "Not a proxy::Track!");
-      return {
-        &(track.track()),
-        track.hitAtPoint(index),
-        track.fitInfoAtPoint(index),
-        index
-      };
-    } // makeTrackPointData()
-
+  TrackPointData makeTrackPointData(TrackProxy const& track, std::size_t index)
+  {
+    static_assert(details::isTrackProxy<TrackProxy>(), "Not a proxy::Track!");
+    return {&(track.track()), track.hitAtPoint(index), track.fitInfoAtPoint(index), index};
+  } // makeTrackPointData()
 
   //--------------------------------------------------------------------------
   /**
@@ -728,16 +697,14 @@ namespace proxy {
     * For details on the track point interface see `proxy::TrackPoint`.
     */
   template <typename CollProxy>
-  struct TrackCollectionProxyElement
-    : public CollectionProxyElement<CollProxy>
-  {
+  struct TrackCollectionProxyElement : public CollectionProxyElement<CollProxy> {
     using base_t = CollectionProxyElement<CollProxy>; ///< Base type.
-    using base_t::base_t; // inherit constructors
+    using base_t::base_t;                             // inherit constructors
 
     /// This type.
     using track_proxy_t = TrackCollectionProxyElement<CollProxy>;
 
-      public:
+  public:
     /// Iterator for trajectory point information.
     using point_iterator = TrackPointIterator<track_proxy_t>;
 
@@ -750,8 +717,7 @@ namespace proxy {
      * @return a reference to the requested track trajectory
      *
      */
-    recob::TrackTrajectory const* operator()
-      (proxy::Tracks::TrackType_t type) const noexcept;
+    recob::TrackTrajectory const* operator()(proxy::Tracks::TrackType_t type) const noexcept;
 
     // --- BEGIN Direct hit interface ------------------------------------------
     /**
@@ -789,12 +755,10 @@ namespace proxy {
      * One hit is expected per trajectory point. Hits can be missing, in which
      * case the art pointer will have `isNull()` as `true`.
      */
-    auto hits() const -> decltype(auto)
-      { return base_t::template get<Tracks::HitTag>(); }
+    auto hits() const -> decltype(auto) { return base_t::template get<Tracks::HitTag>(); }
 
     /// Returns an art pointer to the hit associated with the specified point.
-    auto hitAtPoint(std::size_t index) const -> decltype(auto)
-      { return hits()[index]; }
+    auto hitAtPoint(std::size_t index) const -> decltype(auto) { return hits()[index]; }
 
     /// Returns the number of hits associated with this track.
     std::size_t nHits() const { return hits().size(); }
@@ -802,10 +766,8 @@ namespace proxy {
     /// @}
     // --- END Direct hit interface --------------------------------------------
 
-
     /// Returns fit info for the specified point (`nullptr` if not available).
     recob::TrackFitHitInfo const* fitInfoAtPoint(std::size_t index) const;
-
 
     // --- BEGIN Direct track trajectory interface -----------------------------
     /**
@@ -835,13 +797,14 @@ namespace proxy {
     /// @{
 
     /// Returns whether this track is associated to a trajectory.
-    bool hasOriginalTrajectory() const
-      { return !originalTrajectoryPtr().isNull(); }
+    bool hasOriginalTrajectory() const { return !originalTrajectoryPtr().isNull(); }
 
     /// Returns an _art_ pointer to the associated trajectory.
     /// @return pointer to the associated trajectory (`isNull()` `true` if none)
     art::Ptr<recob::TrackTrajectory> const& originalTrajectoryPtr() const
-      { return base_t::template get<Tracks::TrackTrajectoryTag>(); }
+    {
+      return base_t::template get<Tracks::TrackTrajectoryTag>();
+    }
 
     /**
      * @brief Returns a reference to the associated trajectory.
@@ -852,12 +815,10 @@ namespace proxy {
      * undefined. This condition should be checked beforehand, e.g. with
      * `hasTrajectory()`.
      */
-    recob::TrackTrajectory const& originalTrajectory() const
-      { return *originalTrajectoryPtr(); }
+    recob::TrackTrajectory const& originalTrajectory() const { return *originalTrajectoryPtr(); }
 
     /// @}
     // --- END Direct track trajectory interface -------------------------------
-
 
     // --- BEGIN Point-by-point iteration interface ----------------------------
     /**
@@ -906,8 +867,7 @@ namespace proxy {
      * will iterate through all points (including the invalid ones, hence the
      * check).
      */
-    auto points() const
-      { return details::TrackPointIteratorBox<CollProxy>(*this); }
+    auto points() const { return details::TrackPointIteratorBox<CollProxy>(*this); }
 
     /**
      * @brief Returns an iterable range with only points matching the `mask`.
@@ -978,44 +938,40 @@ namespace proxy {
      * will iterate through only the points which _do not_ have the `NoPoint`
      * flag set (which have in fact a valid position).
      */
-    auto pointsWithFlags
-      (recob::TrackTrajectory::PointFlags_t::Mask_t mask) const;
+    auto pointsWithFlags(recob::TrackTrajectory::PointFlags_t::Mask_t mask) const;
 
     /// Returns the number of trajectory points in the track.
     std::size_t nPoints() const { return track().NPoints(); }
 
     /// Returns the iterator to the data of the first point.
-    point_iterator beginPoint() const { return { *this, 0 }; }
+    point_iterator beginPoint() const { return {*this, 0}; }
 
     /// Returns the iterator past the last point.
-    point_iterator endPoint() const { return { *this, nPoints() }; }
+    point_iterator endPoint() const { return {*this, nPoints()}; }
 
     /// @{
     /// Extracts information from the specified point.
-    TrackPoint point(std::size_t index) const
-      { return { makeTrackPointData(track(), index) }; }
+    TrackPoint point(std::size_t index) const { return {makeTrackPointData(track(), index)}; }
 
-    TrackPoint operator[](std::size_t index) const
-      { return point(index); }
+    TrackPoint operator[](std::size_t index) const { return point(index); }
 
     /// @}
     // --- END Point-by-point iteration interface ------------------------------
-
 
     // --- BEGIN Additional utilities ------------------------------------------
     /// @name Additional utilities
     /// @{
 
-
     /// @}
     // --- END Additional utilities --------------------------------------------
 
-      private:
+  private:
     recob::TrackTrajectory const* originalTrajectoryCPtr() const noexcept
-      { return hasOriginalTrajectory()? &originalTrajectory(): nullptr; }
+    {
+      return hasOriginalTrajectory() ? &originalTrajectory() : nullptr;
+    }
 
   }; // TrackCollectionProxyElement<>
-
 
   /**
    * @brief Proxy to an element of a proxy collection of `recob::Track` objects.
@@ -1034,8 +990,6 @@ namespace proxy {
    */
   template <typename TrackCollProxy>
   using Track = TrackCollectionProxyElement<TrackCollProxy>;
-
-
 
   // --- BEGIN Auxiliary data --------------------------------------------------
   /**
@@ -1062,10 +1016,9 @@ namespace proxy {
    * label rather than the label of the tracks in the proxy.
    */
   inline auto withOriginalTrajectory(art::InputTag const& inputTag)
-    {
-      return proxy::withZeroOrOneAs
-        <recob::TrackTrajectory, Tracks::TrackTrajectoryTag>(inputTag);
-    }
+  {
+    return proxy::withZeroOrOneAs<recob::TrackTrajectory, Tracks::TrackTrajectoryTag>(inputTag);
+  }
 
   /**
    * @brief Adds `recob::TrackTrajectory` information to the proxy.
@@ -1113,10 +1066,9 @@ namespace proxy {
    * requirements.
    */
   inline auto withOriginalTrajectory()
-    {
-      return proxy::withZeroOrOneAs
-        <recob::TrackTrajectory, Tracks::TrackTrajectoryTag>();
-    }
+  {
+    return proxy::withZeroOrOneAs<recob::TrackTrajectory, Tracks::TrackTrajectoryTag>();
+  }
 
   //----------------------------------------------------------------------------
   /**
@@ -1131,11 +1083,10 @@ namespace proxy {
    * See `proxy::withFitHitInfo()` for explanations and examples.
    */
   inline auto withFitHitInfo(art::InputTag const& inputTag)
-    {
-      return proxy::withParallelDataAs
-        <std::vector<recob::TrackFitHitInfo>, Tracks::TrackFitHitInfoTag>
-        (inputTag);
-    }
+  {
+    return proxy::withParallelDataAs<std::vector<recob::TrackFitHitInfo>,
+                                     Tracks::TrackFitHitInfoTag>(inputTag);
+  }
 
   /**
    * @brief Adds `recob::TrackFitHitInfo` information to the proxy.
@@ -1189,10 +1140,10 @@ namespace proxy {
    * requirement.
    */
   inline auto withFitHitInfo()
-    {
-      return proxy::withParallelDataAs
-        <std::vector<recob::TrackFitHitInfo>, Tracks::TrackFitHitInfoTag>();
-    }
+  {
+    return proxy::withParallelDataAs<std::vector<recob::TrackFitHitInfo>,
+                                     Tracks::TrackFitHitInfoTag>();
+  }
 
   /// @}
   // --- END Auxiliary data ----------------------------------------------------
@@ -1201,21 +1152,16 @@ namespace proxy {
   /// Define the traits of `proxy::Tracks` proxy.
   template <>
   struct CollectionProxyMakerTraits<Tracks>
-    : public CollectionProxyMakerTraits<Tracks::TrackDataProduct_t>
-  {
+    : public CollectionProxyMakerTraits<Tracks::TrackDataProduct_t> {
     // default traits, plus a collection proxy class with a custom element:
     template <typename MainColl, typename... AuxColl>
-    using collection_proxy_impl_t
-      = CollectionProxyBase<Track, MainColl, AuxColl...>;
+    using collection_proxy_impl_t = CollectionProxyBase<Track, MainColl, AuxColl...>;
   };
-
 
   //----------------------------------------------------------------------------
   /// Specialization to create a proxy for `recob::Track` collection.
   template <>
-  struct CollectionProxyMaker<Tracks>
-    : public CollectionProxyMakerBase<Tracks>
-  {
+  struct CollectionProxyMaker<Tracks> : public CollectionProxyMakerBase<Tracks> {
 
     /// Base class.
     using maker_base_t = CollectionProxyMakerBase<Tracks>;
@@ -1236,35 +1182,32 @@ namespace proxy {
      * and must not be explicitly specified.
      */
     template <typename Event, typename... WithArgs>
-    static auto make
-      (Event const& event, art::InputTag const& tag, WithArgs&&... withArgs)
-      {
-        // automatically add associated hits with the same input tag;
-        // IDEA: allow a withAssociated<recob::Hit>() from withArgs to override
-        // this one; the pattern may be:
-        // - if withArgs contains a withAssociated<recob::Hit>(), produce a new
-        //   withArgs with that one pushed first
-        // - otherwise, produce a new withArgs with a new
-        //   withAssociated<recob::Hit>(tag) as first element
-        // In principle there is no need for these hits to be first; code might
-        // be simpler when assuming that though.
-        return maker_base_t::make(
-          event, tag,
-          withAssociatedAs<recob::Hit, Tracks::HitTag>(),
-          std::forward<WithArgs>(withArgs)...
-          );
-      } // make()
+    static auto make(Event const& event, art::InputTag const& tag, WithArgs&&... withArgs)
+    {
+      // automatically add associated hits with the same input tag;
+      // IDEA: allow a withAssociated<recob::Hit>() from withArgs to override
+      // this one; the pattern may be:
+      // - if withArgs contains a withAssociated<recob::Hit>(), produce a new
+      //   withArgs with that one pushed first
+      // - otherwise, produce a new withArgs with a new
+      //   withAssociated<recob::Hit>(tag) as first element
+      // In principle there is no need for these hits to be first; code might
+      // be simpler when assuming that though.
+      return maker_base_t::make(event,
+                                tag,
+                                withAssociatedAs<recob::Hit, Tracks::HitTag>(),
+                                std::forward<WithArgs>(withArgs)...);
+    } // make()
 
   }; // struct CollectionProxyMaker<>
-
 
   /// "Converts" point data into a `proxy::TrackPointWrapper`.
   template <typename Data>
   auto wrapTrackPoint(Data const& wrappedData)
-    {
-      (void) details::StaticAsserts<TrackPointWrapper<Data>>();
-      return reinterpret_cast<TrackPointWrapper<Data> const&>(wrappedData);
-    }
+  {
+    (void)details::StaticAsserts<TrackPointWrapper<Data>>();
+    return reinterpret_cast<TrackPointWrapper<Data> const&>(wrappedData);
+  }
 
   /// Iterator for points of a track proxy. Only supports range-for loops.
   /// @ingroup LArSoftProxyReco
@@ -1309,8 +1252,7 @@ namespace proxy {
     track_proxy_t const* track = nullptr;
     std::size_t index = std::numeric_limits<std::size_t>::max();
 
-      public:
-
+  public:
     /// @name Iterator traits
     /// @{
     using difference_type = std::ptrdiff_t;
@@ -1323,30 +1265,41 @@ namespace proxy {
 
     TrackPointIterator() = default;
 
-    TrackPointIterator(track_proxy_t const& track, std::size_t index)
-      : track(&track), index(index)
-      {}
+    TrackPointIterator(track_proxy_t const& track, std::size_t index) : track(&track), index(index)
+    {}
 
-    TrackPointIterator& operator++() { ++index; return *this; }
+    TrackPointIterator& operator++()
+    {
+      ++index;
+      return *this;
+    }
 
     TrackPointIterator operator++(int)
-      { auto it = *this; this->operator++(); return it; }
+    {
+      auto it = *this;
+      this->operator++();
+      return it;
+    }
 
     // we make sure the return value is a temporary
     value_type operator*() const
-      { return static_cast<value_type>(makeTrackPointData(*track, index)); }
+    {
+      return static_cast<value_type>(makeTrackPointData(*track, index));
+    }
 
     bool operator==(TrackPointIterator const& other) const
-      { return (index == other.index) && (track == other.track); }
+    {
+      return (index == other.index) && (track == other.track);
+    }
 
     bool operator!=(TrackPointIterator const& other) const
-      { return (index != other.index) || (track != other.track); }
+    {
+      return (index != other.index) || (track != other.track);
+    }
 
   }; // class TrackPointIterator
 
-
 } // namespace proxy
-
 
 namespace proxy {
 
@@ -1355,11 +1308,10 @@ namespace proxy {
 
     //--------------------------------------------------------------------------
     template <typename T>
-    struct isTrackProxy: public std::false_type {};
+    struct isTrackProxy : public std::false_type {};
 
     template <typename TrackCollProxy>
-    struct isTrackProxy<Track<TrackCollProxy>>: public std::true_type {};
-
+    struct isTrackProxy<Track<TrackCollProxy>> : public std::true_type {};
 
     //--------------------------------------------------------------------------
     /// Structure for range-for iteration.
@@ -1368,19 +1320,16 @@ namespace proxy {
       using track_proxy_t = Track<CollProxy>;
       using const_iterator = typename track_proxy_t::point_iterator;
 
-      TrackPointIteratorBox(track_proxy_t const& track): track(&track) {}
+      TrackPointIteratorBox(track_proxy_t const& track) : track(&track) {}
 
-      const_iterator begin() const
-        { return track->beginPoint(); }
+      const_iterator begin() const { return track->beginPoint(); }
 
-      const_iterator end() const
-        { return track->endPoint(); }
+      const_iterator end() const { return track->endPoint(); }
 
-        private:
+    private:
       track_proxy_t const* track = nullptr;
 
     }; // TrackPointIteratorBox<>
-
 
     //--------------------------------------------------------------------------
 
@@ -1388,55 +1337,47 @@ namespace proxy {
 
   //----------------------------------------------------------------------------
   template <typename CollProxy>
-  recob::TrackTrajectory const*
-  TrackCollectionProxyElement<CollProxy>::operator()
-    (proxy::Tracks::TrackType_t type) const noexcept
+  recob::TrackTrajectory const* TrackCollectionProxyElement<CollProxy>::operator()(
+    proxy::Tracks::TrackType_t type) const noexcept
   {
-     switch (type) {
-       case proxy::Tracks::Fitted:
-         return &(track().Trajectory());
-       case proxy::Tracks::Unfitted:
-         return originalTrajectoryCPtr();
-       default:
-         return nullptr;
-     } // switch
-  } // TrackCollectionProxyElement<>::operator()
-
+    switch (type) {
+    case proxy::Tracks::Fitted: return &(track().Trajectory());
+    case proxy::Tracks::Unfitted: return originalTrajectoryCPtr();
+    default: return nullptr;
+    } // switch
+  }   // TrackCollectionProxyElement<>::operator()
 
   //----------------------------------------------------------------------------
   template <typename CollProxy>
-  recob::TrackFitHitInfo const*
-  TrackCollectionProxyElement<CollProxy>::fitInfoAtPoint
-    (std::size_t index) const
+  recob::TrackFitHitInfo const* TrackCollectionProxyElement<CollProxy>::fitInfoAtPoint(
+    std::size_t index) const
   {
     if constexpr (base_t::template has<Tracks::TrackFitHitInfoTag>()) {
       auto const& fitInfo = base_t::template get<Tracks::TrackFitHitInfoTag>();
       return &(fitInfo[index]);
     }
-    else return nullptr;
+    else
+      return nullptr;
   } // TrackCollectionProxyElement<>::fitInfoAtPoint()
-
 
   //----------------------------------------------------------------------------
   template <typename CollProxy>
   template <typename Pred>
   auto TrackCollectionProxyElement<CollProxy>::selectPoints(Pred&& pred) const
-    { return util::filterRangeFor(points(), std::forward<Pred>(pred)); }
-
+  {
+    return util::filterRangeFor(points(), std::forward<Pred>(pred));
+  }
 
   //----------------------------------------------------------------------------
   template <typename CollProxy>
-  auto TrackCollectionProxyElement<CollProxy>::pointsWithFlags
-    (recob::TrackTrajectory::PointFlags_t::Mask_t mask) const
+  auto TrackCollectionProxyElement<CollProxy>::pointsWithFlags(
+    recob::TrackTrajectory::PointFlags_t::Mask_t mask) const
   {
-    return
-      selectPoints([mask](auto&& point) { return point.flags().match(mask); });
+    return selectPoints([mask](auto&& point) { return point.flags().match(mask); });
   } // TrackCollectionProxyElement<>::pointsWithFlags()
-
 
   //----------------------------------------------------------------------------
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_TRACK_H

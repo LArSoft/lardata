@@ -33,45 +33,40 @@
 
 namespace trkf {
 
-  class KFitTrack : public KETrack
-  {
+  class KFitTrack : public KETrack {
   public:
-
     /// Fit status enum.
     enum FitStatus {
-      INVALID,             // No valid fit information.
-      UNKNOWN,             // Unknown.
-      FORWARD,             // Fit based on past measurements, including current surface.
-      FORWARD_PREDICTED,   // Fit based on past measurements, not including current surface.
-      BACKWARD,            // Fit based on future measurements, including current surface.
-      BACKWARD_PREDICTED,  // Fit based on future measurements, not including current surface.
-      OPTIMAL,             // Fit based on all measurements, including current surface.
-      OPTIMAL_PREDICTED    // Fit based on all measurements, except current surface.
+      INVALID,            // No valid fit information.
+      UNKNOWN,            // Unknown.
+      FORWARD,            // Fit based on past measurements, including current surface.
+      FORWARD_PREDICTED,  // Fit based on past measurements, not including current surface.
+      BACKWARD,           // Fit based on future measurements, including current surface.
+      BACKWARD_PREDICTED, // Fit based on future measurements, not including current surface.
+      OPTIMAL,            // Fit based on all measurements, including current surface.
+      OPTIMAL_PREDICTED   // Fit based on all measurements, except current surface.
     };
 
     /// Default constructor.
     KFitTrack();
 
     /// Initializing constructor.
-    KFitTrack(const KETrack& tre,
-	      double s = 0.,
-	      double chisq = 0.,
-	      FitStatus stat = INVALID);
+    KFitTrack(const KETrack& tre, double s = 0., double chisq = 0., FitStatus stat = INVALID);
 
     /// Destructor.
     virtual ~KFitTrack();
 
     // Accessors.
 
-    double getPath() const {return fPath;}        ///< Propagation distance.
-    double getChisq() const {return fChisq;}      ///< Fit chisquare.
-    FitStatus getStat() const {return fStat;}     ///< Fit status.
+    double getPath() const { return fPath; }    ///< Propagation distance.
+    double getChisq() const { return fChisq; }  ///< Fit chisquare.
+    FitStatus getStat() const { return fStat; } ///< Fit status.
 
     // Modifiers.
 
-    void setPath(double path) {fPath = path;}        ///< Set propagation distance.
-    void setChisq(double chisq) {fChisq = chisq;}    ///< Set chisquare.
-    void setStat(FitStatus stat) {fStat = stat;}     ///< Set fit status.
+    void setPath(double path) { fPath = path; }     ///< Set propagation distance.
+    void setChisq(double chisq) { fChisq = chisq; } ///< Set chisquare.
+    void setStat(FitStatus stat) { fStat = stat; }  ///< Set fit status.
 
     /// Combine two tracks.
     bool combineFit(const KFitTrack& trf);
@@ -80,12 +75,11 @@ namespace trkf {
     virtual std::ostream& Print(std::ostream& out, bool doTitle = true) const;
 
   private:
-
     // Attributes.
 
-    double fPath;        ///< Propagation distance.
-    double fChisq;       ///< Fit chisquare.
-    FitStatus fStat;     ///< Fit status.
+    double fPath;    ///< Propagation distance.
+    double fChisq;   ///< Fit chisquare.
+    FitStatus fStat; ///< Fit status.
   };
 }
 

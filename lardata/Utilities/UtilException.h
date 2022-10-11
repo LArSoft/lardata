@@ -14,19 +14,18 @@
 #ifndef UTILEXCEPTION_HH
 #define UTILEXCEPTION_HH
 
-#include <string>
 #include <exception>
+#include <string>
 
 namespace util {
   /**
      \class UtilException
      Generic (base) exception class
   */
-  class UtilException : public std::exception{
+  class UtilException : public std::exception {
 
   public:
-
-    UtilException(std::string msg="") : std::exception()
+    UtilException(std::string msg = "") : std::exception()
     {
       _msg = "\033[93m";
       _msg += msg;
@@ -34,11 +33,9 @@ namespace util {
     }
 
     virtual ~UtilException() throw(){};
-    virtual const char* what() const throw()
-    { return _msg.c_str(); }
+    virtual const char* what() const throw() { return _msg.c_str(); }
 
   private:
-
     std::string _msg;
   };
 

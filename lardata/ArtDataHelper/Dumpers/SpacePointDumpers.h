@@ -9,20 +9,17 @@
 #ifndef LARDATA_RECOBASE_DUMPERS_SPACEPOINTDUMPERS_H
 #define LARDATA_RECOBASE_DUMPERS_SPACEPOINTDUMPERS_H 1
 
-
 // LArSoft libraries
 #include "lardataobj/RecoBase/SpacePoint.h"
 
 // C/C++ standard libraries
-#include <utility> // std::forward<>()
 #include <type_traits> // std::decay<>
-
+#include <utility>     // std::forward<>()
 
 // --- for the implementation ---
 // LArSoft libraries
-#include "lardata/ArtDataHelper/Dumpers/hexfloat.h"
 #include "lardata/ArtDataHelper/Dumpers/NewLine.h"
-
+#include "lardata/ArtDataHelper/Dumpers/hexfloat.h"
 
 namespace recob {
   namespace dumper {
@@ -44,13 +41,11 @@ namespace recob {
        */
       SpacePointPrintOptions_t() = default;
 
-      SpacePointPrintOptions_t
-        (IndentOptions_t indentOptions, bool bHexFloats)
+      SpacePointPrintOptions_t(IndentOptions_t indentOptions, bool bHexFloats)
         : indent(indentOptions), hexFloats(bHexFloats)
-        {}
+      {}
 
     }; // SpacePointPrintOptions_t
-
 
     /**
      * @brief Dumps the content of the specified space point into a stream
@@ -60,18 +55,15 @@ namespace recob {
      * @param sp the space point to be dumped
      * @param options indentation and formatting options
      */
-    template
-      <typename Stream, typename NewLineRef = recob::dumper::NewLine<Stream>>
-    auto DumpSpacePoint(
-      Stream&& out,
-      recob::SpacePoint const& sp,
-      SpacePointPrintOptions_t const& options = {}
-      ) -> std::enable_if_t
-      <std::is_same<NewLine<std::decay_t<Stream>>, std::decay_t<NewLineRef>>::value>;
+    template <typename Stream, typename NewLineRef = recob::dumper::NewLine<Stream>>
+    auto DumpSpacePoint(Stream&& out,
+                        recob::SpacePoint const& sp,
+                        SpacePointPrintOptions_t const& options = {})
+      -> std::enable_if_t<
+        std::is_same<NewLine<std::decay_t<Stream>>, std::decay_t<NewLineRef>>::value>;
 
   } // namespace dumper
 } // namespace recob
-
 
 //==============================================================================
 //=== template implementation
@@ -80,15 +72,11 @@ namespace recob {
 //--- recob::dumper::DumpSpacePoint
 //---
 template <typename Stream, typename NewLineRef>
-auto recob::dumper::DumpSpacePoint(
-  Stream&& out,
-  recob::SpacePoint const& sp,
-  SpacePointPrintOptions_t const& options /* = {} */
-) -> std::enable_if_t<
-  std::is_same<
-    NewLine<std::decay_t<Stream>>,
-    std::decay_t<NewLineRef>
-  >::value>
+auto recob::dumper::DumpSpacePoint(Stream&& out,
+                                   recob::SpacePoint const& sp,
+                                   SpacePointPrintOptions_t const& options /* = {} */
+                                   )
+  -> std::enable_if_t<std::is_same<NewLine<std::decay_t<Stream>>, std::decay_t<NewLineRef>>::value>
 {
   double const* pos = sp.XYZ();
   double const* err = sp.ErrXYZ();
@@ -96,16 +84,12 @@ auto recob::dumper::DumpSpacePoint(
   NewLineRef nl(out, options.indent);
   lar::OptionalHexFloat hexfloat(options.hexFloats);
 
-  nl()
-    << "ID=" << sp.ID() << " at (" << hexfloat(pos[0])
-    << ", " << hexfloat(pos[1]) << ", " << hexfloat(pos[2])
-    << ") cm, chi^2/NDF=" << hexfloat(sp.Chisq());
+  nl() << "ID=" << sp.ID() << " at (" << hexfloat(pos[0]) << ", " << hexfloat(pos[1]) << ", "
+       << hexfloat(pos[2]) << ") cm, chi^2/NDF=" << hexfloat(sp.Chisq());
 
-  nl()
-    << "variances { x^2=" << hexfloat(err[0]) << " y^2=" << hexfloat(err[2])
-    << " z^2=" << hexfloat(err[5])
-    << " xy=" << hexfloat(err[1]) << " xz=" << hexfloat(err[3])
-    << " yz=" << hexfloat(err[4]) << " }";
+  nl() << "variances { x^2=" << hexfloat(err[0]) << " y^2=" << hexfloat(err[2])
+       << " z^2=" << hexfloat(err[5]) << " xy=" << hexfloat(err[1]) << " xz=" << hexfloat(err[3])
+       << " yz=" << hexfloat(err[4]) << " }";
 
 } // recob::dumper::DumpSpacePoint()
 

@@ -41,9 +41,9 @@
 #include "larcorealg/CoreUtils/MetaUtils.h"
 
 // C/C++ standard libraries
+#include <cstddef> // std::size_t
 #include <tuple>
 #include <type_traits>
-#include <cstddef> // std::size_t
 
 /**
  * @addtogroup Utilities General utilities
@@ -78,13 +78,11 @@ namespace util {
     template <typename Target, typename... T>
     struct type_is_in_impl;
 
-
     //--------------------------------------------------------------------------
     //---  Courtesy traits
     //--------------------------------------------------------------------------
     template <typename Tuple>
     struct has_duplicate_types_unwrapper;
-
 
     //--------------------------------------------------------------------------
     //---  Tagging
@@ -92,11 +90,9 @@ namespace util {
     template <typename Tagged, typename = void>
     struct TagExtractorImpl;
 
-
     //--------------------------------------------------------------------------
 
   } // namespace details
-
 
   //--- BEGIN Metaprogramming --------------------------------------------------
   /// @ingroup MetaprogrammingBase
@@ -108,8 +104,7 @@ namespace util {
 
   /// Direct access to the value in `count_type_in_list`.
   template <typename Target, typename... T>
-  constexpr unsigned int count_type_in_list_v
-    = count_type_in_list<Target, T...>();
+  constexpr unsigned int count_type_in_list_v = count_type_in_list<Target, T...>();
 
   /// Returns the `N` type of the type list.
   template <std::size_t N, typename... T>
@@ -119,7 +114,6 @@ namespace util {
   template <std::size_t N, typename... T>
   using typelist_element_t = typename typelist_element_type<N, T...>::type;
 
-
   /// Holds whether the `Target` type is among the ones in the `T` pack.
   template <typename Target, typename... T>
   using type_is_in = details::type_is_in_impl<Target, T...>;
@@ -128,14 +122,12 @@ namespace util {
   template <typename Target, typename... T>
   constexpr bool type_is_in_v = type_is_in<Target, T...>();
 
-
   /// Holds whether the `Target` type is element of the specified `std::tuple`.
   template <typename Target, typename Tuple>
   struct count_type_in_tuple;
 
   /// @}
   //--- END Metaprogramming ----------------------------------------------------
-
 
   //----------------------------------------------------------------------------
   /**
@@ -147,7 +139,6 @@ namespace util {
    * @details These traits are used in the implementation of the tag-related
    * traits, but they are general enough that are deemed worth being exposed.
    */
-
 
   //----------------------------------------------------------------------------
   /**
@@ -187,35 +178,28 @@ namespace util {
    *       in `SrcTuple`.
    *
    */
-  template <
-    typename SrcTuple,
-    template <typename T, typename...> class Extractor,
-    template <typename...> class TargetClass = std::tuple
-    >
+  template <typename SrcTuple,
+            template <typename T, typename...>
+            class Extractor,
+            template <typename...> class TargetClass = std::tuple>
   struct extract_to_tuple_type;
 
-
   /// Direct access to the type in `extract_to_tuple_type`.
-  template <
-    typename SrcTuple,
-    template <typename T, typename...> class Extractor,
-    template <typename...> class TargetClass = std::tuple
-    >
-  using extract_to_tuple_type_t
-    = typename extract_to_tuple_type<SrcTuple, Extractor, TargetClass>::type;
-
+  template <typename SrcTuple,
+            template <typename T, typename...>
+            class Extractor,
+            template <typename...> class TargetClass = std::tuple>
+  using extract_to_tuple_type_t =
+    typename extract_to_tuple_type<SrcTuple, Extractor, TargetClass>::type;
 
   /// `extract_to_tuple_type` with no `T`-to-`U` type transformation.
   /// @see `extract_to_tuple_type`, `to_tuple_t`
-  template
-    <typename Tuple, template <typename...> class TargetClass = std::tuple>
+  template <typename Tuple, template <typename...> class TargetClass = std::tuple>
   using to_tuple = extract_to_tuple_type<Tuple, self_type, TargetClass>;
 
   /// Direct access to the type in `to_tuple`.
-  template
-    <typename Tuple, template <typename...> class TargetClass = std::tuple>
+  template <typename Tuple, template <typename...> class TargetClass = std::tuple>
   using to_tuple_t = typename to_tuple<Tuple, TargetClass>::type;
-
 
   //----------------------------------------------------------------------------
   /**
@@ -247,22 +231,13 @@ namespace util {
    * @note Currently there is no equivalent trait to ask for the index of the
    *       second or following type; this can be implemented on request.
    */
-  template<
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
   struct index_of_extracted_type;
 
   /// Direct access to the value in `index_of_extracted_type`.
-  template<
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
-  constexpr std::size_t index_of_extracted_type_v
-    = index_of_extracted_type<Extractor, Target, Tuple>();
-
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
+  constexpr std::size_t index_of_extracted_type_v =
+    index_of_extracted_type<Extractor, Target, Tuple>();
 
   /// Like `index_of_extracted_type`, but querying the element types directly.
   /// @see `index_of_extracted_type`, `index_of_type_v`, `has_type`,
@@ -270,11 +245,9 @@ namespace util {
   template <typename Target, typename Tuple>
   using index_of_type = index_of_extracted_type<self_type, Target, Tuple>;
 
-
   /// Direct access to the value in `index_of_type`.
   template <typename Target, typename Tuple>
   constexpr std::size_t index_of_type_v = index_of_type<Target, Tuple>();
-
 
   //----------------------------------------------------------------------------
   /**
@@ -306,23 +279,14 @@ namespace util {
    * @note Currently there is no equivalent trait to ask for the second or
    *       following type; this can be implemented on request.
    */
-  template<
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
-  using type_with_extracted_type = std::tuple_element
-    <index_of_extracted_type_v<Extractor, Target, Tuple>, Tuple>;
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
+  using type_with_extracted_type =
+    std::tuple_element<index_of_extracted_type_v<Extractor, Target, Tuple>, Tuple>;
 
   /// Direct access to the value in `type_with_extracted_type`.
-  template<
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
-  using type_with_extracted_type_t
-    = typename type_with_extracted_type<Extractor, Target, Tuple>::type;
-
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
+  using type_with_extracted_type_t =
+    typename type_with_extracted_type<Extractor, Target, Tuple>::type;
 
   //----------------------------------------------------------------------------
   /**
@@ -369,22 +333,12 @@ namespace util {
    *       `int` extracted types. This is solved in C++17 by the use of a
    *       "constexpr if".
    */
-  template<
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
   struct has_extracted_type;
 
   /// Direct access to the value in `has_extracted_type`.
-  template<
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
-  constexpr bool has_extracted_type_v
-    = has_extracted_type<Extractor, Target, Tuple>();
-
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
+  constexpr bool has_extracted_type_v = has_extracted_type<Extractor, Target, Tuple>();
 
   /// Like `has_extracted_type`, but querying the element types directly.
   /// @see `has_extracted_type`, `index_of_type`, `count_types`, `has_type_v`
@@ -392,9 +346,8 @@ namespace util {
   using has_type = has_extracted_type<self_type, Target, Tuple>;
 
   /// Direct access to the value in `has_type`.
-  template<typename Target, typename Tuple>
+  template <typename Target, typename Tuple>
   constexpr bool has_type_v = has_type<Target, Tuple>();
-
 
   //----------------------------------------------------------------------------
   /**
@@ -433,12 +386,8 @@ namespace util {
    * data of value type `int` will cause a compilation error since there is more
    * than one element with that value type.
    */
-  template <
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple>
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
   auto getByExtractedType(Tuple const& data) -> decltype(auto);
-
 
   /**
    * @brief Traits holding whether elements of `Tuple` have duplicate types.
@@ -466,15 +415,12 @@ namespace util {
    */
   template <template <typename T, typename...> class Extractor, typename Tuple>
   struct has_duplicate_extracted_types
-    : public details::has_duplicate_types_unwrapper
-        <extract_to_tuple_type_t<Tuple, Extractor>>
-    {};
+    : public details::has_duplicate_types_unwrapper<extract_to_tuple_type_t<Tuple, Extractor>> {};
 
   /// Direct access to the value in `has_duplicate_extracted_types`.
   template <template <typename T, typename...> class Extractor, typename Tuple>
-  constexpr bool has_duplicate_extracted_types_v
-    = has_duplicate_extracted_types<Extractor, Tuple>();
-
+  constexpr bool has_duplicate_extracted_types_v =
+    has_duplicate_extracted_types<Extractor, Tuple>();
 
   /// Like `has_duplicate_extracted_types`, but on the element types directly.
   /// @see `has_duplicate_extracted_types`, `index_of_type`, `count_types`,
@@ -485,7 +431,6 @@ namespace util {
   /// Direct access to the value in `has_duplicate_types`.
   template <typename Tuple>
   constexpr bool has_duplicate_types_v = has_duplicate_types<Tuple>();
-
 
   /**
    * @brief Counts the elements of a tuple-like type containing a `Target` type.
@@ -516,22 +461,13 @@ namespace util {
    * with `int` as `value_type`. Likewise, `nDoubleContainers` will be `1`
    * and `nFloatContainers` will be `0`.
    */
-  template <
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
   struct count_extracted_types;
 
   /// Direct access to the value in `count_extracted_types`.
-  template <
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
-  constexpr unsigned int count_extracted_types_v
-    = count_extracted_types<Extractor, Target, Tuple>();
-
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
+  constexpr unsigned int count_extracted_types_v =
+    count_extracted_types<Extractor, Target, Tuple>();
 
   /// Counts the number of `Target` elements in the specified `Tuple`.
   /// @see `count_extracted_types`, `index_of_extracted_type_v`,
@@ -544,7 +480,6 @@ namespace util {
   constexpr unsigned int count_types_v = count_types<Target, Tuple>();
 
   /// @}
-
 
   /**
    * @defgroup MetaprogrammingTagged Tag-related traits
@@ -594,41 +529,44 @@ namespace util {
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    */
   template <typename T, typename Tag>
-  struct TaggedType: public T {
+  struct TaggedType : public T {
 
     // Forward all constructors
     template <typename... Args>
-    TaggedType(Args&&... args): T(std::forward<Args>(args)...) {}
+    TaggedType(Args&&... args) : T(std::forward<Args>(args)...)
+    {}
 
     using tag = Tag;       ///< Tag of this object.
     using tagged_type = T; ///< Type of the object which was tagged.
 
-  };  // struct TaggedType
-
+  }; // struct TaggedType
 
   /// Trait holding a type derived from `T`, tagged with `Tag`.
   /// @see `TaggedType`
   template <typename T, typename Tag>
-  struct add_tag { using type = TaggedType<std::remove_reference_t<T>, Tag>; };
+  struct add_tag {
+    using type = TaggedType<std::remove_reference_t<T>, Tag>;
+  };
 
   /// Direct access to the type contained in `add_tag`.
   /// @see `TaggedType`
   template <typename T, typename Tag>
   using add_tag_t = typename add_tag<T, Tag>::type;
 
-
   /// Trait holding the type contained in a `TaggedType` (or the type itself).
   template <typename Tagged>
-  struct remove_tag { using type = Tagged; };
+  struct remove_tag {
+    using type = Tagged;
+  };
 
   template <typename T, typename Tag>
-  struct remove_tag<TaggedType<T, Tag>>
-    { using type = typename TaggedType<T, Tag>::tagged_type; };
+  struct remove_tag<TaggedType<T, Tag>> {
+    using type = typename TaggedType<T, Tag>::tagged_type;
+  };
 
   /// Direct access to the type contained in `remove_tag`.
   template <typename Tagged>
   using remove_tag_t = typename remove_tag<Tagged>::type;
-
 
   /**
    * @brief "Converts" `obj` to an object with tag `Tag`.
@@ -643,7 +581,9 @@ namespace util {
    */
   template <typename Tag, typename T>
   auto makeTagged(T& obj) -> decltype(auto)
-    { return static_cast<add_tag_t<T, Tag>&>(obj); }
+  {
+    return static_cast<add_tag_t<T, Tag>&>(obj);
+  }
 
   /**
    * @brief "Converts" `obj` to an object with tag `Tag`.
@@ -658,7 +598,9 @@ namespace util {
    */
   template <typename Tag, typename T>
   auto makeTagged(T const& obj) -> decltype(auto)
-    { return static_cast<add_tag_t<T const, Tag> const&>(obj); }
+  {
+    return static_cast<add_tag_t<T const, Tag> const&>(obj);
+  }
 
   /**
    * @brief "Converts" `obj` to an object with tag `Tag`.
@@ -674,7 +616,9 @@ namespace util {
    */
   template <typename Tag, typename T>
   auto makeTagged(T const&& obj) -> decltype(auto)
-    { return add_tag_t<T, Tag>(obj); /* copy, since it's constant */ }
+  {
+    return add_tag_t<T, Tag>(obj); /* copy, since it's constant */
+  }
 
   /**
    * @brief "Converts" `obj` to an object with tag `Tag`.
@@ -691,33 +635,41 @@ namespace util {
    */
   template <typename Tag, typename T>
   auto makeTagged(T&& obj) -> decltype(auto)
-    { return add_tag_t<T, Tag>(std::move(obj)); }
+  {
+    return add_tag_t<T, Tag>(std::move(obj));
+  }
 
   /// "Converts" a tagged type back to its original type.
   template <typename Tagged>
   auto removeTag(Tagged& tagged) -> decltype(auto)
-    { return static_cast<remove_tag_t<Tagged>&>(tagged); }
+  {
+    return static_cast<remove_tag_t<Tagged>&>(tagged);
+  }
 
   /// "Converts" a tagged type back to its original type.
   template <typename Tagged>
   auto removeTag(Tagged const& tagged) -> decltype(auto)
-    { return static_cast<remove_tag_t<Tagged> const&>(tagged); }
+  {
+    return static_cast<remove_tag_t<Tagged> const&>(tagged);
+  }
 
   /// "Converts" a tagged type back to its original type.
   template <typename Tagged>
   auto removeTag(Tagged const&& tagged) -> decltype(auto)
-    { return static_cast<remove_tag_t<Tagged> const&&>(tagged); }
+  {
+    return static_cast<remove_tag_t<Tagged> const&&>(tagged);
+  }
 
   /// "Converts" a tagged type back to its original type.
   template <typename Tagged>
   auto removeTag(Tagged&& tagged) -> decltype(auto)
-    { return static_cast<remove_tag_t<Tagged>&&>(tagged); }
-
+  {
+    return static_cast<remove_tag_t<Tagged>&&>(tagged);
+  }
 
   /// Tag class parametrized by a sequence of numbers.
   template <std::size_t...>
   struct TagN {};
-
 
   /**
    * @brief Extracts the tag from a type.
@@ -728,7 +680,7 @@ namespace util {
    * If `Tagged` type has no `tag` type member, a compilation error will ensue.
    */
   template <typename Tagged>
-  struct TagExtractor: public details::TagExtractorImpl<Tagged> {};
+  struct TagExtractor : public details::TagExtractorImpl<Tagged> {};
 
   /// Trait holding the tag of `Tagged` as `type`.
   template <typename Tagged>
@@ -738,7 +690,6 @@ namespace util {
   template <typename Tagged>
   using tag_of_t = typename tag_of<Tagged>::type;
 
-
   /// Returns a tuple with all the tags from `SrcTuple`.
   template <typename SrcTuple>
   using extract_tags = extract_to_tuple_type<SrcTuple, TagExtractor>;
@@ -746,7 +697,6 @@ namespace util {
   /// Direct access to the type in `extract_tags`.
   template <typename SrcTuple>
   using extract_tags_t = typename extract_tags<SrcTuple>::type;
-
 
   /**
    * @brief Trait holding the index of the element of `Tuple` with tag `Tag`.
@@ -781,11 +731,9 @@ namespace util {
   template <typename Tag, typename Tuple>
   using index_of_tag = index_of_extracted_type<TagExtractor, Tag, Tuple>;
 
-
   /// Direct access to the value in `index_of_tag`.
   template <typename Tag, typename Tuple>
   constexpr std::size_t index_of_tag_v = index_of_tag<Tag, Tuple>();
-
 
   /**
    * @brief Trait holding the type of the element of `Tuple` with tag `Tag`.
@@ -819,11 +767,9 @@ namespace util {
   template <typename Tag, typename Tuple>
   using type_with_tag = type_with_extracted_type<TagExtractor, Tag, Tuple>;
 
-
   /// Direct access to the value in `type_with_tag`.
   template <typename Tag, typename Tuple>
   using type_with_tag_t = typename type_with_tag<Tag, Tuple>::type;
-
 
   /**
    * @brief Trait informing if there are elements in `Tuple` with tag `Tag`.
@@ -856,7 +802,6 @@ namespace util {
   template <typename Tag, typename Tuple>
   constexpr bool has_tag_v = has_tag<Tag, Tuple>();
 
-
   /**
    * @brief Trait counting the elements in `Tuple` with tag `Tag`.
    * @tparam Tag the sought tag
@@ -888,7 +833,6 @@ namespace util {
   template <typename Tag, typename Tuple>
   constexpr unsigned int count_tags_v = count_tags<Tag, Tuple>();
 
-
   /**
    * @brief Trait reporting if multiple elements in `Tuple` have the same tag.
    * @tparam Tuple the tuple-like type holding the elements to check
@@ -910,7 +854,6 @@ namespace util {
   /// Direct access to the value in `has_duplicate_tags`.
   template <typename Tuple>
   constexpr bool has_duplicate_tags_v = has_duplicate_tags<Tuple>();
-
 
   /**
    * @brief Returns the object with the specified tag.
@@ -938,13 +881,13 @@ namespace util {
    */
   template <typename Tag, typename Tuple>
   auto getByTag(Tuple const& data) -> decltype(auto)
-    { return getByExtractedType<TagExtractor, Tag>(data); }
-
+  {
+    return getByExtractedType<TagExtractor, Tag>(data);
+  }
 
   /// @}
 
 } // namespace util
-
 
 //------------------------------------------------------------------------------
 //---  Template implementation
@@ -963,26 +906,21 @@ namespace util {
     //--- General utilities
     //--------------------------------------------------------------------------
     template <typename Target, typename... T>
-    struct count_type_in_list_impl: public std::integral_constant<unsigned int, 0U>
-    {};
+    struct count_type_in_list_impl : public std::integral_constant<unsigned int, 0U> {};
 
     template <typename Target, typename First, typename... Others>
     struct count_type_in_list_impl<Target, First, Others...>
-      : public std::integral_constant
-          <unsigned int, count_type_in_list_impl<Target, Others...>::value>
-    {};
+      : public std::integral_constant<unsigned int,
+                                      count_type_in_list_impl<Target, Others...>::value> {};
 
     template <typename Target, typename... Others>
     struct count_type_in_list_impl<Target, Target, Others...>
-      : public std::integral_constant
-          <unsigned int, count_type_in_list_impl<Target, Others...>::value + 1>
-    {};
-
+      : public std::integral_constant<unsigned int,
+                                      count_type_in_list_impl<Target, Others...>::value + 1> {};
 
     //--------------------------------------------------------------------------
     //--- Courtesy traits
     //--------------------------------------------------------------------------
-
 
     //--------------------------------------------------------------------------
     //---  Tagging
@@ -990,19 +928,16 @@ namespace util {
 
     //--------------------------------------------------------------------------
 
-
     //--------------------------------------------------------------------------
     template <typename Target, typename... T>
-    struct type_is_in_impl: public std::false_type {};
+    struct type_is_in_impl : public std::false_type {};
 
     template <typename Target, typename First, typename... Others>
     struct type_is_in_impl<Target, First, Others...>
-      : public std::integral_constant<bool, type_is_in_impl<Target, Others...>::value>
-    {};
+      : public std::integral_constant<bool, type_is_in_impl<Target, Others...>::value> {};
 
     template <typename Target, typename... Others>
-    struct type_is_in_impl<Target, Target, Others...>: public std::true_type {};
-
+    struct type_is_in_impl<Target, Target, Others...> : public std::true_type {};
 
     //--------------------------------------------------------------------------
     /**
@@ -1023,84 +958,130 @@ namespace util {
      * for a typed template argument to be so complicate ().
      * This may change in the future,
      */
-    template <template <typename...> class TargetClass, template <typename T, typename...> class Extractor, typename Tuple, std::size_t I, std::size_t N, typename... T>
+    template <template <typename...> class TargetClass,
+              template <typename T, typename...>
+              class Extractor,
+              typename Tuple,
+              std::size_t I,
+              std::size_t N,
+              typename... T>
     struct extract_to_tuple_type_impl {
-      using type = typename extract_to_tuple_type_impl<TargetClass, Extractor, Tuple, (I + 1), N, T..., typename Extractor<std::tuple_element_t<I, Tuple>>::type>::type;
+      using type = typename extract_to_tuple_type_impl<
+        TargetClass,
+        Extractor,
+        Tuple,
+        (I + 1),
+        N,
+        T...,
+        typename Extractor<std::tuple_element_t<I, Tuple>>::type>::type;
     }; // extract_to_tuple_type_impl
 
     /// End-of-recursion specialization: packs all types already extracted into the target type.
-    template <template <typename...> class TargetClass, template <typename T, typename...> class Extractor, typename Tuple, std::size_t N, typename... T>
+    template <template <typename...> class TargetClass,
+              template <typename T, typename...>
+              class Extractor,
+              typename Tuple,
+              std::size_t N,
+              typename... T>
     struct extract_to_tuple_type_impl<TargetClass, Extractor, Tuple, N, N, T...> {
       using type = TargetClass<T...>;
     }; // extract_to_tuple_type_impl<N>
 
-
     //--------------------------------------------------------------------------
 
     // TODO try alternative simple implementation:
-    template <typename SrcTuple, template <typename T, typename...> class Extractor, template <typename...> class TargetClass, std::size_t... I>
+    template <typename SrcTuple,
+              template <typename T, typename...>
+              class Extractor,
+              template <typename...>
+              class TargetClass,
+              std::size_t... I>
     struct extract_to_tuple_type_impl_simple {
-      using type = TargetClass<
-        typename Extractor<std::tuple_element_t<I, SrcTuple>>::type...
-        >;
+      using type = TargetClass<typename Extractor<std::tuple_element_t<I, SrcTuple>>::type...>;
     }; // extract_to_tuple_type_impl<N>
-
 
     //--------------------------------------------------------------------------
 
     // Part of implementation for `index_of_extracted_type`.
-    template <template <typename T, typename...> class Extractor, typename Target, std::size_t I, typename Elem, typename Tuple>
+    template <template <typename T, typename...> class Extractor,
+              typename Target,
+              std::size_t I,
+              typename Elem,
+              typename Tuple>
     struct index_of_extracted_type_impl;
 
     // Part of implementation for `index_of_extracted_type`.
-    template <template <typename T, typename...> class Extractor, typename Target, std::size_t N, std::size_t I, typename Tuple>
+    template <template <typename T, typename...> class Extractor,
+              typename Target,
+              std::size_t N,
+              std::size_t I,
+              typename Tuple>
     struct index_of_extracted_type_checked
-      : public index_of_extracted_type_impl<Extractor, Target, I, typename Extractor<std::tuple_element_t<I, Tuple>>::type, Tuple>
-    {};
+      : public index_of_extracted_type_impl<
+          Extractor,
+          Target,
+          I,
+          typename Extractor<std::tuple_element_t<I, Tuple>>::type,
+          Tuple> {};
 
     // Part of implementation for `index_of_extracted_type`.
-    template<template <typename T, typename...> class Extractor, typename Target, std::size_t N, typename Tuple>
+    template <template <typename T, typename...> class Extractor,
+              typename Target,
+              std::size_t N,
+              typename Tuple>
     struct index_of_extracted_type_checked<Extractor, Target, N, N, Tuple>
-      : public std::integral_constant<std::size_t, N>
-    {};
-    template <template <typename T, typename...> class Extractor, typename Target, std::size_t I, typename Elem, typename Tuple>
+      : public std::integral_constant<std::size_t, N> {};
+    template <template <typename T, typename...> class Extractor,
+              typename Target,
+              std::size_t I,
+              typename Elem,
+              typename Tuple>
     struct index_of_extracted_type_impl
-      : public index_of_extracted_type_checked
-        <Extractor, Target, std::tuple_size<Tuple>::value, (I + 1), Tuple>
-      {};
+      : public index_of_extracted_type_checked<Extractor,
+                                               Target,
+                                               std::tuple_size<Tuple>::value,
+                                               (I + 1),
+                                               Tuple> {};
 
     // Part of implementation for `index_of_extracted_type`.
-    template <template <typename T, typename...> class Extractor, typename Target, std::size_t I, typename Tuple>
+    template <template <typename T, typename...> class Extractor,
+              typename Target,
+              std::size_t I,
+              typename Tuple>
     struct index_of_extracted_type_impl<Extractor, Target, I, Target, Tuple>
-      : public std::integral_constant<std::size_t, I>
-    {
+      : public std::integral_constant<std::size_t, I> {
       static constexpr std::size_t N = std::tuple_size<Tuple>();
       static_assert(I < N, "Internal logic error.");
     };
 
     // Part of implementation for `index_of_extracted_type`.
-    template <template <typename T, typename...> class Extractor, typename Target, std::size_t N, std::size_t After, typename Tuple>
+    template <template <typename T, typename...> class Extractor,
+              typename Target,
+              std::size_t N,
+              std::size_t After,
+              typename Tuple>
     struct index_of_extracted_type_checked_after
-      : public index_of_extracted_type_checked<Extractor, Target, N, (After + 1), Tuple>
-    {};
+      : public index_of_extracted_type_checked<Extractor, Target, N, (After + 1), Tuple> {};
 
     // Part of implementation for `index_of_extracted_type`.
-    template <template <typename T, typename...> class Extractor, typename Target, std::size_t N, typename Tuple>
+    template <template <typename T, typename...> class Extractor,
+              typename Target,
+              std::size_t N,
+              typename Tuple>
     struct index_of_extracted_type_checked_after<Extractor, Target, N, N, Tuple>
-      : public std::integral_constant<std::size_t, N>
-    {};
-
+      : public std::integral_constant<std::size_t, N> {};
 
     // Part of implementation for `index_of_extracted_type`.
     // This implementation relies on std::tuple_size and std::tuple_element;
     // an implementation assuming Tuple to be std::tuple would be more efficient...
     template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
     struct index_of_type_base
-      : public std::integral_constant<
-          std::size_t,
-          index_of_extracted_type_checked<Extractor, Target, std::tuple_size<Tuple>::value, 0U, Tuple>::value
-          >
-    {};
+      : public std::integral_constant<std::size_t,
+                                      index_of_extracted_type_checked<Extractor,
+                                                                      Target,
+                                                                      std::tuple_size<Tuple>::value,
+                                                                      0U,
+                                                                      Tuple>::value> {};
 
     // Part of implementation for `index_of_extracted_type`.
     template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
@@ -1108,49 +1089,42 @@ namespace util {
       static constexpr std::size_t N = std::tuple_size<Tuple>::value;
       static constexpr std::size_t value = index_of_type_base<Extractor, Target, Tuple>();
 
-      static_assert(value < N,
-        "The specified tuple does not have the sought type.");
-      static_assert(index_of_extracted_type_checked_after<Extractor, Target, N, value, Tuple>() >= N,
-        "The specified tuple has more than one element with the sought type.");
+      static_assert(value < N, "The specified tuple does not have the sought type.");
+      static_assert(index_of_extracted_type_checked_after<Extractor, Target, N, value, Tuple>() >=
+                      N,
+                    "The specified tuple has more than one element with the sought type.");
     }; // struct index_of_type_helper
-
 
     //--------------------------------------------------------------------------
     // Part of implementation of `has_duplicate_types`.
     template <typename Tuple, typename... T>
-    struct has_duplicate_types_impl: public std::false_type {};
+    struct has_duplicate_types_impl : public std::false_type {};
 
     template <typename Tuple, typename First, typename... Others>
     struct has_duplicate_types_impl<Tuple, First, Others...>
       : public std::integral_constant<bool,
-          (count_type_in_tuple<First, Tuple>::value > 1U)
-          || has_duplicate_types_impl<Tuple, Others...>::value
-          >
-    {};
-
+                                      (count_type_in_tuple<First, Tuple>::value > 1U) ||
+                                        has_duplicate_types_impl<Tuple, Others...>::value> {};
 
     // Part of implementation of `has_duplicate_types`.
     template <typename... T>
     struct has_duplicate_types_unwrapper<std::tuple<T...>>
-      : public has_duplicate_types_impl<std::tuple<T...>, T...>
-      {};
-
+      : public has_duplicate_types_impl<std::tuple<T...>, T...> {};
 
     //--------------------------------------------------------------------------
     // Part of implementation of `count_extracted_types` (might be exposed...).
     template <template <typename T, typename...> class Extractor, typename Target, typename... Tags>
     struct count_tags_in_list
-      : public count_type_in_list<typename Extractor<Target>::type, Tags...>
-    {};
+      : public count_type_in_list<typename Extractor<Target>::type, Tags...> {};
 
-    template <template <typename T, typename...> class Extractor, typename Target, typename... TagTuple>
+    template <template <typename T, typename...> class Extractor,
+              typename Target,
+              typename... TagTuple>
     struct count_tags_in_tuple;
 
     template <template <typename T, typename...> class Extractor, typename Target, typename... Tags>
     struct count_tags_in_tuple<Extractor, Target, std::tuple<Tags...>>
-      : public count_type_in_tuple<typename Extractor<Target>::type, Tags...>
-    {};
-
+      : public count_type_in_tuple<typename Extractor<Target>::type, Tags...> {};
 
     //--------------------------------------------------------------------------
     //--- Tag traits
@@ -1163,16 +1137,11 @@ namespace util {
     template <typename Tagged>
     struct TagExtractorImpl<
       Tagged,
-      std::enable_if_t
-        <always_true_type<typename std::remove_reference_t<Tagged>::tag>::value>
-      >
-    {
+      std::enable_if_t<always_true_type<typename std::remove_reference_t<Tagged>::tag>::value>> {
       using type = typename std::remove_reference_t<Tagged>::tag;
     };
 
-
     //--------------------------------------------------------------------------
-
 
   } // namespace details
 
@@ -1182,87 +1151,59 @@ namespace util {
   //--- General utilities
   //----------------------------------------------------------------------------
   template <typename Target, typename Tuple>
-  struct count_type_in_tuple
-    {
-      static_assert(always_false_type<Tuple>(),
-        "count_type_in_tuple requires an instance of std::tuple");
-    };
+  struct count_type_in_tuple {
+    static_assert(always_false_type<Tuple>(),
+                  "count_type_in_tuple requires an instance of std::tuple");
+  };
 
   // specialization: only works for std::tuples
   template <typename Target, typename... T>
-  struct count_type_in_tuple<Target, std::tuple<T...>>
-    : public count_type_in_list<Target, T...>
-  {};
-
+  struct count_type_in_tuple<Target, std::tuple<T...>> : public count_type_in_list<Target, T...> {};
 
   //----------------------------------------------------------------------------
   //--- Courtesy traits
   //----------------------------------------------------------------------------
-  template <
-    typename SrcTuple,
-    template <typename T, typename...> class Extractor,
-    template <typename...> class TargetClass /* = std::tuple */
-    >
+  template <typename SrcTuple,
+            template <typename T, typename...>
+            class Extractor,
+            template <typename...>
+            class TargetClass /* = std::tuple */
+            >
   struct extract_to_tuple_type {
-      private:
+  private:
     static constexpr std::size_t N = std::tuple_size<SrcTuple>();
-      public:
-    using type = typename details::extract_to_tuple_type_impl
-      <TargetClass, Extractor, SrcTuple, 0U, N>::type;
+
+  public:
+    using type =
+      typename details::extract_to_tuple_type_impl<TargetClass, Extractor, SrcTuple, 0U, N>::type;
   }; // extract_to_tuple_type
 
-
   //----------------------------------------------------------------------------
-  template<
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
   struct index_of_extracted_type
     : public std::integral_constant<
         std::size_t,
-        details::index_of_type_helper<Extractor, Target, Tuple>::value
-        >
-  {};
-
+        details::index_of_type_helper<Extractor, Target, Tuple>::value> {};
 
   //----------------------------------------------------------------------------
-  template<
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
   struct has_extracted_type
-    : public std::integral_constant<
-        bool,
-        (details::index_of_type_base<Extractor, Target, Tuple>::value < std::tuple_size<Tuple>::value)
-        >
-  {};
-
+    : public std::integral_constant<bool,
+                                    (details::index_of_type_base<Extractor, Target, Tuple>::value <
+                                     std::tuple_size<Tuple>::value)> {};
 
   //----------------------------------------------------------------------------
-  template <
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple
-    >
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
   struct count_extracted_types
-    : public count_type_in_tuple
-        <Target, extract_to_tuple_type_t<Tuple, Extractor>>
-  {};
-
+    : public count_type_in_tuple<Target, extract_to_tuple_type_t<Tuple, Extractor>> {};
 
   //----------------------------------------------------------------------------
-  template <
-    template <typename T, typename...> class Extractor,
-    typename Target,
-    typename Tuple>
+  template <template <typename T, typename...> class Extractor, typename Target, typename Tuple>
   auto getByExtractedType(Tuple const& data) -> decltype(auto)
-    {
-      using std::get;
-      return get<index_of_extracted_type_v<Extractor, Target, Tuple>>(data);
-    }
-
+  {
+    using std::get;
+    return get<index_of_extracted_type_v<Extractor, Target, Tuple>>(data);
+  }
 
   //----------------------------------------------------------------------------
   //--- Tagging utilities
@@ -1271,8 +1212,6 @@ namespace util {
   //----------------------------------------------------------------------------
 } // namespace util
 
-
 //------------------------------------------------------------------------------
-
 
 #endif // LARDATA_UTILITIES_TUPLELOOKUPBYTAG_H

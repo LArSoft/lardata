@@ -11,25 +11,29 @@
 #define LARDATA_ARTDATAHELPERS_HITCREATOR_H
 
 // LArSoft libraries
+#include "lardataobj/RawData/RawDigit.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/Wire.h"
-#include "lardataobj/RawData/RawDigit.h"
 
 // framework libraries
 #include "art/Framework/Core/ProducesCollector.h"
 #include "art/Persistency/Common/PtrMaker.h"
 #include "canvas/Persistency/Common/Assns.h"
 #include "canvas/Persistency/Common/Ptr.h"
-#include "canvas/Utilities/InputTag.h"
 #include "canvas/Utilities/Exception.h"
+#include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard library
+#include <string>
 #include <utility> // std::move()
 #include <vector>
-#include <string>
 
-namespace geo { struct WireID; }
-namespace raw { class RawDigit; }
+namespace geo {
+  struct WireID;
+}
+namespace raw {
+  class RawDigit;
+}
 namespace art {
   class ProducesCollector;
   class Event;
@@ -81,13 +85,13 @@ namespace recob {
    *      interest
    */
   class HitCreator {
-    public:
-      /// Type of one region of interest.
-      using RegionOfInterest_t = recob::Wire::RegionsOfInterest_t::datarange_t;
+  public:
+    /// Type of one region of interest.
+    using RegionOfInterest_t = recob::Wire::RegionsOfInterest_t::datarange_t;
 
-      // destructor, copy and move constructor and assignment as default
+    // destructor, copy and move constructor and assignment as default
 
-      /**
+    /**
        * @brief Constructor: extracts some information from raw digit.
        * @param digits a pointer to a `raw::RawDigit` (for channel, view, signal
        *        type)
@@ -111,27 +115,24 @@ namespace recob {
        * The information used from the raw digit is the channel ID; view and
        * signal type are obtained from geometry.
        */
-      HitCreator(
-        raw::RawDigit const& digits,
-        geo::WireID const&   wireID,
-        raw::TDCtick_t       start_tick,
-        raw::TDCtick_t       end_tick,
-        float                rms,
-        float                peak_time,
-        float                sigma_peak_time,
-        float                peak_amplitude,
-        float                sigma_peak_amplitude,
-        float                hit_integral,
-        float                hit_sigma_integral,
-        float                summedADC,
-        short int            multiplicity,
-        short int            local_index,
-        float                goodness_of_fit,
-        int                  dof
-        );
+    HitCreator(raw::RawDigit const& digits,
+               geo::WireID const& wireID,
+               raw::TDCtick_t start_tick,
+               raw::TDCtick_t end_tick,
+               float rms,
+               float peak_time,
+               float sigma_peak_time,
+               float peak_amplitude,
+               float sigma_peak_amplitude,
+               float hit_integral,
+               float hit_sigma_integral,
+               float summedADC,
+               short int multiplicity,
+               short int local_index,
+               float goodness_of_fit,
+               int dof);
 
-
-      /**
+    /**
        * @brief Constructor: extracts some information from wire.
        * @param wire a pointer to a `recob::Wire` (for channel, view, signal
        *        type)
@@ -155,27 +156,24 @@ namespace recob {
        * The information used from the wire are the channel ID and view;
        * the signal type is obtained from geometry.
        */
-      HitCreator(
-        recob::Wire const&   wire,
-        geo::WireID const&   wireID,
-        raw::TDCtick_t       start_tick,
-        raw::TDCtick_t       end_tick,
-        float                rms,
-        float                peak_time,
-        float                sigma_peak_time,
-        float                peak_amplitude,
-        float                sigma_peak_amplitude,
-        float                hit_integral,
-        float                hit_sigma_integral,
-        float                summedADC,
-        short int            multiplicity,
-        short int            local_index,
-        float                goodness_of_fit,
-        int                  dof
-        );
+    HitCreator(recob::Wire const& wire,
+               geo::WireID const& wireID,
+               raw::TDCtick_t start_tick,
+               raw::TDCtick_t end_tick,
+               float rms,
+               float peak_time,
+               float sigma_peak_time,
+               float peak_amplitude,
+               float sigma_peak_amplitude,
+               float hit_integral,
+               float hit_sigma_integral,
+               float summedADC,
+               short int multiplicity,
+               short int local_index,
+               float goodness_of_fit,
+               int dof);
 
-
-      /**
+    /**
        * @brief Constructor: computes sum of ADC from wire.
        * @param wire a pointer to a `recob::Wire` (for channel, view, signal
        *        type)
@@ -201,26 +199,23 @@ namespace recob {
        * of the wire signal between `start_tick` and `end_tick`
        * (the latter excluded).
        */
-      HitCreator(
-        recob::Wire const&   wire,
-        geo::WireID const&   wireID,
-        raw::TDCtick_t       start_tick,
-        raw::TDCtick_t       end_tick,
-        float                rms,
-        float                peak_time,
-        float                sigma_peak_time,
-        float                peak_amplitude,
-        float                sigma_peak_amplitude,
-        float                hit_integral,
-        float                hit_sigma_integral,
-        short int            multiplicity,
-        short int            local_index,
-        float                goodness_of_fit,
-        int                  dof
-        );
+    HitCreator(recob::Wire const& wire,
+               geo::WireID const& wireID,
+               raw::TDCtick_t start_tick,
+               raw::TDCtick_t end_tick,
+               float rms,
+               float peak_time,
+               float sigma_peak_time,
+               float peak_amplitude,
+               float sigma_peak_amplitude,
+               float hit_integral,
+               float hit_sigma_integral,
+               short int multiplicity,
+               short int local_index,
+               float goodness_of_fit,
+               int dof);
 
-
-      /**
+    /**
        * @brief Constructor: uses region of interest specified by index.
        * @param wire a pointer to a `recob::Wire` (for channel, view, signal
        *        type)
@@ -246,26 +241,23 @@ namespace recob {
        *
        * Signal start and end ticks are extracted from the region of interest.
        */
-      HitCreator(
-        recob::Wire const&        wire,
-        geo::WireID const&        wireID,
-        float                     rms,
-        float                     peak_time,
-        float                     sigma_peak_time,
-        float                     peak_amplitude,
-        float                     sigma_peak_amplitude,
-        float                     hit_integral,
-        float                     hit_sigma_integral,
-        float                     summedADC,
-        short int                 multiplicity,
-        short int                 local_index,
-        float                     goodness_of_fit,
-        int                       dof,
-        RegionOfInterest_t const& signal
-        );
+    HitCreator(recob::Wire const& wire,
+               geo::WireID const& wireID,
+               float rms,
+               float peak_time,
+               float sigma_peak_time,
+               float peak_amplitude,
+               float sigma_peak_amplitude,
+               float hit_integral,
+               float hit_sigma_integral,
+               float summedADC,
+               short int multiplicity,
+               short int local_index,
+               float goodness_of_fit,
+               int dof,
+               RegionOfInterest_t const& signal);
 
-
-      /**
+    /**
        * @brief Constructor: uses region of interest specified by index.
        * @param wire a pointer to a `recob::Wire` (for channel, view, signal
        *        type)
@@ -291,41 +283,36 @@ namespace recob {
        *
        * Signal start and end ticks are extracted from the region of interest.
        */
-      HitCreator(
-        recob::Wire const& wire,
-        geo::WireID const& wireID,
-        float              rms,
-        float              peak_time,
-        float              sigma_peak_time,
-        float              peak_amplitude,
-        float              sigma_peak_amplitude,
-        float              hit_integral,
-        float              hit_sigma_integral,
-        float              summedADC,
-        short int          multiplicity,
-        short int          local_index,
-        float              goodness_of_fit,
-        int                dof,
-        size_t             iSignalRoI
-        );
+    HitCreator(recob::Wire const& wire,
+               geo::WireID const& wireID,
+               float rms,
+               float peak_time,
+               float sigma_peak_time,
+               float peak_amplitude,
+               float sigma_peak_amplitude,
+               float hit_integral,
+               float hit_sigma_integral,
+               float summedADC,
+               short int multiplicity,
+               short int local_index,
+               float goodness_of_fit,
+               int dof,
+               size_t iSignalRoI);
 
-
-      /**
+    /**
        * @brief Constructor: copies from an existing hit.
        * @param from the original hit
        */
-      HitCreator(recob::Hit const& from);
+    HitCreator(recob::Hit const& from);
 
-
-      /**
+    /**
        * @brief Constructor: copies from an existing hit, changing wire ID.
        * @param from the original hit
        * @param wireID ID of the new wire the hit is on
        */
-      HitCreator(recob::Hit const& from, geo::WireID const& wireID);
+    HitCreator(recob::Hit const& from, geo::WireID const& wireID);
 
-
-      /**
+    /**
        * @brief Prepares the constructed hit to be moved away.
        * @return a right-value reference to the constructed hit
        *
@@ -340,10 +327,9 @@ namespace recob {
        * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
        *
        */
-      recob::Hit&& move() { return std::move(hit); }
+    recob::Hit&& move() { return std::move(hit); }
 
-
-      /**
+    /**
        * @brief Returns the constructed wire
        * @return a constant reference to the constructed wire
        *
@@ -358,15 +344,12 @@ namespace recob {
        * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
        *
        */
-      recob::Hit const& copy() const { return hit; }
+    recob::Hit const& copy() const { return hit; }
 
-    protected:
-
-      recob::Hit hit; ///< Local instance of the hit being constructed.
+  protected:
+    recob::Hit hit; ///< Local instance of the hit being constructed.
 
   }; // class HitCreator
-
-
 
   /** **************************************************************************
    * @brief Base class handling a collection of hits and its associations.
@@ -399,13 +382,11 @@ namespace recob {
    */
   class HitAndAssociationsWriterBase {
   public:
-
     // no public constructor: use one of the derived classes!
     // destructor, copy and move constructors and assignment are default
 
     /// Returns the number of hits currently in the collection.
-    size_t size() const { return hits? hits->size(): 0; }
-
+    size_t size() const { return hits ? hits->size() : 0; }
 
     /**
      * @brief Moves the data into the  event.
@@ -427,10 +408,8 @@ namespace recob {
      */
     void put_into();
 
-
     /// Returns a read-only reference to the current list of hits.
     std::vector<recob::Hit> const& peek() const { return *hits; }
-
 
     /**
      * @brief Declares the hit products we are going to fill.
@@ -451,10 +430,10 @@ namespace recob {
      * All the data products (hit collection and associations) will have the
      * specified product instance name.
      */
-    static void declare_products(
-      art::ProducesCollector& collector, std::string instance_name = "",
-      bool doWireAssns = true, bool doRawDigitAssns = true
-      );
+    static void declare_products(art::ProducesCollector& collector,
+                                 std::string instance_name = "",
+                                 bool doWireAssns = true,
+                                 bool doRawDigitAssns = true);
 
   protected:
     using HitPtr_t = art::Ptr<recob::Hit>; ///< Type of art pointer to Hit.
@@ -472,7 +451,6 @@ namespace recob {
 
     art::PtrMaker<recob::Hit> hitPtrMaker; ///< Tool to create hit pointers,
 
-
     /**
      * @brief Constructor: sets instance name and whether to build associations.
      * @param event the event the products are going to be put into
@@ -483,20 +461,15 @@ namespace recob {
      * All the data products (hit collection and associations) will have the
      * specified product instance name.
      */
-    HitAndAssociationsWriterBase(
-      art::Event& event,
-      std::string instance_name,
-      bool doWireAssns, bool doRawDigitAssns
-      );
-
+    HitAndAssociationsWriterBase(art::Event& event,
+                                 std::string instance_name,
+                                 bool doWireAssns,
+                                 bool doRawDigitAssns);
 
     /// Creates an art pointer to the hit with the specified index.
     HitPtr_t CreatePtr(size_t index) const { return hitPtrMaker(index); }
 
   }; // class HitAndAssociationsWriterBase
-
-
-
 
   /** **************************************************************************
    * @brief A class handling a collection of hits and its associations.
@@ -505,9 +478,8 @@ namespace recob {
    * wires and one for its association with raw digits, one can push hits into
    * this object, and then move it into the event.
    */
-  class HitCollectionCreator: public HitAndAssociationsWriterBase {
+  class HitCollectionCreator : public HitAndAssociationsWriterBase {
   public:
-
     /// @name Constructors
     /// @{
     /**
@@ -520,12 +492,10 @@ namespace recob {
      * All the data products (hit collection and associations) will have the
      * specified product instance name.
      */
-    HitCollectionCreator(
-      art::Event& event,
-      std::string instance_name = "",
-      bool doWireAssns = true, bool doRawDigitAssns = true
-      );
-
+    HitCollectionCreator(art::Event& event,
+                         std::string instance_name = "",
+                         bool doWireAssns = true,
+                         bool doRawDigitAssns = true);
 
     /**
      * @brief Constructor: no product instance name.
@@ -533,17 +503,13 @@ namespace recob {
      * @param doWireAssns whether to enable associations to wires
      * @param doRawDigitAssns whether to enable associations to raw digits
      */
-    HitCollectionCreator(
-      art::Event& event,
-      bool doWireAssns, bool doRawDigitAssns
-      ):
-      HitCollectionCreator(event, "", doWireAssns, doRawDigitAssns)
-      {}
+    HitCollectionCreator(art::Event& event, bool doWireAssns, bool doRawDigitAssns)
+      : HitCollectionCreator(event, "", doWireAssns, doRawDigitAssns)
+    {}
 
     /// @}
 
     // destructor, copy and move constructors and assignment are default
-
 
     /// @name Addition of hits
     /// @{
@@ -556,12 +522,9 @@ namespace recob {
      * After this call, hit will be invalid.
      * If a art pointer is not valid, that association will not be stored.
      */
-    void emplace_back(
-      recob::Hit&& hit,
-      art::Ptr<recob::Wire> const& wire = art::Ptr<recob::Wire>(),
-      art::Ptr<raw::RawDigit> const& digits = art::Ptr<raw::RawDigit>()
-      );
-
+    void emplace_back(recob::Hit&& hit,
+                      art::Ptr<recob::Wire> const& wire = art::Ptr<recob::Wire>(),
+                      art::Ptr<raw::RawDigit> const& digits = art::Ptr<raw::RawDigit>());
 
     /**
      * @brief Adds the specified hit to the data collection.
@@ -571,12 +534,9 @@ namespace recob {
      *
      * If a art pointer is not valid, that association will not be stored.
      */
-    void emplace_back(
-      recob::Hit const& hit,
-      art::Ptr<recob::Wire> const& wire = art::Ptr<recob::Wire>(),
-      art::Ptr<raw::RawDigit> const& digits = art::Ptr<raw::RawDigit>()
-      );
-
+    void emplace_back(recob::Hit const& hit,
+                      art::Ptr<recob::Wire> const& wire = art::Ptr<recob::Wire>(),
+                      art::Ptr<raw::RawDigit> const& digits = art::Ptr<raw::RawDigit>());
 
     /**
      * @brief Adds the specified hit to the data collection.
@@ -587,13 +547,12 @@ namespace recob {
      * After this call, the hit creator will be empty.
      * If a art pointer is not valid, that association will not be stored.
      */
-    void emplace_back(
-      HitCreator&& hit,
-      art::Ptr<recob::Wire> const& wire = art::Ptr<recob::Wire>(),
-      art::Ptr<raw::RawDigit> const& digits = art::Ptr<raw::RawDigit>()
-      )
-      { emplace_back(hit.move(), wire, digits); }
-
+    void emplace_back(HitCreator&& hit,
+                      art::Ptr<recob::Wire> const& wire = art::Ptr<recob::Wire>(),
+                      art::Ptr<raw::RawDigit> const& digits = art::Ptr<raw::RawDigit>())
+    {
+      emplace_back(hit.move(), wire, digits);
+    }
 
     /**
      * @brief Adds the specified hit to the data collection.
@@ -604,8 +563,9 @@ namespace recob {
      * If the digit pointer is not valid, its association will not be stored.
      */
     void emplace_back(recob::Hit&& hit, art::Ptr<raw::RawDigit> const& digits)
-      { emplace_back(std::move(hit), art::Ptr<recob::Wire>(), digits); }
-
+    {
+      emplace_back(std::move(hit), art::Ptr<recob::Wire>(), digits);
+    }
 
     /**
      * @brief Adds the specified hit to the data collection.
@@ -616,8 +576,9 @@ namespace recob {
      * If the digit pointer is not valid, its association will not be stored.
      */
     void emplace_back(HitCreator&& hit, art::Ptr<raw::RawDigit> const& digits)
-      { emplace_back(std::move(hit), art::Ptr<recob::Wire>(), digits); }
-
+    {
+      emplace_back(std::move(hit), art::Ptr<recob::Wire>(), digits);
+    }
 
     /**
      * @brief Adds the specified hit to the data collection.
@@ -626,19 +587,20 @@ namespace recob {
      *
      * If the digit pointer is not valid, its association will not be stored.
      */
-    void emplace_back
-      (HitCreator const& hit, art::Ptr<raw::RawDigit> const& digits)
-      { emplace_back(std::move(hit.copy()), art::Ptr<recob::Wire>(), digits); }
+    void emplace_back(HitCreator const& hit, art::Ptr<raw::RawDigit> const& digits)
+    {
+      emplace_back(std::move(hit.copy()), art::Ptr<recob::Wire>(), digits);
+    }
     /// @}
-
 
     /// Returns the number of hits currently in the collection.
     size_t size() const { return hits->size(); }
 
-
     /// Prepares the collection to host at least `new_size` hits.
-    void reserve(size_t new_size) { if (hits) hits->reserve(new_size); }
-
+    void reserve(size_t new_size)
+    {
+      if (hits) hits->reserve(new_size);
+    }
 
     /**
      * @brief Moves the data into an event.
@@ -660,27 +622,23 @@ namespace recob {
      */
     void put_into();
 
-
     /// Returns a read-only reference to the current list of hits.
     std::vector<recob::Hit> const& peek() const { return *hits; }
-
 
   protected:
     using HitPtr_t = HitAndAssociationsWriterBase::HitPtr_t;
 
     /// Creates an art pointer to the hit with the last index.
     HitPtr_t CreatePtrToLastHit() const
-      { return hits->empty()? HitPtr_t(): CreatePtr(hits->size() - 1); }
+    {
+      return hits->empty() ? HitPtr_t() : CreatePtr(hits->size() - 1);
+    }
 
     /// Creates associations between the last hit and the specified pointers.
-    void CreateAssociationsToLastHit(
-      art::Ptr<recob::Wire> const& wire, art::Ptr<raw::RawDigit> const& digits
-      );
+    void CreateAssociationsToLastHit(art::Ptr<recob::Wire> const& wire,
+                                     art::Ptr<raw::RawDigit> const& digits);
 
   }; // class HitCollectionCreator
-
-
-
 
   /** **************************************************************************
    * @brief A class handling a collection of hits and its associations.
@@ -689,7 +647,7 @@ namespace recob {
    * simply want the hits associated to the wire and digit with the same
    * channel.
    */
-  class HitCollectionAssociator: public HitAndAssociationsWriterBase {
+  class HitCollectionAssociator : public HitAndAssociationsWriterBase {
   public:
     /// @name Constructors
     /// @{
@@ -705,12 +663,10 @@ namespace recob {
      *
      * If a label is empty, the corresponding association will not be produced.
      */
-    HitCollectionAssociator(
-      art::Event& event,
-      std::string instance_name,
-      art::InputTag const& WireModuleLabel,
-      art::InputTag const& RawDigitModuleLabel
-      );
+    HitCollectionAssociator(art::Event& event,
+                            std::string instance_name,
+                            art::InputTag const& WireModuleLabel,
+                            art::InputTag const& RawDigitModuleLabel);
 
     /**
      * @brief Constructor: sets instance name and whether to build associations.
@@ -723,14 +679,11 @@ namespace recob {
      *
      * If a label is empty, the corresponding association will not be produced.
      */
-    HitCollectionAssociator(
-      art::Event& event,
-      art::InputTag const& WireModuleLabel,
-      art::InputTag const& RawDigitModuleLabel
-      ):
-      HitCollectionAssociator
-        (event, "", WireModuleLabel, RawDigitModuleLabel)
-      {}
+    HitCollectionAssociator(art::Event& event,
+                            art::InputTag const& WireModuleLabel,
+                            art::InputTag const& RawDigitModuleLabel)
+      : HitCollectionAssociator(event, "", WireModuleLabel, RawDigitModuleLabel)
+    {}
 
     /**
      * @brief Constructor: sets instance name and whether to build associations.
@@ -745,12 +698,10 @@ namespace recob {
      * The raw digit association is built out of their existing associations
      * with wires, rather than by directly using the raw digits data product.
      */
-    HitCollectionAssociator(
-      art::Event& event,
-      std::string instance_name,
-      art::InputTag const& WireModuleLabel,
-      bool doRawDigitAssns
-      );
+    HitCollectionAssociator(art::Event& event,
+                            std::string instance_name,
+                            art::InputTag const& WireModuleLabel,
+                            bool doRawDigitAssns);
 
     /**
      * @brief Constructor: sets instance name and whether to build associations.
@@ -764,14 +715,11 @@ namespace recob {
      * The raw digit association is built out of their existing associations
      * with wires, rather than by directly using the raw digits data product.
      */
-    HitCollectionAssociator(
-      art::Event& event,
-      art::InputTag const& WireModuleLabel,
-      bool doRawDigitAssns
-      ):
-      HitCollectionAssociator
-        (event, "", WireModuleLabel, doRawDigitAssns)
-      {}
+    HitCollectionAssociator(art::Event& event,
+                            art::InputTag const& WireModuleLabel,
+                            bool doRawDigitAssns)
+      : HitCollectionAssociator(event, "", WireModuleLabel, doRawDigitAssns)
+    {}
 
     /// @}
 
@@ -787,7 +735,6 @@ namespace recob {
      * If there were previous hits in the object, they are lost.
      */
     void use_hits(std::unique_ptr<std::vector<recob::Hit>>&& srchits);
-
 
     /**
      * @brief Moves the data into the event.
@@ -808,7 +755,6 @@ namespace recob {
      * After the move, the collections in this object are empty.
      */
     void put_into();
-
 
   protected:
     /// Label of the collection of wires to associate.
@@ -824,7 +770,6 @@ namespace recob {
 
   }; // class HitCollectionAssociator
 
-
   /** **************************************************************************
    * @brief A class handling a collection of hits and its associations.
    *
@@ -839,9 +784,8 @@ namespace recob {
    * on the same channel are associated to different wires or raw digits, an
    * exception is thrown.
    */
-  class HitRefinerAssociator: public HitAndAssociationsWriterBase {
+  class HitRefinerAssociator : public HitAndAssociationsWriterBase {
   public:
-
     /// @name Constructors
     /// @{
     /**
@@ -856,10 +800,10 @@ namespace recob {
      * specified product instance name.
      */
     HitRefinerAssociator(art::Event& event,
-      art::InputTag const& HitModuleLabel,
-      std::string instance_name = "",
-      bool doWireAssns = true, bool doRawDigitAssns = true
-      );
+                         art::InputTag const& HitModuleLabel,
+                         std::string instance_name = "",
+                         bool doWireAssns = true,
+                         bool doRawDigitAssns = true);
 
     /**
      * @brief Constructor: sets instance name and whether to build associations.
@@ -872,12 +816,11 @@ namespace recob {
      * empty product instance name.
      */
     HitRefinerAssociator(art::Event& event,
-      art::InputTag const& HitModuleLabel,
-      bool doWireAssns, bool doRawDigitAssns = true
-      ):
-      HitRefinerAssociator
-        (event, HitModuleLabel, "", doWireAssns, doRawDigitAssns)
-      {}
+                         art::InputTag const& HitModuleLabel,
+                         bool doWireAssns,
+                         bool doRawDigitAssns = true)
+      : HitRefinerAssociator(event, HitModuleLabel, "", doWireAssns, doRawDigitAssns)
+    {}
 
     /// @}
 
@@ -893,7 +836,6 @@ namespace recob {
      * If there were previous hits in the object, they are lost.
      */
     void use_hits(std::unique_ptr<std::vector<recob::Hit>>&& srchits);
-
 
     /**
      * @brief Moves the data into the event.
@@ -916,7 +858,6 @@ namespace recob {
      */
     void put_into();
 
-
   protected:
     art::InputTag hits_label; ///< Label of the collection of hits.
 
@@ -927,7 +868,6 @@ namespace recob {
     void prepare_associations() { prepare_associations(*hits); }
 
   }; // class HitRefinerAssociator
-
 
   // ---------------------------------------------------------------------------
   /**
@@ -997,10 +937,10 @@ namespace recob {
      *
      * This constructor calls `declareProducts()`.
      */
-    HitAndAssociationsWriterManager(
-      art::ProducesCollector& collector, std::string instanceName = "",
-      bool doWireAssns = true, bool doRawDigitAssns = true
-      );
+    HitAndAssociationsWriterManager(art::ProducesCollector& collector,
+                                    std::string instanceName = "",
+                                    bool doWireAssns = true,
+                                    bool doRawDigitAssns = true);
 
     /**
      * @brief Declares the hit products we are going to fill.
@@ -1020,14 +960,13 @@ namespace recob {
      * All the data products (hit collection and associations) will have the
      * specified product instance name.
      */
-    void declareProducts(
-      art::ProducesCollector& collector, std::string instanceName = "",
-      bool doWireAssns = true, bool doRawDigitAssns = true
-      );
+    void declareProducts(art::ProducesCollector& collector,
+                         std::string instanceName = "",
+                         bool doWireAssns = true,
+                         bool doRawDigitAssns = true);
 
     /// Returns a new writer already configured.
     Writer_t collectionWriter(art::Event& event) const;
-
 
     /// Returns the configured product instance name.
     std::string instanceName() const { return prodInstance; }
@@ -1046,14 +985,12 @@ namespace recob {
     /// Whether we produce hit-wire associations.
     bool hasWireAssns = true;
 
-
   }; // class HitAndAssociationsWriterManager
 
   /// A manager for `recob::HitCollectionCreator` writer class.
   using HitCollectionCreatorManager = HitAndAssociationsWriterManager<HitCollectionCreator>;
 
 } // namespace recob
-
 
 //------------------------------------------------------------------------------
 //---  template implementation
@@ -1064,25 +1001,24 @@ namespace recob {
 //--- recob::HitAndAssociationsWriterManager
 //---
 template <typename Writer>
-recob::HitAndAssociationsWriterManager<Writer>
-  ::HitAndAssociationsWriterManager
-  (
-    art::ProducesCollector& collector, std::string instanceName /* = "" */,
-    bool doWireAssns /* = true */, bool doRawDigitAssns /* = true */
-  )
+recob::HitAndAssociationsWriterManager<Writer>::HitAndAssociationsWriterManager(
+  art::ProducesCollector& collector,
+  std::string instanceName /* = "" */,
+  bool doWireAssns /* = true */,
+  bool doRawDigitAssns /* = true */
+)
 {
-  declareProducts
-    (collector, instanceName, doWireAssns, doRawDigitAssns);
+  declareProducts(collector, instanceName, doWireAssns, doRawDigitAssns);
 } // recob::HitAndAssociationsWriterManager::HitAndAssociationsWriterManager()
-
 
 //------------------------------------------------------------------------------
 template <typename Writer>
-void recob::HitAndAssociationsWriterManager<Writer>::declareProducts
-  (
-    art::ProducesCollector& collector, std::string instanceName /* = "" */,
-    bool doWireAssns /* = true */, bool doRawDigitAssns /* = true */
-  )
+void recob::HitAndAssociationsWriterManager<Writer>::declareProducts(
+  art::ProducesCollector& collector,
+  std::string instanceName /* = "" */,
+  bool doWireAssns /* = true */,
+  bool doRawDigitAssns /* = true */
+)
 {
   if (collector_p) {
     // this means you already called to declaredProducts()
@@ -1094,28 +1030,24 @@ void recob::HitAndAssociationsWriterManager<Writer>::declareProducts
   prodInstance = instanceName;
   hasWireAssns = doWireAssns;
   hasRawDigitAssns = doRawDigitAssns;
-  HitAndAssociationsWriterBase::declare_products
-    (collector, prodInstance, hasWireAssns, hasRawDigitAssns);
+  HitAndAssociationsWriterBase::declare_products(
+    collector, prodInstance, hasWireAssns, hasRawDigitAssns);
 } // recob::HitAndAssociationsWriterManager::declareProducts()
-
 
 //------------------------------------------------------------------------------
 template <typename Writer>
 typename recob::HitAndAssociationsWriterManager<Writer>::Writer_t
-recob::HitAndAssociationsWriterManager<Writer>::collectionWriter
-  (art::Event& event) const
+recob::HitAndAssociationsWriterManager<Writer>::collectionWriter(art::Event& event) const
 {
   if (!collector_p) {
     // this means you forgot to code a call to declaredProducts()
     // or used the wrong constructor:
     throw art::Exception(art::errors::LogicError)
       << "HitAndAssociationsWriter<>::collectionWriter() called"
-      " before products are declared.";
+         " before products are declared.";
   }
-  return
-    { event, prodInstance, hasWireAssns, hasRawDigitAssns };
+  return {event, prodInstance, hasWireAssns, hasRawDigitAssns};
 } // recob::HitAndAssociationsWriterManager::collectionWriter()
-
 
 //------------------------------------------------------------------------------
 

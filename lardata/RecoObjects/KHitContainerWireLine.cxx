@@ -28,10 +28,9 @@ namespace trkf {
   /// This method converts the hits in the input collection into
   /// KHitWireLine objects and inserts them into the base class.
   ///
-  void
-  KHitContainerWireLine::fill(const detinfo::DetectorPropertiesData& detProp,
-                              const art::PtrVector<recob::Hit>& hits,
-                              int only_plane)
+  void KHitContainerWireLine::fill(const detinfo::DetectorPropertiesData& detProp,
+                                   const art::PtrVector<recob::Hit>& hits,
+                                   int only_plane)
   {
     // Get services.
 

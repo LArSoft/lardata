@@ -47,13 +47,12 @@ namespace trkf {
   ///
   /// Returned value: propagation distance + success flag.
   ///
-  std::optional<double>
-  PropYZPlane::short_vec_prop(KTrack& trk,
-                              const std::shared_ptr<const Surface>& psurf,
-                              Propagator::PropDirection dir,
-                              bool doDedx,
-                              TrackMatrix* prop_matrix,
-                              TrackError* noise_matrix) const
+  std::optional<double> PropYZPlane::short_vec_prop(KTrack& trk,
+                                                    const std::shared_ptr<const Surface>& psurf,
+                                                    Propagator::PropDirection dir,
+                                                    bool doDedx,
+                                                    TrackMatrix* prop_matrix,
+                                                    TrackError* noise_matrix) const
   {
     // Set the default return value to be unitialized with value 0.
 
@@ -255,10 +254,9 @@ namespace trkf {
   ///
   /// Propagation distance is always zero after successful propagation.
   ///
-  std::optional<double>
-  PropYZPlane::origin_vec_prop(KTrack& trk,
-                               const std::shared_ptr<const Surface>& porient,
-                               TrackMatrix* prop_matrix) const
+  std::optional<double> PropYZPlane::origin_vec_prop(KTrack& trk,
+                                                     const std::shared_ptr<const Surface>& porient,
+                                                     TrackMatrix* prop_matrix) const
   {
     // Set the default return value to be unitialized with value 0.
 
@@ -356,12 +354,11 @@ namespace trkf {
 
   // Transform track parameters from SurfYZLine to SurfYZPlane.
 
-  bool
-  PropYZPlane::transformYZLine(double phi1,
-                               double phi2,
-                               TrackVector& vec,
-                               Surface::TrackDirection& dir,
-                               TrackMatrix* prop_matrix) const
+  bool PropYZPlane::transformYZLine(double phi1,
+                                    double phi2,
+                                    TrackVector& vec,
+                                    Surface::TrackDirection& dir,
+                                    TrackMatrix* prop_matrix) const
   {
     // Calculate surface transcendental functions.
 
@@ -548,12 +545,11 @@ namespace trkf {
 
   // Transform track parameters from SurfYZPlane to SurfYZPlane.
 
-  bool
-  PropYZPlane::transformYZPlane(double phi1,
-                                double phi2,
-                                TrackVector& vec,
-                                Surface::TrackDirection& dir,
-                                TrackMatrix* prop_matrix) const
+  bool PropYZPlane::transformYZPlane(double phi1,
+                                     double phi2,
+                                     TrackVector& vec,
+                                     Surface::TrackDirection& dir,
+                                     TrackMatrix* prop_matrix) const
   {
     // Calculate transcendental functions.
 
@@ -644,13 +640,12 @@ namespace trkf {
 
   // Transform track parameters from SurfXYZPlane to SurfYZPlane.
 
-  bool
-  PropYZPlane::transformXYZPlane(double theta1,
-                                 double phi1,
-                                 double phi2,
-                                 TrackVector& vec,
-                                 Surface::TrackDirection& dir,
-                                 TrackMatrix* prop_matrix) const
+  bool PropYZPlane::transformXYZPlane(double theta1,
+                                      double phi1,
+                                      double phi2,
+                                      TrackVector& vec,
+                                      Surface::TrackDirection& dir,
+                                      TrackMatrix* prop_matrix) const
   {
     // Calculate transcendental functions.
 

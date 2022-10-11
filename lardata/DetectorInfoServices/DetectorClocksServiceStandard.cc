@@ -9,19 +9,19 @@
 // Must precede include of art_root_io/detail/readMetadata.h
 #include "TTree.h"
 
-#include "art_root_io/Inputfwd.h"
-#include "art_root_io/RootDB/SQLite3Wrapper.h"
-#include "art_root_io/detail/readMetadata.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "art/Persistency/Provenance/ScheduleContext.h"
+#include "art_root_io/Inputfwd.h"
+#include "art_root_io/RootDB/SQLite3Wrapper.h"
+#include "art_root_io/detail/readMetadata.h"
 #include "canvas/Persistency/Provenance/FileFormatVersion.h"
 #include "canvas/Persistency/Provenance/ParameterSetMap.h"
 #include "canvas/Persistency/Provenance/rootNames.h"
-#include "fhiclcpp/ParameterSet.h"
 #include "cetlib_except/exception.h"
+#include "fhiclcpp/ParameterSet.h"
 
 #include <bitset>
 #include <memory>
@@ -40,15 +40,13 @@ namespace detinfo {
     reg.sPreBeginRun.watch(this, &DetectorClocksServiceStandard::preBeginRun);
   }
 
-  void
-  DetectorClocksServiceStandard::preBeginRun(art::Run const& run)
+  void DetectorClocksServiceStandard::preBeginRun(art::Run const& run)
   {
     // This callback probably is not necessary.
     fClocks.ApplyParams();
   }
 
-  void
-  DetectorClocksServiceStandard::postOpenFile(string const& filename)
+  void DetectorClocksServiceStandard::postOpenFile(string const& filename)
   {
     if (!fInheritClockConfig) { return; }
     if (filename.empty()) { return; }
@@ -123,12 +121,10 @@ namespace detinfo {
     }
     fClocks.ApplyParams();
   } // DetectorClocksServiceStandard::postOpenFile()
-  
-  
-  DetectorClocksData DetectorClocksServiceStandard::DataFor
-    (art::Event const& e) const
-    { return detinfo::detectorClocksStandardDataFor(fClocks, e); }
-  
+
+  DetectorClocksData DetectorClocksServiceStandard::DataFor(art::Event const& e) const
+  {
+    return detinfo::detectorClocksStandardDataFor(fClocks, e);
+  }
 
 } // namespace detinfo
-

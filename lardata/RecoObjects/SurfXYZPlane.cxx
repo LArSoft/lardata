@@ -8,10 +8,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////
 
-#include <cmath>
 #include "lardata/RecoObjects/SurfXYZPlane.h"
-#include "cetlib_except/exception.h"
 #include "TVector2.h"
+#include "cetlib_except/exception.h"
+#include <cmath>
 
 namespace trkf {
 
@@ -22,13 +22,7 @@ namespace trkf {
   double SurfXYZPlane::fSepTolerance = 1.e-6;
 
   /// Default constructor.
-  SurfXYZPlane::SurfXYZPlane() :
-    fX0(0.),
-    fY0(0.),
-    fZ0(0.),
-    fPhi(0.),
-    fTheta(0.)
-  {}
+  SurfXYZPlane::SurfXYZPlane() : fX0(0.), fY0(0.), fZ0(0.), fPhi(0.), fTheta(0.) {}
 
   /// Initializing constructor.
   ///
@@ -38,12 +32,8 @@ namespace trkf {
   /// phi - Rotation angle about x-axis (wire angle).
   /// theta - Rotation angle about y'-axis (projected Lorentz angle).
   ///
-  SurfXYZPlane::SurfXYZPlane(double x0, double y0, double z0, double phi, double theta) :
-    fX0(x0),
-    fY0(y0),
-    fZ0(z0),
-    fPhi(phi),
-    fTheta(theta)
+  SurfXYZPlane::SurfXYZPlane(double x0, double y0, double z0, double phi, double theta)
+    : fX0(x0), fY0(y0), fZ0(z0), fPhi(phi), fTheta(theta)
   {}
 
   /// Initializing constructor (normal vector).
@@ -53,38 +43,25 @@ namespace trkf {
   /// x0, y0, z0 - Global coordinates of local origin.
   /// nx, ny, nz - Normal vector in global coordinate system.
   ///
-  SurfXYZPlane::SurfXYZPlane(double x0, double y0, double z0,
-			     double nx, double ny, double nz) :
-    fX0(x0),
-    fY0(y0),
-    fZ0(z0),
-    fPhi(0.),
-    fTheta(0.)
+  SurfXYZPlane::SurfXYZPlane(double x0, double y0, double z0, double nx, double ny, double nz)
+    : fX0(x0), fY0(y0), fZ0(z0), fPhi(0.), fTheta(0.)
   {
     // Calculate angles.
 
     double nyz = std::hypot(ny, nz);
     fTheta = atan2(nx, nyz);
     fPhi = 0.;
-    if(nyz != 0.)
-      fPhi = atan2(-ny, nz);
+    if (nyz != 0.) fPhi = atan2(-ny, nz);
   }
 
   /// Destructor.
-  SurfXYZPlane::~SurfXYZPlane()
-  {}
+  SurfXYZPlane::~SurfXYZPlane() {}
 
   /// Clone method.
-  Surface* SurfXYZPlane::clone() const
-  {
-    return new SurfXYZPlane(*this);
-  }
+  Surface* SurfXYZPlane::clone() const { return new SurfXYZPlane(*this); }
 
   /// Surface-specific tests of validity of track parameters.
-  bool SurfXYZPlane::isTrackValid(const TrackVector& vec) const
-  {
-    return true;
-  }
+  bool SurfXYZPlane::isTrackValid(const TrackVector& vec) const { return true; }
 
   /// Transform global to local coordinates.
   ///
@@ -101,13 +78,15 @@ namespace trkf {
     double cosphi = std::cos(fPhi);
 
     // u = (x-x0)*cos(theta) + (y-y0)*sin(theta)*sin(phi) - (z-z0)*sin(theta)*cos(phi)
-    uvw[0] = (xyz[0]-fX0)*costh + (xyz[1]-fY0)*sinth*sinphi - (xyz[2]-fZ0)*sinth*cosphi;
+    uvw[0] =
+      (xyz[0] - fX0) * costh + (xyz[1] - fY0) * sinth * sinphi - (xyz[2] - fZ0) * sinth * cosphi;
 
     // v =                     (y-y0)*cos(phi)            + (z-z0)*sin(phi)
-    uvw[1] = (xyz[1]-fY0)*cosphi + (xyz[2]-fZ0)*sinphi;
+    uvw[1] = (xyz[1] - fY0) * cosphi + (xyz[2] - fZ0) * sinphi;
 
     // w = (x-x0)*sin(theta) - (y-y0)*cos(theta)*sin(phi) + (z-z0)*cos(theta)*cos(phi)
-    uvw[2] = (xyz[0]-fX0)*sinth - (xyz[1]-fY0)*costh*sinphi + (xyz[2]-fZ0)*costh*cosphi;
+    uvw[2] =
+      (xyz[0] - fX0) * sinth - (xyz[1] - fY0) * costh * sinphi + (xyz[2] - fZ0) * costh * cosphi;
   }
 
   /// Transform local to global coordinates.
@@ -125,13 +104,13 @@ namespace trkf {
     double cosphi = std::cos(fPhi);
 
     // x = x0 + u*cos(theta)                       + w*sin(theta)
-    xyz[0] = fX0 + uvw[0]*costh + uvw[2]*sinth;
+    xyz[0] = fX0 + uvw[0] * costh + uvw[2] * sinth;
 
     // y = y0 + u*sin(theta)*sin(phi) + v*cos(phi) - w*cos(theta)*sin(phi)
-    xyz[1] = fY0 + uvw[0]*sinth*sinphi + uvw[1]*cosphi - uvw[2]*costh*sinphi;
+    xyz[1] = fY0 + uvw[0] * sinth * sinphi + uvw[1] * cosphi - uvw[2] * costh * sinphi;
 
     // z = z0 - u*sin(theta)*cos(phi) + v*sin(phi) + w*cos(theta)*cos(phi)
-    xyz[2] = fZ0 - uvw[0]*sinth*cosphi + uvw[1]*sinphi + uvw[2]*costh*cosphi;
+    xyz[2] = fZ0 - uvw[0] * sinth * cosphi + uvw[1] * sinphi + uvw[2] * costh * cosphi;
   }
 
   /// Get position of track.
@@ -164,14 +143,13 @@ namespace trkf {
   /// mom - Momentum vector in global coordinate system.
   /// dir - Track direction.
   ///
-  void SurfXYZPlane::getMomentum(const TrackVector& vec, double mom[3],
-				TrackDirection dir) const
+  void SurfXYZPlane::getMomentum(const TrackVector& vec, double mom[3], TrackDirection dir) const
   {
 
     // Get momentum.
 
     double invp = std::abs(vec(4));
-    double p = 1. / std::max(invp, 1.e-3);   // Capped at 1000. GeV/c.
+    double p = 1. / std::max(invp, 1.e-3); // Capped at 1000. GeV/c.
 
     // Get track slope parameters.
 
@@ -180,11 +158,11 @@ namespace trkf {
 
     // Calculate dw/ds.
 
-    double dwds = 1. / std::sqrt(1. + dudw*dudw + dvdw*dvdw);
-    TrackDirection realdir = getDirection(vec, dir);   // Should be same as original direction.
-    if(realdir == BACKWARD)
+    double dwds = 1. / std::sqrt(1. + dudw * dudw + dvdw * dvdw);
+    TrackDirection realdir = getDirection(vec, dir); // Should be same as original direction.
+    if (realdir == BACKWARD)
       dwds = -dwds;
-    else if(realdir != FORWARD)
+    else if (realdir != FORWARD)
       throw cet::exception("SurfXYZPlane") << "Track direction not specified.\n";
 
     // Calculate momentum vector in local coordinate system.
@@ -200,9 +178,9 @@ namespace trkf {
     double sinphi = std::sin(fPhi);
     double cosphi = std::cos(fPhi);
 
-    mom[0] = pu*costh + pw*sinth;
-    mom[1] = pu*sinth*sinphi + pv*cosphi - pw*costh*sinphi;
-    mom[2] = -pu*sinth*cosphi + pv*sinphi + pw*costh*cosphi;
+    mom[0] = pu * costh + pw * sinth;
+    mom[1] = pu * sinth * sinphi + pv * cosphi - pw * costh * sinphi;
+    mom[2] = -pu * sinth * cosphi + pv * sinphi + pw * costh * cosphi;
 
     return;
   }
@@ -224,15 +202,15 @@ namespace trkf {
     // Test if the other surface is a SurfXYZPlane.
 
     const SurfXYZPlane* psurf = dynamic_cast<const SurfXYZPlane*>(&surf);
-    if(psurf != 0) {
+    if (psurf != 0) {
 
       // Test whether surface angle parameters are the same
       // with tolerance.
 
       double delta_phi = TVector2::Phi_mpi_pi(fPhi - psurf->phi());
       double delta_theta = fTheta - psurf->theta();
-      if(std::abs(delta_phi) <= fPhiTolerance && std::abs(delta_theta) <= fThetaTolerance)
-	result = true;
+      if (std::abs(delta_phi) <= fPhiTolerance && std::abs(delta_theta) <= fThetaTolerance)
+        result = true;
     }
     return result;
   }
@@ -255,7 +233,7 @@ namespace trkf {
     // Check if the other surface is parallel to this one.
 
     bool parallel = isParallel(surf);
-    if(!parallel)
+    if (!parallel)
       throw cet::exception("SurfXYZPlane") << "Attempt to find distance to non-parallel surface.\n";
 
     // Find the origin of the other surface in global coordinates,
@@ -290,10 +268,9 @@ namespace trkf {
     // Test if the other surface is parallel.
 
     bool parallel = isParallel(surf);
-    if(parallel) {
+    if (parallel) {
       double dist = distanceTo(surf);
-      if(std::abs(dist) <= fSepTolerance)
-	result = true;
+      if (std::abs(dist) <= fSepTolerance) result = true;
     }
 
     return result;
@@ -302,8 +279,8 @@ namespace trkf {
   /// Printout
   std::ostream& SurfXYZPlane::Print(std::ostream& out) const
   {
-    out << "SurfXYZPlane{ x0=" << fX0 << ", y0=" << fY0 << ", z0=" << fZ0
-	<< ", phi=" << fPhi << ", theta=" << fTheta << "}";
+    out << "SurfXYZPlane{ x0=" << fX0 << ", y0=" << fY0 << ", z0=" << fZ0 << ", phi=" << fPhi
+        << ", theta=" << fTheta << "}";
     return out;
   }
 

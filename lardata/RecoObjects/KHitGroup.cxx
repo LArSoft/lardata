@@ -20,15 +20,10 @@ namespace trkf {
   /// has_path - Path flag (optional).
   /// path     - Estimated path distance (optional).
   ///
-  KHitGroup::KHitGroup(bool has_path, double path) :
-    fPlane(-1),
-    fHasPath(has_path),
-    fPath(path)
-  {}
+  KHitGroup::KHitGroup(bool has_path, double path) : fPlane(-1), fHasPath(has_path), fPath(path) {}
 
   /// Destructor.
-  KHitGroup::~KHitGroup()
-  {}
+  KHitGroup::~KHitGroup() {}
 
   /// Add a mesaurement into the colleciton.
   ///
@@ -40,8 +35,7 @@ namespace trkf {
   {
     // Make sure that the measurement pointer is not null (throw exception if null).
 
-    if(hit.get() == 0)
-      throw cet::exception("KHitGroup") << "Attempt to add null measurement.\n";
+    if (hit.get() == 0) throw cet::exception("KHitGroup") << "Attempt to add null measurement.\n";
 
     // If the stored common surface pointer has not yet been initialized,
     // initialize it now.
@@ -49,19 +43,20 @@ namespace trkf {
     // the common surface (pointer to same surface object).
     // Throw exception if the new surface doesn't match.
 
-    if(hit->getMeasPlane() < 0)
-      throw cet::exception("KHitGroup") << __func__ << ": invalid hit plane " << hit->getMeasPlane() << "\n";
+    if (hit->getMeasPlane() < 0)
+      throw cet::exception("KHitGroup")
+        << __func__ << ": invalid hit plane " << hit->getMeasPlane() << "\n";
 
-    if(fSurf.get() == 0) {
+    if (fSurf.get() == 0) {
       fSurf = hit->getMeasSurface();
       fPlane = hit->getMeasPlane();
     }
     else {
-      if(fSurf.get() != hit->getMeasSurface().get())
+      if (fSurf.get() != hit->getMeasSurface().get())
         throw cet::exception("KHitGroup") << "Attempt to add non-matching measurement.\n";
-      if(hit->getMeasPlane() != fPlane) {
+      if (hit->getMeasPlane() != fPlane) {
         throw cet::exception("KHitGroup") << __func__ << ": hit plane mismatch, "
-          << hit->getMeasPlane() << " vs. " << fPlane << "\n";
+                                          << hit->getMeasPlane() << " vs. " << fPlane << "\n";
       }
       if (fPlane < 0)
         throw cet::exception("KHitGroup") << __func__ << ": invalid plane " << fPlane << "\n";
@@ -85,9 +80,7 @@ namespace trkf {
   ///
   bool KHitGroup::operator==(const KHitGroup& obj) const
   {
-    bool result =
-      (!fHasPath && !obj.fHasPath) ||
-      (fHasPath && obj.fHasPath && fPath == obj.fPath);
+    bool result = (!fHasPath && !obj.fHasPath) || (fHasPath && obj.fHasPath && fPath == obj.fPath);
     return result;
   }
 
@@ -107,10 +100,9 @@ namespace trkf {
   bool KHitGroup::operator<(const KHitGroup& obj) const
   {
     bool result = false;
-    if(fHasPath != obj.fHasPath)
+    if (fHasPath != obj.fHasPath)
       throw cet::exception("KHitGroup") << "Attempt to compare incomparable objects.\n";
-    if(fHasPath)
-      result = fPath < obj.fPath;
+    if (fHasPath) result = fPath < obj.fPath;
     return result;
   }
 

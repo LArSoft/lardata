@@ -12,9 +12,9 @@
  */
 
 // C/C++ standard libraries
+#include <iostream>
 #include <map>
 #include <random>
-#include <iostream>
 
 // Boost libraries
 /*
@@ -26,16 +26,14 @@
  * This also makes fairly complicate to receive parameters from the command line
  * (for example, a random seed).
  */
-#define BOOST_TEST_MODULE ( CountersMap_test )
+#define BOOST_TEST_MODULE (CountersMap_test)
 #include "boost/test/unit_test.hpp"
 
 // LArSoft libraries
 #include "lardata/Utilities/CountersMap.h"
 
-
 /// The seed for the default random engine
 constexpr unsigned int RandomSeed = 12345;
-
 
 //------------------------------------------------------------------------------
 //--- Test code
@@ -50,15 +48,16 @@ constexpr unsigned int RandomSeed = 12345;
  * with the CountersMap.
  * The test fails if the two images do not match.
  */
-void RunHoughTransformTreeTest() {
+void RunHoughTransformTreeTest()
+{
 
   // the structure we are testing is a 2D "image" of integers;
   // image is mostly empty (zero), but each abscissa has roughly the same
   // number of non-empty pixels (NPoints), and at least one of them.
 
-  constexpr unsigned int NPoints =  1000;
+  constexpr unsigned int NPoints = 1000;
   constexpr unsigned int NAngles = 10800;
-  constexpr unsigned int NDist   =  2500; // half distance
+  constexpr unsigned int NDist = 2500; // half distance
 
   typedef std::map<int, int> BaseMap_t;
 
@@ -69,7 +68,7 @@ void RunHoughTransformTreeTest() {
   // CountersMap; uses chunks of 8 counters per block
   std::vector<lar::CountersMap<int, int, 8>> cm_image(NAngles);
   // the following should fail compilation
-//  std::vector<lar::CountersMap<int, int, 9>> cm_image_broken(NAngles);
+  //  std::vector<lar::CountersMap<int, int, 9>> cm_image_broken(NAngles);
 
   static std::default_random_engine random_engine(RandomSeed);
   std::uniform_real_distribution<float> uniform(-1., 1.);
@@ -86,10 +85,12 @@ void RunHoughTransformTreeTest() {
       cm_image[iAngle].increment(int(d)); // different interface than usual map
       // prepare for the next point; wrap in the [-NDist, NDist[ range
       d += slope;
-      while (d >= (float) NDist) d -= 2*NDist;
-      while (d < 0) d += 2*NDist;
+      while (d >= (float)NDist)
+        d -= 2 * NDist;
+      while (d < 0)
+        d += 2 * NDist;
     } // for iAngle
-  } // for iPoint
+  }   // for iPoint
 
   std::cout << "Filling complete, now checking." << std::endl;
 
@@ -98,21 +99,19 @@ void RunHoughTransformTreeTest() {
   unsigned int nExtraKeys = 0, nMismatchValue = 0, nMissingKeys = 0;
   auto stl_begin = stl_image.cbegin();
   unsigned int iMap = 0;
-  for (const auto& cm_map: cm_image) {
+  for (const auto& cm_map : cm_image) {
 
     const MapVectorI_t::value_type& stl_map = *(stl_begin++);
 
-    std::cout << "Map #" << iMap << " (" << cm_map.n_counters()
-      << " counters, " << stl_map.size() << " real)"
-      << std::endl;
+    std::cout << "Map #" << iMap << " (" << cm_map.n_counters() << " counters, " << stl_map.size()
+              << " real)" << std::endl;
 
     // compare the two maps; the CountersMap one has more elements,
     // since the counters are allocated in blocks;
     // if a key is in STL map, it must be also in the CountersMap;
     // if a key is not in STL map, counter in CountersMap must be missing or 0
-    MapVectorI_t::value_type::const_iterator stl_iter = stl_map.begin(),
-      stl_end = stl_map.end();
-    for (auto p: cm_map) { // this should be a pair (index, counter)
+    MapVectorI_t::value_type::const_iterator stl_iter = stl_map.begin(), stl_end = stl_map.end();
+    for (auto p : cm_map) { // this should be a pair (index, counter)
 
       if (stl_iter != stl_end) { // we have still counters to find
         // if counter is already beyond the next non-empty one froml STL map,
@@ -127,10 +126,10 @@ void RunHoughTransformTreeTest() {
       if (stl_iter != stl_end) { // we have still counters to find
         if (p.first == stl_iter->first) {
           // if the counter is in SLT map, the two counts must match
-        //  std::cout << "  " << p.first << " " << p.second << std::endl;
+          //  std::cout << "  " << p.first << " " << p.second << std::endl;
           if (stl_iter->second != p.second) {
-            std::cout << "ERROR wrong counter value " << p.second
-              << ", expected " << stl_iter->second << std::endl;
+            std::cout << "ERROR wrong counter value " << p.second << ", expected "
+                      << stl_iter->second << std::endl;
             ++nMismatchValue;
           }
           ++stl_iter; // done with it
@@ -139,21 +138,19 @@ void RunHoughTransformTreeTest() {
           // if the counter is not in STL map, then it must be 0
           if (p.second != 0) {
             ++nExtraKeys;
-            std::cout << "ERROR extra key " << p.first << " (" << p.second << ")"
-              << std::endl;
+            std::cout << "ERROR extra key " << p.first << " (" << p.second << ")" << std::endl;
           }
-        //  else {
-        //    std::cout << "  " << p.first << " " << p.second << " (not in STL)"
-        //      << std::endl;
-        //  }
+          //  else {
+          //    std::cout << "  " << p.first << " " << p.second << " (not in STL)"
+          //      << std::endl;
+          //  }
         }
       }
       else {
         // no more keys in STL map
         if (p.second != 0) {
           ++nExtraKeys;
-          std::cout << "ERROR extra key " << p.first << " (" << p.second << ")"
-            << std::endl;
+          std::cout << "ERROR extra key " << p.first << " (" << p.second << ")" << std::endl;
         }
       }
     } // for element in map
@@ -171,9 +168,7 @@ void RunHoughTransformTreeTest() {
   BOOST_TEST(nMissingKeys == 0U);
   BOOST_TEST(nExtraKeys == 0U);
 
-
 } // RunHoughTransformTreeTest()
-
 
 //------------------------------------------------------------------------------
 //--- registration of tests
@@ -184,7 +179,8 @@ void RunHoughTransformTreeTest() {
 // number of checks and it will fail if any of them does.
 //
 
-BOOST_AUTO_TEST_CASE(RunHoughTransformTree) {
+BOOST_AUTO_TEST_CASE(RunHoughTransformTree)
+{
   RunHoughTransformTreeTest();
   std::cout << "Done." << std::endl;
 }

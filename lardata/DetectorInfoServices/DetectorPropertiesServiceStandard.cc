@@ -6,9 +6,9 @@
 // Framework includes
 
 // LArSoft includes
+#include "lardata/DetectorInfoServices/DetectorPropertiesServiceStandard.h"
 #include "larcore/Geometry/Geometry.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
-#include "lardata/DetectorInfoServices/DetectorPropertiesServiceStandard.h"
 #include "lardata/DetectorInfoServices/LArPropertiesService.h"
 #include "lardata/DetectorInfoServices/ServicePack.h" // lar::extractProviders()
 #include "messagefacility/MessageLogger/MessageLogger.h"
@@ -38,8 +38,7 @@ namespace detinfo {
   //--------------------------------------------------------------------
   //  Callback called after input file is opened.
 
-  void
-  DetectorPropertiesServiceStandard::postOpenFile(const std::string& filename)
+  void DetectorPropertiesServiceStandard::postOpenFile(const std::string& filename)
   {
     // Use this method to figure out whether to inherit configuration
     // parameters from previous jobs.
@@ -130,8 +129,7 @@ namespace detinfo {
   //--------------------------------------------------------------------
   //  Determine whether a parameter set is a DetectorPropertiesService configuration.
 
-  bool
-  DetectorPropertiesServiceStandard::isDetectorPropertiesServiceStandard(
+  bool DetectorPropertiesServiceStandard::isDetectorPropertiesServiceStandard(
     const fhicl::ParameterSet& ps) const
   {
     // This method uses heuristics to determine whether the parameter
@@ -143,4 +141,3 @@ namespace detinfo {
   }
 
 } // namespace detinfo
-

@@ -64,81 +64,37 @@ namespace trkf {
     // Accessors.
 
     /// Measurement space dimension.
-    int
-    getMeasDim() const
-    {
-      return fMeasDim;
-    }
+    int getMeasDim() const { return fMeasDim; }
 
     /// Measurement collection.
-    const std::vector<std::shared_ptr<const KHit<1>>>&
-    getMeasVec() const
-    {
-      return fMeasVec;
-    }
+    const std::vector<std::shared_ptr<const KHit<1>>>& getMeasVec() const { return fMeasVec; }
 
     /// Measurement vector.
-    const ublas::vector<double>&
-    getMeasVector() const
-    {
-      return fMvec;
-    }
+    const ublas::vector<double>& getMeasVector() const { return fMvec; }
 
     /// Measurement error matrix.
-    const ublas::symmetric_matrix<double>&
-    getMeasError() const
-    {
-      return fMerr;
-    }
+    const ublas::symmetric_matrix<double>& getMeasError() const { return fMerr; }
 
     /// Prediction vector.
-    const ublas::vector<double>&
-    getPredVector() const
-    {
-      return fPvec;
-    }
+    const ublas::vector<double>& getPredVector() const { return fPvec; }
 
     /// Prediction matrix.
-    const ublas::symmetric_matrix<double>&
-    getPredError() const
-    {
-      return fPerr;
-    }
+    const ublas::symmetric_matrix<double>& getPredError() const { return fPerr; }
 
     /// Residual vector.
-    const ublas::vector<double>&
-    getResVector() const
-    {
-      return fRvec;
-    }
+    const ublas::vector<double>& getResVector() const { return fRvec; }
 
     /// Residual error matrix.
-    const ublas::symmetric_matrix<double>&
-    getResError() const
-    {
-      return fRerr;
-    }
+    const ublas::symmetric_matrix<double>& getResError() const { return fRerr; }
 
     /// Residual inv. error matrix.
-    const ublas::symmetric_matrix<double>&
-    getResInvError() const
-    {
-      return fRinv;
-    }
+    const ublas::symmetric_matrix<double>& getResInvError() const { return fRinv; }
 
     /// Kalman H-matrix.
-    const ublas::matrix<double>&
-    getH() const
-    {
-      return fH;
-    }
+    const ublas::matrix<double>& getH() const { return fH; }
 
     /// Incremental chisquare.
-    double
-    getChisq() const
-    {
-      return fChisq;
-    }
+    double getChisq() const { return fChisq; }
 
     // Modifiers.
 

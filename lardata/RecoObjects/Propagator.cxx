@@ -49,13 +49,12 @@ namespace trkf {
   /// This method calls virtual method short_vec_prop in steps of some
   /// maximum size.
   ///
-  std::optional<double>
-  Propagator::vec_prop(KTrack& trk,
-                       const std::shared_ptr<const Surface>& psurf,
-                       PropDirection dir,
-                       bool doDedx,
-                       TrackMatrix* prop_matrix,
-                       TrackError* noise_matrix) const
+  std::optional<double> Propagator::vec_prop(KTrack& trk,
+                                             const std::shared_ptr<const Surface>& psurf,
+                                             PropDirection dir,
+                                             bool doDedx,
+                                             TrackMatrix* prop_matrix,
+                                             TrackError* noise_matrix) const
   {
     std::optional<double> result{std::nullopt};
 
@@ -247,14 +246,13 @@ namespace trkf {
   ///
   /// If the reference track is null, this method simply calls vec_prop.
   ///
-  std::optional<double>
-  Propagator::lin_prop(KTrack& trk,
-                       const std::shared_ptr<const Surface>& psurf,
-                       PropDirection dir,
-                       bool doDedx,
-                       KTrack* ref,
-                       TrackMatrix* prop_matrix,
-                       TrackError* noise_matrix) const
+  std::optional<double> Propagator::lin_prop(KTrack& trk,
+                                             const std::shared_ptr<const Surface>& psurf,
+                                             PropDirection dir,
+                                             bool doDedx,
+                                             KTrack* ref,
+                                             TrackMatrix* prop_matrix,
+                                             TrackError* noise_matrix) const
   {
     // Default result.
 
@@ -342,13 +340,12 @@ namespace trkf {
   ///
   /// Returned value: propagation distance + success flag.
   ///
-  std::optional<double>
-  Propagator::err_prop(KETrack& tre,
-                       const std::shared_ptr<const Surface>& psurf,
-                       PropDirection dir,
-                       bool doDedx,
-                       KTrack* ref,
-                       TrackMatrix* prop_matrix) const
+  std::optional<double> Propagator::err_prop(KETrack& tre,
+                                             const std::shared_ptr<const Surface>& psurf,
+                                             PropDirection dir,
+                                             bool doDedx,
+                                             KTrack* ref,
+                                             TrackMatrix* prop_matrix) const
   {
     // Propagate without error, get propagation matrix.
 
@@ -382,12 +379,11 @@ namespace trkf {
   ///
   /// Returned value: propagation distance + success flag.
   ///
-  std::optional<double>
-  Propagator::noise_prop(KETrack& tre,
-                         const std::shared_ptr<const Surface>& psurf,
-                         PropDirection dir,
-                         bool doDedx,
-                         KTrack* ref) const
+  std::optional<double> Propagator::noise_prop(KETrack& tre,
+                                               const std::shared_ptr<const Surface>& psurf,
+                                               PropDirection dir,
+                                               bool doDedx,
+                                               KTrack* ref) const
   {
     // Propagate without error, get propagation matrix and noise matrix.
 
@@ -448,8 +444,10 @@ namespace trkf {
   /// d(pinv2)/d(pinv1) = pinv2^3 E2 / (pinv1^3 E1).
   ///
   ///
-  std::optional<double>
-  Propagator::dedx_prop(double pinv, double mass, double s, double* deriv) const
+  std::optional<double> Propagator::dedx_prop(double pinv,
+                                              double mass,
+                                              double s,
+                                              double* deriv) const
   {
     // For infinite initial momentum, return with success status,
     // still infinite momentum.

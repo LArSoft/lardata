@@ -176,26 +176,10 @@ namespace util {
 
     bool Clockwise(double Ax, double Ay, double Bx, double By, double Cx, double Cy) const;
 
-    Double_t
-    TimeToCm() const
-    {
-      return fTimetoCm;
-    }
-    Double_t
-    WireToCm() const
-    {
-      return fWiretoCm;
-    }
-    Double_t
-    WireTimeToCmCm() const
-    {
-      return fWireTimetoCmCm;
-    }
-    UInt_t
-    Nplanes() const
-    {
-      return fNPlanes;
-    }
+    Double_t TimeToCm() const { return fTimetoCm; }
+    Double_t WireToCm() const { return fWiretoCm; }
+    Double_t WireTimeToCmCm() const { return fWireTimetoCmCm; }
+    UInt_t Nplanes() const { return fNPlanes; }
 
   private:
     geo::GeometryCore const& fGeom;

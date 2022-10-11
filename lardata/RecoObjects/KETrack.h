@@ -49,25 +49,13 @@ namespace trkf {
 
     // Accessors.
 
-    const TrackError&
-    getError() const
-    {
-      return fErr;
-    }                             ///< Track error matrix.
-    double PointingError() const; ///< Pointing error (radians).
+    const TrackError& getError() const { return fErr; } ///< Track error matrix.
+    double PointingError() const;                       ///< Pointing error (radians).
 
     // Modifiers.
 
-    TrackError&
-    getError()
-    {
-      return fErr;
-    } ///< Modifiable error matrix.
-    void
-    setError(const TrackError& err)
-    {
-      fErr = err;
-    } ///< Set error matrix.
+    TrackError& getError() { return fErr; }              ///< Modifiable error matrix.
+    void setError(const TrackError& err) { fErr = err; } ///< Set error matrix.
 
     /// Combine two tracks.
     std::optional<double> combineTrack(const KETrack& tre);

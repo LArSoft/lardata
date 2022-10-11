@@ -82,21 +82,18 @@
 #ifndef LARDATA_UTILITIES_COLLECTIONVIEW_H
 #define LARDATA_UTILITIES_COLLECTIONVIEW_H
 
-
 // C/C++ standard libraries
-#include <stdexcept> // std::out_of_range
-#include <iterator> // std::iterator_traits, std::reverse_iterator
-#include <string> // std::to_string()
+#include <cstddef>     // std::size_t
+#include <iterator>    // std::iterator_traits, std::reverse_iterator
+#include <stdexcept>   // std::out_of_range
+#include <string>      // std::to_string()
 #include <type_traits> // std::declval(), ...
-#include <cstddef> // std::size_t
-
 
 namespace lar {
 
   // forward declarations
   template <typename Range>
   class CollectionView;
-
 
   namespace details {
 
@@ -106,21 +103,24 @@ namespace lar {
       using range_t = Range;
       using traits_t = RangeTraits<range_t>;
       static auto getCBegin(range_t const& range)
-        { using std::cbegin; return cbegin(range); }
+      {
+        using std::cbegin;
+        return cbegin(range);
+      }
       static auto getCEnd(range_t const& range)
-        { using std::cend; return cend(range); }
-      using begin_iterator_t
-        = std::decay_t<decltype(traits_t::getCBegin(std::declval<range_t>()))>;
-      using end_iterator_t
-        = std::decay_t<decltype(traits_t::getCEnd(std::declval<range_t>()))>;
+      {
+        using std::cend;
+        return cend(range);
+      }
+      using begin_iterator_t = std::decay_t<decltype(traits_t::getCBegin(std::declval<range_t>()))>;
+      using end_iterator_t = std::decay_t<decltype(traits_t::getCEnd(std::declval<range_t>()))>;
     }; // RangeTraits<>
-
 
     //--------------------------------------------------------------------------
     /// Class storing a begin and a end iterator.
     template <typename BeginIter, typename EndIter = BeginIter>
     class CollectionExtremes {
-        public:
+    public:
       using begin_iterator_t = BeginIter;
       using end_iterator_t = EndIter;
 
@@ -128,7 +128,7 @@ namespace lar {
       static constexpr FromContainerTag fromContainer{};
 
       /// Constructor: copies the specified iterators.
-      CollectionExtremes(BeginIter b, EndIter e): b(b), e(e) {}
+      CollectionExtremes(BeginIter b, EndIter e) : b(b), e(e) {}
 
       /// Returns the stored begin iterator.
       begin_iterator_t const& begin() const { return b; }
@@ -136,28 +136,28 @@ namespace lar {
       /// Returns the stored end iterator.
       end_iterator_t const& end() const { return e; }
 
-
-        private:
+    private:
       begin_iterator_t b; ///< Stored copy of begin iterator.
-      end_iterator_t e; ///< Stored copy of end iterator.
-    }; // class CollectionExtremes<>
-
+      end_iterator_t e;   ///< Stored copy of end iterator.
+    };                    // class CollectionExtremes<>
 
     //--------------------------------------------------------------------------
     /// Helper to create a CollectionExtremes object from two iterators.
     template <typename BeginIter, typename EndIter>
     auto makeCollectionExtremes(BeginIter const& b, EndIter const& e)
-      { return CollectionExtremes<BeginIter, EndIter>(b, e); }
+    {
+      return CollectionExtremes<BeginIter, EndIter>(b, e);
+    }
 
     //--------------------------------------------------------------------------
     /// Helper to create a CollectionExtremes object from a range object.
     template <typename Range>
     auto makeCollectionExtremes(Range const& range)
-      {
-        using std::cbegin;
-        using std::cend;
-        return makeCollectionExtremes(cbegin(range), cend(range));
-      } // makeCollectionExtremes(range)
+    {
+      using std::cbegin;
+      using std::cend;
+      return makeCollectionExtremes(cbegin(range), cend(range));
+    } // makeCollectionExtremes(range)
 
     //--------------------------------------------------------------------------
     // forward declaration
@@ -166,7 +166,6 @@ namespace lar {
     //--------------------------------------------------------------------------
 
   } // namespace details
-
 
   //----------------------------------------------------------------------------
   /**
@@ -283,9 +282,9 @@ namespace lar {
    *
    */
   template <typename Range>
-  class CollectionView: private Range {
-    using this_t = CollectionView<Range>; ///< This type.
-    using range_t = Range; ///< Type of the range being wrapped.
+  class CollectionView : private Range {
+    using this_t = CollectionView<Range>;           ///< This type.
+    using range_t = Range;                          ///< Type of the range being wrapped.
     using traits_t = details::RangeTraits<range_t>; ///< Range traits.
 
     /// Type of the begin iterator.
@@ -296,7 +295,7 @@ namespace lar {
     /// Type of traits of iterator.
     using iter_traits_t = std::iterator_traits<begin_iter_t>;
 
-      public:
+  public:
     using collection_type = range_t; ///< Type of collection being wrapped.
 
     using value_type = typename iter_traits_t::value_type;
@@ -322,11 +321,17 @@ namespace lar {
 
     /// Returns an iterator to the begin of the collection.
     const_iterator cbegin() const noexcept
-      { using std::cbegin; return cbegin(asRange()); }
+    {
+      using std::cbegin;
+      return cbegin(asRange());
+    }
 
     /// Returns an iterator past the end of the collection.
     end_iter_t cend() const noexcept
-      { using std::cend; return cend(asRange()); }
+    {
+      using std::cend;
+      return cend(asRange());
+    }
 
     /// Returns an iterator to the begin of the collection.
     const_iterator begin() const noexcept { return cbegin(); }
@@ -349,12 +354,10 @@ namespace lar {
     const_reverse_iterator rend() const noexcept { return crend(); }
 
     /// Returns a reverse iterator to the begin of the collection.
-    const_reverse_iterator crbegin() const noexcept
-      { return const_reverse_iterator(cend()); }
+    const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(cend()); }
 
     /// Returns a reverse iterator past the end of the collection.
-    const_reverse_iterator crend() const noexcept
-      { return const_reverse_iterator(cbegin()); }
+    const_reverse_iterator crend() const noexcept { return const_reverse_iterator(cbegin()); }
 
     /// Returns the last element in the collection.
     auto back() const -> decltype(auto) { return *crbegin(); }
@@ -365,20 +368,17 @@ namespace lar {
     /// @name Random access.
 
     /// Returns the content of the `i`-th element.
-    auto operator[] (size_type i) const -> decltype(auto)
-      { return cbegin()[i]; }
+    auto operator[](size_type i) const -> decltype(auto) { return cbegin()[i]; }
 
     /// Returns the content of the `i`-th element.
     auto at(size_type i) const -> decltype(auto)
-      {
-        if (i >= size()) {
-          throw std::out_of_range(
-            "CollectionView index out of range: "
-            + std::to_string(i) + " >= " + std::to_string(size())
-            );
-        }
-        return operator[](i);
+    {
+      if (i >= size()) {
+        throw std::out_of_range("CollectionView index out of range: " + std::to_string(i) +
+                                " >= " + std::to_string(size()));
       }
+      return operator[](i);
+    }
 
     /// @}
 
@@ -389,7 +389,7 @@ namespace lar {
 
     /// @}
 
-      protected:
+  protected:
     /*
     /// @{
     /// @name This object can't be directly constructed.
@@ -405,51 +405,49 @@ namespace lar {
     */
 
     /// Constructor: steals the data from the specified range.
-    explicit CollectionView(range_t&& range): range_t(std::move(range)) {}
+    explicit CollectionView(range_t&& range) : range_t(std::move(range)) {}
 
     // we license the creation of this class from ranges to a single function
     // (and to derived classes)
     friend this_t details::makeCollectionView<range_t>(range_t&&);
 
-      private:
+  private:
     /// Returns this very object, cast back to `range_t`.
-    range_t const& asRange() const
-      { return static_cast<range_t const&>(*this); }
+    range_t const& asRange() const { return static_cast<range_t const&>(*this); }
 
   }; // class CollectionView<>
-
 
   //----------------------------------------------------------------------------
   /// Returns the specified container, wrapped in the view.
   template <typename Range>
   CollectionView<Range> const& wrapCollectionIntoView(Range const& c)
-    { return reinterpret_cast<CollectionView<Range> const&>(c); }
-
+  {
+    return reinterpret_cast<CollectionView<Range> const&>(c);
+  }
 
   //----------------------------------------------------------------------------
   /// Creates a `CollectionView` from the specified iterators.
   template <typename BeginIter, typename EndIter>
   auto makeCollectionView(BeginIter const& b, EndIter const& e)
-    {
-      return details::makeCollectionView(details::makeCollectionExtremes(b, e));
-    }
+  {
+    return details::makeCollectionView(details::makeCollectionExtremes(b, e));
+  }
 
   /// Type of collection view owning the two range boundary iterators.
   template <typename BeginIter, typename EndIter = BeginIter>
-  using RangeAsCollection_t = decltype
-    (makeCollectionView(std::declval<BeginIter>(), std::declval<EndIter>()));
-
+  using RangeAsCollection_t =
+    decltype(makeCollectionView(std::declval<BeginIter>(), std::declval<EndIter>()));
 
   //----------------------------------------------------------------------------
   namespace details {
     template <typename Range>
     CollectionView<Range> makeCollectionView(Range&& range)
-      { return CollectionView<Range>(std::move(range)); }
+    {
+      return CollectionView<Range>(std::move(range));
+    }
   } // namespace details
   //----------------------------------------------------------------------------
 
 } // namespace lar
 
-
 #endif // LARDATA_UTILITIES_COLLECTIONVIEW_H
-

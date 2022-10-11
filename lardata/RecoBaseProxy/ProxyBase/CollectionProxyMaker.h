@@ -12,16 +12,15 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_COLLECTIONPROXYMAKER_H
 
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase/CollectionProxy.h"
 #include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
-#include "larcorealg/CoreUtils/MetaUtils.h" // util::always_true_type
+#include "larcorealg/CoreUtils/MetaUtils.h"     // util::always_true_type
+#include "lardata/RecoBaseProxy/ProxyBase/CollectionProxy.h"
 
 // framework libraries
 #include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard
 #include <vector>
-
 
 namespace proxy {
 
@@ -55,10 +54,8 @@ namespace proxy {
    */
   template <typename Proxy, typename Selector = Proxy>
   struct CollectionProxyMakerTraits {
-    static_assert
-      (util::always_true_type<Proxy>(), "This class requires specialization.");
+    static_assert(util::always_true_type<Proxy>(), "This class requires specialization.");
   };
-
 
   //----------------------------------------------------------------------------
   /**
@@ -115,11 +112,9 @@ namespace proxy {
      *
      */
     template <typename Event, typename... WithArgs>
-    static auto make
-      (Event const& event, art::InputTag const& tag, WithArgs&&... withArgs);
+    static auto make(Event const& event, art::InputTag const& tag, WithArgs&&... withArgs);
 
   }; // struct CollectionProxyMakerBase<>
-
 
   //----------------------------------------------------------------------------
   /**
@@ -141,12 +136,10 @@ namespace proxy {
    * `proxy::CollectionProxyMakerBase` as well, for convenience.
    */
   template <typename CollProxy>
-  struct CollectionProxyMaker: CollectionProxyMakerBase<CollProxy> {};
-
+  struct CollectionProxyMaker : CollectionProxyMakerBase<CollProxy> {};
 
   /// @}
   // --- END Collection proxy infrastructure -----------------------------------
-
 
   //----------------------------------------------------------------------------
   //--- specializations of CollectionProxyMakerTraits
@@ -162,11 +155,9 @@ namespace proxy {
     using main_element_t = util::collection_value_t<main_collection_t>;
 
     /// Type of main collection proxy.
-    using main_collection_proxy_t
-      = details::MainCollectionProxy<main_collection_t>;
+    using main_collection_proxy_t = details::MainCollectionProxy<main_collection_t>;
 
   }; // CollectionProxyMakerTraits<std::vector<T>>
-
 
   template <typename MainColl>
   struct CollectionProxyMakerTraits<CollectionProxy<MainColl>> {
@@ -177,17 +168,13 @@ namespace proxy {
     using main_element_t = typename main_collection_proxy_t::main_element_t;
 
     /// Type of element of the main collection.
-    using main_collection_t
-      = typename main_collection_proxy_t::main_collection_t;
+    using main_collection_t = typename main_collection_proxy_t::main_collection_t;
 
   }; // CollectionProxyMakerTraits<CollectionProxy>
-
 
   // ---------------------------------------------------------------------------
 
 } // namespace proxy
-
-
 
 // -----------------------------------------------------------------------------
 // ---  Template implementation
@@ -242,43 +229,39 @@ namespace proxy {
     template <typename Traits, typename... Args>
     struct CollectionProxyImplFromTraitsImpl<
       Traits,
-      std::enable_if_t<util::always_true_v
-        <typename Traits::template collection_proxy_impl_t<Args...>>
-        >,
-      Args...
-      >
-    {
+      std::enable_if_t<
+        util::always_true_v<typename Traits::template collection_proxy_impl_t<Args...>>>,
+      Args...> {
       using type = typename Traits::template collection_proxy_impl_t<Args...>;
     };
 
     /// `Traits::collection_proxy_impl_t` if that (template) type exists,
     /// `proxy::CollectionProxy` otherwise.
     template <typename Traits, typename... Args>
-    using CollectionProxyImplFromTraits_t
-      = typename CollectionProxyImplFromTraitsImpl<Traits, void, Args...>::type;
-
+    using CollectionProxyImplFromTraits_t =
+      typename CollectionProxyImplFromTraitsImpl<Traits, void, Args...>::type;
 
     // -------------------------------------------------------------------------
     template <typename Traits, typename... Args>
-    auto createCollectionProxyFromTraits(Args&&... args) {
-      using collection_proxy_impl_t
-        = CollectionProxyImplFromTraits_t<Traits, std::decay_t<Args>...>;
+    auto createCollectionProxyFromTraits(Args&&... args)
+    {
+      using collection_proxy_impl_t =
+        CollectionProxyImplFromTraits_t<Traits, std::decay_t<Args>...>;
       return collection_proxy_impl_t(std::forward<Args>(args)...);
     } // createCollectionProxyFromTraits()
-
 
     // -------------------------------------------------------------------------
 
   } // namespace details
-
 
   // ---------------------------------------------------------------------------
   // ---  CollectionProxyMakerBase implementation
   // ---------------------------------------------------------------------------
   template <typename CollProxy>
   template <typename Event, typename... WithArgs>
-  auto CollectionProxyMakerBase<CollProxy>::make
-    (Event const& event, art::InputTag const& tag, WithArgs&&... withArgs)
+  auto CollectionProxyMakerBase<CollProxy>::make(Event const& event,
+                                                 art::InputTag const& tag,
+                                                 WithArgs&&... withArgs)
   {
     auto mainHandle = event.template getValidHandle<main_collection_t>(tag);
 
@@ -287,11 +270,8 @@ namespace proxy {
     // provided a default implementation, `proxy::CollectionProxy`, is used:
     return details::createCollectionProxyFromTraits<traits_t>(
       *mainHandle,
-      withArgs.template createAuxProxyMaker<main_collection_proxy_t>
-        (event, mainHandle, tag)...
-      );
+      withArgs.template createAuxProxyMaker<main_collection_proxy_t>(event, mainHandle, tag)...);
   } // CollectionProxyMakerBase<>::make<>()
-
 
   // ---------------------------------------------------------------------------
 

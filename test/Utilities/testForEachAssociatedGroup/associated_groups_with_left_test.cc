@@ -7,35 +7,35 @@
  */
 
 // LArSoft libraries
-#include "lardata/Utilities/ForEachAssociatedGroup.h"
 #include "larcorealg/CoreUtils/enumerate.h"
+#include "lardata/Utilities/ForEachAssociatedGroup.h"
 
 // framework libraries
-#include "canvas/Persistency/Provenance/ProductID.h"
-#include "canvas/Persistency/Common/Ptr.h"
 #include "canvas/Persistency/Common/Assns.h"
+#include "canvas/Persistency/Common/Ptr.h"
+#include "canvas/Persistency/Provenance/ProductID.h"
 
 // Boost libraries
-#define BOOST_TEST_MODULE ( PointIsolationAlg_test )
+#define BOOST_TEST_MODULE (PointIsolationAlg_test)
 #include "boost/test/unit_test.hpp"
 
 // C/C++ standard libraries
 #include <array>
 #include <iostream>
 
-
 //------------------------------------------------------------------------------
 // ROOT libraries
-#include "TROOT.h" // gROOT
-#include "TInterpreter.h"
 #include "TClassEdit.h"
+#include "TInterpreter.h"
+#include "TROOT.h" // gROOT
 
 // C/C++ standard libraries
 #include <string>
 #include <typeinfo>
 
 template <typename T>
-TClass* QuickGenerateTClass() {
+TClass* QuickGenerateTClass()
+{
 
   // magic! this interpreter call is needed before GetNormalizedName() is called
   TInterpreter* interpreter = gROOT->GetInterpreter();
@@ -56,9 +56,9 @@ TClass* QuickGenerateTClass() {
 
 } // QuickGenerateTClass()
 
-
 //------------------------------------------------------------------------------
-void associated_groups_with_left_test() {
+void associated_groups_with_left_test()
+{
 
   // types used in the association (they actually do not matter)
   struct TypeA {};
@@ -75,26 +75,26 @@ void associated_groups_with_left_test() {
 
   // association description: B's for each A
   std::array<std::pair<Index_t, std::vector<Index_t>>, 3U> expected;
-  expected[0] = { 0, { 0, 3, 6 } };
-  expected[1] = { 1, { 2, 4, 6 } };
-  expected[2] = { 3, { 8, 10, 12, 13 } };
-  art::ProductID aPID{ 5 }, bPID{ 12 };
+  expected[0] = {0, {0, 3, 6}};
+  expected[1] = {1, {2, 4, 6}};
+  expected[2] = {3, {8, 10, 12, 13}};
+  art::ProductID aPID{5}, bPID{12};
 
   // fill the association
   MyAssns_t assns;
-  for (auto const& pair: expected) {
+  for (auto const& pair : expected) {
     auto const& aIndex = pair.first;
-    for (auto const& bIndex: pair.second) {
-      assns.addSingle({ aPID, aIndex, nullptr }, { bPID, bIndex, nullptr });
+    for (auto const& bIndex : pair.second) {
+      assns.addSingle({aPID, aIndex, nullptr}, {bPID, bIndex, nullptr});
     } // for bIndex
-  } // for pair
+  }   // for pair
 
   std::vector<std::pair<Index_t, std::vector<Index_t>>> results;
-  for (auto const& [ A, Bs ]: util::associated_groups_with_left(assns)) {
+  for (auto const& [A, Bs] : util::associated_groups_with_left(assns)) {
     std::cout << "Association group #" << results.size() << ":" << std::endl;
     std::vector<Index_t> myBs;
     myBs.reserve(Bs.size());
-    for(art::Ptr<TypeB> const& B: Bs) {
+    for (art::Ptr<TypeB> const& B : Bs) {
       std::cout << "  " << B << std::endl;
       myBs.push_back(B.key());
     }
@@ -104,22 +104,20 @@ void associated_groups_with_left_test() {
   //strings should be same as vs
   std::cout << "Starting check..." << std::endl;
   BOOST_TEST(results.size() == expected.size());
-  for (auto const& [ i, result, expected ]: util::enumerate(results, expected))
-  {
-    auto const& [ A, Bs ] = result;
-    auto const& [ expectedA, expectedBs ] = expected;
+  for (auto const& [i, result, expected] : util::enumerate(results, expected)) {
+    auto const& [A, Bs] = result;
+    auto const& [expectedA, expectedBs] = expected;
     BOOST_TEST_MESSAGE("  element #" << i << ", A=" << expectedA);
     BOOST_TEST(A == expectedA);
-    BOOST_CHECK_EQUAL_COLLECTIONS
-      (Bs.cbegin(), Bs.cend(), expectedBs.cbegin(), expectedBs.cend());
+    BOOST_CHECK_EQUAL_COLLECTIONS(Bs.cbegin(), Bs.cend(), expectedBs.cbegin(), expectedBs.cend());
   } // for results
 
 } // associated_groups_with_left_test()
 
-
 //------------------------------------------------------------------------------
 //--- tests
 //
-BOOST_AUTO_TEST_CASE(AssociatedGroupsWithLeftTestCase) {
+BOOST_AUTO_TEST_CASE(AssociatedGroupsWithLeftTestCase)
+{
   associated_groups_with_left_test();
 } // AssociatedGroupsWithLeftTestCase

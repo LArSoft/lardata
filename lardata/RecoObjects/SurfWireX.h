@@ -17,14 +17,14 @@
 
 #include "lardata/RecoObjects/SurfYZPlane.h"
 
-namespace geo { struct WireID; }
+namespace geo {
+  struct WireID;
+}
 
 namespace trkf {
 
-  class SurfWireX : public SurfYZPlane
-  {
+  class SurfWireX : public SurfYZPlane {
   public:
-
     /// Constructor.
     SurfWireX(const geo::WireID& wireid);
 

@@ -6,31 +6,30 @@
  */
 
 // LArSoft includes
-#include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/Cluster.h"
+#include "lardataobj/RecoBase/Hit.h"
 
 // art libraries
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h"
-#include "canvas/Persistency/Common/Ptr.h"
 #include "canvas/Persistency/Common/FindManyP.h"
+#include "canvas/Persistency/Common/Ptr.h"
 #include "canvas/Utilities/InputTag.h"
 
 // support libraries
 #include "fhiclcpp/types/Atom.h"
-#include "fhiclcpp/types/Table.h"
-#include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/Comment.h"
+#include "fhiclcpp/types/Name.h"
+#include "fhiclcpp/types/Table.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // C//C++ standard libraries
-#include <string>
-#include <sstream>
-#include <iomanip> // std::setw()
 #include <algorithm> // std::min(), std::sort()
-
+#include <iomanip>   // std::setw()
+#include <sstream>
+#include <string>
 
 namespace recob {
 
@@ -52,8 +51,7 @@ namespace recob {
    *
    */
   class DumpClusters : public art::EDAnalyzer {
-      public:
-
+  public:
     /// Configuration object
     struct Config {
       using Comment = fhicl::Comment;
@@ -61,18 +59,15 @@ namespace recob {
 
       fhicl::Atom<art::InputTag> ClusterModuleLabel{
         Name("ClusterModuleLabel"),
-        Comment("input tag for the clusters to be dumped")
-        };
+        Comment("input tag for the clusters to be dumped")};
       fhicl::Atom<std::string> OutputCategory{
         Name("OutputCategory"),
         Comment("name of the category used for message facility output"),
-        "DumpClusters"
-        };
+        "DumpClusters"};
       fhicl::Atom<unsigned int> HitsPerLine{
         Name("HitsPerLine"),
         Comment("number of hits per line (0 suppresses hit dumping)"),
-        20U
-        };
+        20U};
 
     }; // Config
 
@@ -82,25 +77,24 @@ namespace recob {
     explicit DumpClusters(Parameters const& config);
 
     /// Does the printing
-    void analyze (const art::Event& evt);
+    void analyze(const art::Event& evt);
 
-      private:
-
+  private:
     art::InputTag fClusterModuleLabel; ///< tag of the cluster data product
-    std::string fOutputCategory; ///< category for LogInfo output
-    unsigned int fHitsPerLine; ///< hits per line in the output
+    std::string fOutputCategory;       ///< category for LogInfo output
+    unsigned int fHitsPerLine;         ///< hits per line in the output
 
   }; // class DumpWires
 
 } // namespace recob
-
 
 //------------------------------------------------------------------------------
 namespace {
 
   /// Returns the length of the string representation of the specified object
   template <typename T>
-  size_t StringLength(const T& value) {
+  size_t StringLength(const T& value)
+  {
     std::ostringstream sstr;
     sstr << value;
     return sstr.str().length();
@@ -112,44 +106,40 @@ namespace recob {
 
   //-------------------------------------------------
   DumpClusters::DumpClusters(Parameters const& config)
-    : EDAnalyzer         (config)
+    : EDAnalyzer(config)
     , fClusterModuleLabel(config().ClusterModuleLabel())
-    , fOutputCategory    (config().OutputCategory())
-    , fHitsPerLine       (config().HitsPerLine())
-    {}
-
+    , fOutputCategory(config().OutputCategory())
+    , fHitsPerLine(config().HitsPerLine())
+  {}
 
   //-------------------------------------------------
-  void DumpClusters::analyze(const art::Event& evt) {
+  void DumpClusters::analyze(const art::Event& evt)
+  {
 
     // fetch the data to be dumped on screen
     art::InputTag ClusterInputTag(fClusterModuleLabel);
 
-    auto Clusters
-      = evt.getValidHandle<std::vector<recob::Cluster>>(ClusterInputTag);
+    auto Clusters = evt.getValidHandle<std::vector<recob::Cluster>>(ClusterInputTag);
 
     // get cluster-hit associations
     art::FindManyP<recob::Hit> HitAssn(Clusters, evt, ClusterInputTag);
 
-    mf::LogInfo(fOutputCategory)
-      << "The event contains " << Clusters->size() << " '"
-      << ClusterInputTag.encode() << "' clusters";
+    mf::LogInfo(fOutputCategory) << "The event contains " << Clusters->size() << " '"
+                                 << ClusterInputTag.encode() << "' clusters";
 
     unsigned int iCluster = 0;
     std::vector<size_t> HitBuffer(fHitsPerLine), LastBuffer;
-    for (const recob::Cluster& cluster: *Clusters) {
+    for (const recob::Cluster& cluster : *Clusters) {
       decltype(auto) ClusterHits = HitAssn.at(iCluster);
 
       // print a header for the cluster
       mf::LogVerbatim(fOutputCategory)
-        << "Cluster #" << (iCluster++) << " from " << ClusterHits.size()
-        << " hits: " << cluster;
-
+        << "Cluster #" << (iCluster++) << " from " << ClusterHits.size() << " hits: " << cluster;
 
       // print the hits of the cluster
       if ((fHitsPerLine > 0) && !ClusterHits.empty()) {
         std::vector<size_t> HitIndices;
-        for (art::Ptr<recob::Hit> pHit: ClusterHits)
+        for (art::Ptr<recob::Hit> pHit : ClusterHits)
           HitIndices.push_back(pHit.key());
         std::sort(HitIndices.begin(), HitIndices.end());
 
@@ -157,16 +147,13 @@ namespace recob {
 
         mf::LogVerbatim(fOutputCategory) << "  hit indices:";
 
-        std::vector<size_t>::const_iterator iHit = HitIndices.begin(),
-          hend = HitIndices.end();
+        std::vector<size_t>::const_iterator iHit = HitIndices.begin(), hend = HitIndices.end();
         size_t RangeStart = *iHit, RangeStop = RangeStart;
         std::ostringstream output_line;
         size_t nItemsInLine = 0;
         while (++iHit != hend) {
 
-          if (*iHit == RangeStop + 1) {
-            ++RangeStop;
-          }
+          if (*iHit == RangeStop + 1) { ++RangeStop; }
           else {
             // the new item does not belong to the current range:
             // - print the current range
@@ -175,11 +162,10 @@ namespace recob {
               ++nItemsInLine;
             }
             else {
-              char fill = (RangeStart + 1 == RangeStop)? ' ': '-';
-              output_line << "  " << std::setw(Padding) << RangeStart
-                << fill << fill
-                << std::setw(Padding) << std::setfill(fill) << RangeStop
-                << std::setfill(' ');
+              char fill = (RangeStart + 1 == RangeStop) ? ' ' : '-';
+              output_line << "  " << std::setw(Padding) << RangeStart << fill << fill
+                          << std::setw(Padding) << std::setfill(fill) << RangeStop
+                          << std::setfill(' ');
               nItemsInLine += 2;
             }
             // - start a new one
@@ -200,10 +186,9 @@ namespace recob {
         if (RangeStart == RangeStop)
           line_out << "  " << std::setw(Padding) << RangeStart;
         else {
-          char fill = (RangeStart + 1 == RangeStop)? ' ': '-';
-          line_out << "  " << std::setw(Padding) << RangeStart
-            << fill << fill
-            << std::setw(Padding) << std::setfill(fill) << RangeStop;
+          char fill = (RangeStart + 1 == RangeStop) ? ' ' : '-';
+          line_out << "  " << std::setw(Padding) << RangeStart << fill << fill << std::setw(Padding)
+                   << std::setfill(fill) << RangeStop;
         }
       } // if dumping the hits
 
@@ -214,4 +199,3 @@ namespace recob {
   DEFINE_ART_MODULE(DumpClusters)
 
 } // namespace recob
-

@@ -12,16 +12,13 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_MAKEPARALLELDATAFROM_H
 
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase/ParallelData.h"
 #include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
+#include "lardata/RecoBaseProxy/ProxyBase/ParallelData.h"
 
 // framework libraries
 #include "canvas/Utilities/InputTag.h"
 
-
-
 namespace proxy {
-
 
   // -- BEGIN Parallel data infrastructure -------------------------------------
   /// @addtogroup LArSoftProxiesParallelData
@@ -50,14 +47,11 @@ namespace proxy {
    * `auxData` behaviour becomes undefined as soon as `trackData` falls out of
    * scope.
    */
-  template <
-    typename AuxColl,
-    typename Aux = util::collection_value_t<AuxColl>,
-    typename Tag = Aux
-    >
+  template <typename AuxColl, typename Aux = util::collection_value_t<AuxColl>, typename Tag = Aux>
   auto makeParallelDataFrom(AuxColl const& data)
-    { return proxy::makeParallelData<AuxColl, Aux, Tag>(data); }
-
+  {
+    return proxy::makeParallelData<AuxColl, Aux, Tag>(data);
+  }
 
   /**
    * @brief Creates and returns a parallel data collection object.
@@ -86,23 +80,20 @@ namespace proxy {
 
   template <typename AuxColl, typename Aux, typename Event>
   auto makeParallelDataFrom(Event const& event, art::InputTag const& tag)
-    { return makeParallelDataFrom<AuxColl, Aux, Aux, Event>(event, tag); }
+  {
+    return makeParallelDataFrom<AuxColl, Aux, Aux, Event>(event, tag);
+  }
 
   template <typename AuxColl, typename Event>
   auto makeParallelDataFrom(Event const& event, art::InputTag const& tag)
-    {
-      return
-        makeParallelDataFrom<AuxColl, util::collection_value_t<AuxColl>, Event>
-        (event, tag);
-    }
-
+  {
+    return makeParallelDataFrom<AuxColl, util::collection_value_t<AuxColl>, Event>(event, tag);
+  }
 
   /// @}
   // -- END Parallel data infrastructure ---------------------------------------
 
-
 } // namespace proxy
-
 
 //------------------------------------------------------------------------------
 //--- template implementation
@@ -113,12 +104,11 @@ namespace proxy {
   //--- makeParallelDataFrom() implementations
   //----------------------------------------------------------------------------
   template <typename AuxColl, typename Aux, typename Tag, typename Event>
-  auto makeParallelDataFrom(Event const& event, art::InputTag const& tag) {
-    return makeParallelDataFrom<AuxColl, Aux, Tag>
-      (*(event.template getValidHandle<AuxColl>(tag)));
+  auto makeParallelDataFrom(Event const& event, art::InputTag const& tag)
+  {
+    return makeParallelDataFrom<AuxColl, Aux, Tag>(*(event.template getValidHandle<AuxColl>(tag)));
   } // makeParallelDataFrom()
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_MAKEPARALLELDATAFROM_H

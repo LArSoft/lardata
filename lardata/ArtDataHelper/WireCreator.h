@@ -14,11 +14,13 @@
 #include <utility> // std::move()
 
 // LArSoft libraries
-#include "larcoreobj/SimpleTypesAndConstants/RawTypes.h" // raw::ChannelID_t
+#include "larcoreobj/SimpleTypesAndConstants/RawTypes.h"  // raw::ChannelID_t
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h" // geo::View_t
 #include "lardataobj/RecoBase/Wire.h"
 
-namespace raw { class RawDigit; }
+namespace raw {
+  class RawDigit;
+}
 
 /// Reconstruction base classes
 namespace recob {
@@ -51,13 +53,13 @@ namespace recob {
    * constructed wire, or to create another one.
    */
   class WireCreator {
-    public:
-      /// Alias for the type of regions of interest
-      using RegionsOfInterest_t = Wire::RegionsOfInterest_t;
+  public:
+    /// Alias for the type of regions of interest
+    using RegionsOfInterest_t = Wire::RegionsOfInterest_t;
 
-      // destructor, copy and move constructor and assignment as default
+    // destructor, copy and move constructor and assignment as default
 
-      /**
+    /**
        * @brief Constructor: uses specified signal in regions of interest
        * @param sigROIlist signal organized in regions of interest
        * @param rawdigit the raw digit this channel is associated to
@@ -65,11 +67,9 @@ namespace recob {
        * The information used from the raw digit are the channel ID and the
        * length in samples (TDC ticks) of the original readout window.
        */
-      WireCreator
-        (const RegionsOfInterest_t& sigROIlist, const raw::RawDigit& rawdigit);
+    WireCreator(const RegionsOfInterest_t& sigROIlist, const raw::RawDigit& rawdigit);
 
-
-      /**
+    /**
        * @brief Constructor: uses specified signal in regions of interest
        * @param sigROIlist signal organized in regions of interest
        * @param rawdigit the raw digit this channel is associated to
@@ -79,11 +79,9 @@ namespace recob {
        *
        * Signal information is moved from sigROIlist, that becomes empty.
        */
-      WireCreator
-        (RegionsOfInterest_t&& sigROIlist, const raw::RawDigit& rawdigit);
+    WireCreator(RegionsOfInterest_t&& sigROIlist, const raw::RawDigit& rawdigit);
 
-
-      /**
+    /**
        * @brief Constructor: uses specified signal in regions of interest
        * @param sigROIlist signal organized in regions of interest
        * @param channel the ID of the channel
@@ -92,14 +90,9 @@ namespace recob {
        * The information used from the raw digit are the channel ID and the
        * length in samples (TDC ticks) of the original readout window.
        */
-      WireCreator(
-        RegionsOfInterest_t const& sigROIlist,
-        raw::ChannelID_t channel,
-        geo::View_t view
-        );
+    WireCreator(RegionsOfInterest_t const& sigROIlist, raw::ChannelID_t channel, geo::View_t view);
 
-
-      /**
+    /**
        * @brief Constructor: uses specified signal in regions of interest
        * @param sigROIlist signal organized in regions of interest
        * @param channel the ID of the channel
@@ -110,13 +103,9 @@ namespace recob {
        *
        * Signal information is moved from sigROIlist, that becomes empty.
        */
-      WireCreator(
-        RegionsOfInterest_t&& sigROIlist,
-        raw::ChannelID_t channel,
-        geo::View_t view
-        );
+    WireCreator(RegionsOfInterest_t&& sigROIlist, raw::ChannelID_t channel, geo::View_t view);
 
-      /**
+    /**
        * @brief Prepares the constructed wire to be moved away
        * @return a right-value reference to the constructed wire
        *
@@ -130,10 +119,9 @@ namespace recob {
        *     recob::Wire single_wire(wire.move()); // wrong! wire is empty now
        *
        */
-      Wire&& move() { return std::move(wire); }
+    Wire&& move() { return std::move(wire); }
 
-
-      /**
+    /**
        * @brief Returns the constructed wire
        * @return a constant reference to the constructed wire
        *
@@ -147,11 +135,10 @@ namespace recob {
        *     recob::Wire single_wire(wire.copy()); // wire is copied again
        *
        */
-      const Wire& copy() const { return wire; }
+    const Wire& copy() const { return wire; }
 
-    protected:
-
-      Wire wire; ///< local instance of the wire being constructed
+  protected:
+    Wire wire; ///< local instance of the wire being constructed
 
   }; // class WireCreator
 

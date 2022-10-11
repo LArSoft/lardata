@@ -112,11 +112,10 @@ namespace trkf {
     setMeasError(merr);
   }
 
-  bool
-  KHitWireLine::subpredict(const KETrack& tre,
-                           KVector<1>::type& pvec,
-                           KSymMatrix<1>::type& perr,
-                           KHMatrix<1>::type& hmatrix) const
+  bool KHitWireLine::subpredict(const KETrack& tre,
+                                KVector<1>::type& pvec,
+                                KSymMatrix<1>::type& perr,
+                                KHMatrix<1>::type& hmatrix) const
   {
     // Make sure that the track surface and the measurement surface are the
     // same. Throw an exception if they are not.

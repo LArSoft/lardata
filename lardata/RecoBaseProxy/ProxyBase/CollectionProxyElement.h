@@ -12,21 +12,18 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_COLLECTIONPROXYELEMENT_H
 
 // LArSoft libraries
+#include "larcorealg/CoreUtils/DebugUtils.h"    // lar::debug::demangle()
+#include "larcorealg/CoreUtils/MetaUtils.h"     // util::always_true_type, ...
 #include "lardata/Utilities/TupleLookupByTag.h" // util::index_of_tag_v, ...
-#include "larcorealg/CoreUtils/MetaUtils.h" // util::always_true_type, ...
-#include "larcorealg/CoreUtils/DebugUtils.h" // lar::debug::demangle()
 
 // C/C++ standard
-#include <tuple> // also std::tuple_element_t<>, std::get()
-#include <utility> // std::move()
-#include <stdexcept> // std::logic_error
+#include <cstdlib>     // std::size_t
+#include <stdexcept>   // std::logic_error
+#include <tuple>       // also std::tuple_element_t<>, std::get()
 #include <type_traits> // std::integral_constant<>
-#include <cstdlib> // std::size_t
-
-
+#include <utility>     // std::move()
 
 namespace proxy {
-
 
   namespace details {
 
@@ -34,7 +31,6 @@ namespace proxy {
     struct SubstituteWithAuxList;
 
   } // namespace details
-
 
   //--- BEGIN Proxy element infrastructure -------------------------------------
   /**
@@ -161,20 +157,19 @@ namespace proxy {
   template <typename CollProxy>
   struct CollectionProxyElement {
 
-      public:
+  public:
     using collection_proxy_t = CollProxy;
     using main_element_t = typename collection_proxy_t::main_element_t;
 
     /// Tuple of elements (expected to be tagged types).
-    using aux_elements_t = typename details::SubstituteWithAuxList
-      <typename collection_proxy_t::aux_collections_t>::type;
+    using aux_elements_t =
+      typename details::SubstituteWithAuxList<typename collection_proxy_t::aux_collections_t>::type;
 
     /// Constructor: sets the element index, the main element and steals
     /// auxiliary data.
-    CollectionProxyElement
-      (std::size_t index, main_element_t const& main, aux_elements_t&& auxData)
-      : fIndex(index), fMain(&main) , fAuxData(std::move(auxData))
-      {}
+    CollectionProxyElement(std::size_t index, main_element_t const& main, aux_elements_t&& auxData)
+      : fIndex(index), fMain(&main), fAuxData(std::move(auxData))
+    {}
 
     /// Returns a pointer to the main element.
     main_element_t const* operator->() const { return fMain; }
@@ -188,8 +183,9 @@ namespace proxy {
     /// Returns the auxiliary data specified by type (`Tag`).
     template <typename Tag>
     auto get() const -> decltype(auto)
-      { return std::get<util::index_of_tag_v<Tag, aux_elements_t>>(fAuxData); }
-
+    {
+      return std::get<util::index_of_tag_v<Tag, aux_elements_t>>(fAuxData);
+    }
 
     /**
      * @brief Returns the auxiliary data specified by type (`Tag`).
@@ -262,17 +258,18 @@ namespace proxy {
      *
      */
     template <typename Tag, typename T = Tag const&>
-    [[deprecated("Use C++17 constexpr if instead and get() instead")]]
-    auto getIf() const -> decltype(auto);
-
+    [[deprecated("Use C++17 constexpr if instead and get() instead")]] auto getIf() const
+      -> decltype(auto);
 
     /// Returns whether this class knowns about the specified type (`Tag`).
     template <typename Tag>
-    static constexpr bool has() { return util::has_tag_v<Tag, aux_elements_t>; }
+    static constexpr bool has()
+    {
+      return util::has_tag_v<Tag, aux_elements_t>;
+    }
 
-      private:
-
-    std::size_t fIndex; ///< Index of this element in the proxy.
+  private:
+    std::size_t fIndex;          ///< Index of this element in the proxy.
     main_element_t const* fMain; ///< Pointer to the main object of the element.
 
     // note that the auxiliary data is not tagged, we need to learn which
@@ -287,10 +284,8 @@ namespace proxy {
 
   }; // CollectionProxyElement<>
 
-
   /// @}
   //--- END Proxy element infrastructure ---------------------------------------
-
 
   //----------------------------------------------------------------------------
   namespace details {
@@ -308,24 +303,19 @@ namespace proxy {
      * @return a `ProxyElement` object bound to the specified data element
      */
     template <typename ProxyElement, typename... AuxData>
-    auto makeCollectionProxyElement(
-      std::size_t index,
-      typename ProxyElement::main_element_t const& main,
-      AuxData&&... auxData
-    ) {
+    auto makeCollectionProxyElement(std::size_t index,
+                                    typename ProxyElement::main_element_t const& main,
+                                    AuxData&&... auxData)
+    {
       return ProxyElement(
-        index, main,
-        typename ProxyElement::aux_elements_t(std::forward<AuxData>(auxData)...)
-        );
+        index, main, typename ProxyElement::aux_elements_t(std::forward<AuxData>(auxData)...));
     } // makeCollectionProxyElement()
-
 
     //--------------------------------------------------------------------------
 
   } // namespace details
 
 } // namespace proxy
-
 
 //------------------------------------------------------------------------------
 //--- template implementation
@@ -341,8 +331,7 @@ namespace proxy {
     // `auxiliary_data_t`
     template <typename Tuple>
     struct SubstituteWithAuxList {
-      static_assert
-        (util::always_true_type<Tuple>(), "Template argument must be a tuple");
+      static_assert(util::always_true_type<Tuple>(), "Template argument must be a tuple");
     }; // SubstituteWithAuxList<>
 
     template <typename... T>
@@ -354,36 +343,33 @@ namespace proxy {
 
   } // namespace details
 
-
   //----------------------------------------------------------------------------
   //---  CollectionProxyElement
   //----------------------------------------------------------------------------
   template <typename CollProxy>
   template <typename Tag, typename T>
   auto CollectionProxyElement<CollProxy>::getIf() const -> decltype(auto)
-    { return getIfHas<Tag, T>(std::bool_constant<has<Tag>()>{}); }
-
+  {
+    return getIfHas<Tag, T>(std::bool_constant<has<Tag>()>{});
+  }
 
   //----------------------------------------------------------------------------
   template <typename CollProxy>
   template <typename Tag, typename>
-  auto CollectionProxyElement<CollProxy>::getIfHas
-    (std::bool_constant<true>) const -> decltype(auto)
-    { return get<Tag>(); }
+  auto CollectionProxyElement<CollProxy>::getIfHas(std::bool_constant<true>) const -> decltype(auto)
+  {
+    return get<Tag>();
+  }
 
   template <typename CollProxy>
   template <typename Tag, typename T>
-  auto CollectionProxyElement<CollProxy>::getIfHas
-    (std::bool_constant<false>) const -> T
-    {
-      throw std::logic_error
-        ("Tag '" + lar::debug::demangle<Tag>() + "' not available.");
-    }
-
+  auto CollectionProxyElement<CollProxy>::getIfHas(std::bool_constant<false>) const -> T
+  {
+    throw std::logic_error("Tag '" + lar::debug::demangle<Tag>() + "' not available.");
+  }
 
   //----------------------------------------------------------------------------
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_COLLECTIONPROXYELEMENT_H

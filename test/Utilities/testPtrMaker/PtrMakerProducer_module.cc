@@ -28,45 +28,42 @@ using lartest::PtrMakerProducer;
 
 class lartest::PtrMakerProducer : public art::EDProducer {
 public:
-  typedef  std::vector<int>     intvector_t;
-  typedef  art::PtrVector<int>  intPtrvector_t;
+  typedef std::vector<int> intvector_t;
+  typedef art::PtrVector<int> intPtrvector_t;
 
-  explicit PtrMakerProducer(fhicl::ParameterSet const & p);
+  explicit PtrMakerProducer(fhicl::ParameterSet const& p);
 
   // The compiler-generated destructor is fine for non-base
   // classes without bare pointers or other resource use.
 
   // Plugins should not be copied or assigned.
-  PtrMakerProducer(PtrMakerProducer const &) = delete;
-  PtrMakerProducer(PtrMakerProducer &&) = delete;
-  PtrMakerProducer & operator = (PtrMakerProducer const &) = delete;
-  PtrMakerProducer & operator = (PtrMakerProducer &&) = delete;
+  PtrMakerProducer(PtrMakerProducer const&) = delete;
+  PtrMakerProducer(PtrMakerProducer&&) = delete;
+  PtrMakerProducer& operator=(PtrMakerProducer const&) = delete;
+  PtrMakerProducer& operator=(PtrMakerProducer&&) = delete;
 
   // Required functions.
-  void produce(art::Event & e) override;
+  void produce(art::Event& e) override;
 
 private:
-
   // Declare member data here.
   std::string fInputLabel;
-
 };
 
+PtrMakerProducer::PtrMakerProducer(fhicl::ParameterSet const& p)
+  : EDProducer{p}, fInputLabel(p.get<std::string>("input_label"))
+{
+  produces<intPtrvector_t>();
+}
 
-PtrMakerProducer::PtrMakerProducer(fhicl::ParameterSet const & p)
-  : EDProducer{p}, fInputLabel( p.get<std::string>("input_label") )
-  {
-    produces<intPtrvector_t>();
-  }
-
-void PtrMakerProducer::produce(art::Event & e)
+void PtrMakerProducer::produce(art::Event& e)
 {
   std::cerr << "PtrMakerProducer::produce is running!\n";
   art::Handle<std::vector<int>> h;
   e.getByLabel(fInputLabel, h);
   art::PtrMaker<int> make_intptr(e, h.id());
   auto intptrs = std::make_unique<intPtrvector_t>();
-  for ( size_t i = 0; i < h->size(); ++i ) {
+  for (size_t i = 0; i < h->size(); ++i) {
     auto p = make_intptr(i);
     intptrs->push_back(p);
   }

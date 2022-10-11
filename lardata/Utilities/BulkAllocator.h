@@ -5,22 +5,20 @@
  * @date   August 17th, 2014
  */
 
-
 //--- BEGIN issue #19494 -------------------------------------------------------
 /// @bug BulkAllocator.h is currently broken; see issue #19494.
 // We are leaving it here because, being a header, it will not bother unless
 // explicitly invoked. Note that there is a unit test for it too.
-#error ("BulkAllocator.h is currently broken; see issue #19494.")
+#error("BulkAllocator.h is currently broken; see issue #19494.")
 //--- END issue #19494 ---------------------------------------------------------
-
 
 #ifndef BULKALLOCATOR_H
 #define BULKALLOCATOR_H
 
 // interface include
-#include <memory> // std::allocator<>, std::unique_ptr<>
+#include <cstdlib>   // std::free
+#include <memory>    // std::allocator<>, std::unique_ptr<>
 #include <stdexcept> // std::logic_error
-#include <cstdlib> // std::free
 
 namespace lar {
   /// Namespace hiding implementation details
@@ -30,18 +28,17 @@ namespace lar {
       template <typename T>
       class BulkAllocatorBase;
     } // namespace bulk_allocator
-  } // namespace details
-
+  }   // namespace details
 
   /// Exception thrown when BulkAllocator-specific allocation errors happen
-  class memory_error: public std::bad_alloc {
-      public:
-    memory_error(): std::bad_alloc() {}
-    memory_error(const char* message): std::bad_alloc(), msg(message) {}
+  class memory_error : public std::bad_alloc {
+  public:
+    memory_error() : std::bad_alloc() {}
+    memory_error(const char* message) : std::bad_alloc(), msg(message) {}
 
     virtual const char* what() const throw() override { return msg; }
 
-      private:
+  private:
     const char* msg = nullptr;
   }; // class memory_error
 
@@ -89,8 +86,8 @@ namespace lar {
    * but all BulkAllocator<int> share.
    */
   template <typename T>
-  class BulkAllocator: public std::allocator<T> {
-      public:
+  class BulkAllocator : public std::allocator<T> {
+  public:
     using BaseAllocator_t = std::allocator<T>;
 
     // import types from the STL allocator
@@ -105,34 +102,38 @@ namespace lar {
     typedef typename BaseAllocator_t::reference reference;
     typedef typename BaseAllocator_t::const_reference const_reference;
 
-    template<typename U>
+    template <typename U>
     struct rebind {
       typedef BulkAllocator<U> other;
     };
 
     /// Default constructor: uses the default chunk size
-    BulkAllocator() noexcept: BulkAllocator(GetChunkSize(), false) {}
+    BulkAllocator() noexcept : BulkAllocator(GetChunkSize(), false) {}
 
     /// Constructor: sets chunk size and optionally allocates the first chunk
     BulkAllocator(size_type ChunkSize, bool bPreallocate = false) noexcept
-      { CreateGlobalAllocator(ChunkSize, bPreallocate); }
+    {
+      CreateGlobalAllocator(ChunkSize, bPreallocate);
+    }
 
     /// Copy constructor: default
-    BulkAllocator(const BulkAllocator &a) noexcept = default;
+    BulkAllocator(const BulkAllocator& a) noexcept = default;
 
     /// Move  constructor: default
-    BulkAllocator(BulkAllocator &&a) noexcept = default;
+    BulkAllocator(BulkAllocator&& a) noexcept = default;
 
     /// General copy constructor; currently, it does not preallocate
     template <class U>
-    BulkAllocator(const BulkAllocator<U> &a) noexcept:
-      BaseAllocator_t(a) { SetChunkSize(a.GetChunkSize()); }
+    BulkAllocator(const BulkAllocator<U>& a) noexcept : BaseAllocator_t(a)
+    {
+      SetChunkSize(a.GetChunkSize());
+    }
 
     /// Copy assignment: default
-    BulkAllocator& operator = (const BulkAllocator &a) = default;
+    BulkAllocator& operator=(const BulkAllocator& a) = default;
 
     /// Move assignment: default
-    BulkAllocator& operator = (BulkAllocator &&a) = default;
+    BulkAllocator& operator=(BulkAllocator&& a) = default;
 
     /// Destructor; memory is freed only if no allocators are left around
     ~BulkAllocator() { GlobalAllocator.RemoveUser(); }
@@ -150,10 +151,9 @@ namespace lar {
     static size_type GetChunkSize() { return GlobalAllocator.GetChunkSize(); }
 
     /// Sets chunk size of global allocator; only affects future allocations!
-    static void SetChunkSize(size_type ChunkSize)
-      { GlobalAllocator.SetChunkSize(ChunkSize); }
+    static void SetChunkSize(size_type ChunkSize) { GlobalAllocator.SetChunkSize(ChunkSize); }
 
-      private:
+  private:
     typedef details::bulk_allocator::BulkAllocatorBase<T>
       SharedAllocator_t; ///< shared allocator type
 
@@ -163,21 +163,19 @@ namespace lar {
     /// The allocator shared by all instances of this object
     static SharedAllocator_t GlobalAllocator;
 
-
   }; // class BulkAllocator<>
 
 } // namespace lar
 
-
 //------------------------------------------------------------------------------
 #include <algorithm> // std::max()
-#include <vector>
-#include <iostream>
 #include <array>
-#include <typeinfo>
+#include <iostream>
 #include <string>
+#include <typeinfo>
+#include <vector>
 #ifdef __GNUG__
-# include <cxxabi.h>
+#include <cxxabi.h>
 #endif // __GNUG__
 
 namespace lar {
@@ -202,20 +200,24 @@ namespace lar {
      * @endcode
      */
     template <typename T>
-    std::string demangle() {
+    std::string demangle()
+    {
       std::string name = typeid(T).name();
-      #ifdef __GNUG__
-        int status; // some arbitrary value to eliminate the compiler warning
-        std::unique_ptr<char, void(*)(void*)> res
-          { abi::__cxa_demangle(name.c_str(), NULL, NULL, &status), std::free };
-        return (status==0) ? res.get() : name ;
-      #else // !__GNUG__
-        return name;
-      #endif // ?__GNUG__
-    } // demangle()
+#ifdef __GNUG__
+      int status; // some arbitrary value to eliminate the compiler warning
+      std::unique_ptr<char, void (*)(void*)> res{
+        abi::__cxa_demangle(name.c_str(), NULL, NULL, &status), std::free};
+      return (status == 0) ? res.get() : name;
+#else  // !__GNUG__
+      return name;
+#endif // ?__GNUG__
+    }  // demangle()
 
     template <typename T>
-    inline std::string demangle(const T&) { return demangle<T>(); }
+    inline std::string demangle(const T&)
+    {
+      return demangle<T>();
+    }
     ///@}
 
     namespace bulk_allocator {
@@ -223,7 +225,7 @@ namespace lar {
 
       /// A simple reference counter, keep track of a number of users.
       class ReferenceCounter {
-          public:
+      public:
         typedef unsigned int Counter_t; ///< type of user counter
 
         /// Returns whether there are currently users
@@ -237,12 +239,15 @@ namespace lar {
 
         /// Removed a user to the users count; returns false if no user yet
         bool RemoveUser()
-          { if (!counter) return false; --counter; return true; }
+        {
+          if (!counter) return false;
+          --counter;
+          return true;
+        }
 
-          private:
+      private:
         Counter_t counter = 0;
       }; // class ReferenceCounter
-
 
       /**
        * @brief A class managing a memory pool
@@ -257,16 +262,14 @@ namespace lar {
        * the caller.
        */
       template <typename T>
-      class BulkAllocatorBase: public ReferenceCounter {
-          public:
+      class BulkAllocatorBase : public ReferenceCounter {
+      public:
         typedef size_t size_type;
         typedef T value_type;
         typedef T* pointer;
 
         /// Constructor; preallocates memory if explicitly requested
-        BulkAllocatorBase(
-          size_type NewChunkSize = DefaultChunkSize, bool bPreallocate = false
-          );
+        BulkAllocatorBase(size_type NewChunkSize = DefaultChunkSize, bool bPreallocate = false);
 
         /// Destructor: releases all the memory pool (@see Free())
         ~BulkAllocatorBase() { Free(); }
@@ -314,7 +317,7 @@ namespace lar {
         /// @see Preallocate(size_type)
         void Preallocate() { Preallocate(ChunkSize); }
 
-          private:
+      private:
         typedef std::allocator<T> Allocator_t;
         typedef typename Allocator_t::difference_type difference_type;
 
@@ -322,27 +325,27 @@ namespace lar {
 
         /// Internal memory chunk; like a std::vector, but does not construct
         class MemoryChunk_t {
-            public:
+        public:
           Allocator_t* allocator; ///< reference to the allocator to be used
 
           pointer begin = nullptr; ///< start of the pool
-          pointer end = nullptr; ///< end of the pool
-          pointer free = nullptr; ///< first unused element of the pool
+          pointer end = nullptr;   ///< end of the pool
+          pointer free = nullptr;  ///< first unused element of the pool
 
           ///< Constructor: allocates memory
-          MemoryChunk_t(Allocator_t& alloc, size_type n): allocator(&alloc)
-            {
-              begin = n? allocator->allocate(n): nullptr;
-              end = begin + n;
-              free = begin;
-            } // MemoryChunk_t()
+          MemoryChunk_t(Allocator_t& alloc, size_type n) : allocator(&alloc)
+          {
+            begin = n ? allocator->allocate(n) : nullptr;
+            end = begin + n;
+            free = begin;
+          }                                             // MemoryChunk_t()
           MemoryChunk_t(const MemoryChunk_t&) = delete; ///< Can't copy
-          MemoryChunk_t(MemoryChunk_t&&); ///< Move constructor
+          MemoryChunk_t(MemoryChunk_t&&);               ///< Move constructor
 
           ~MemoryChunk_t() { allocator->deallocate(begin, size()); }
 
           MemoryChunk_t& operator=(const MemoryChunk_t&) = delete;
-            ///< Can't assign
+          ///< Can't assign
           MemoryChunk_t& operator=(MemoryChunk_t&&); ///< Move assignment
 
           /// Returns the number of elements in this pool
@@ -358,26 +361,26 @@ namespace lar {
           bool full() const { return !available(); }
 
           /// Returns a pointer to a free item, or nullptr if none is available
-          pointer get() { return (free != end)? free++: nullptr; }
+          pointer get() { return (free != end) ? free++ : nullptr; }
 
           /// Returns a pointer to n free items, or nullptr if not available
           pointer get(size_t n)
-            {
-              pointer ptr = free;
-              if ((free += n) <= end) return ptr;
-              free = ptr;
-              return nullptr;
-            }
+          {
+            pointer ptr = free;
+            if ((free += n) <= end) return ptr;
+            free = ptr;
+            return nullptr;
+          }
 
-            private:
+        private:
           ///< Default constructor (does nothing)
-          MemoryChunk_t(): allocator(nullptr) {}
+          MemoryChunk_t() : allocator(nullptr) {}
 
         }; // class MemoryChunk_t
 
         typedef std::vector<MemoryChunk_t> MemoryPool_t;
 
-        size_type ChunkSize; ///< size of the chunks to add
+        size_type ChunkSize;     ///< size of the chunks to add
         MemoryPool_t MemoryPool; ///< list of all memory chunks; first is free
 
         /// Default chunk size (default: 10000)
@@ -388,9 +391,9 @@ namespace lar {
 
       }; // class BulkAllocatorBase<>
 
-
       template <typename T>
-      BulkAllocatorBase<T>::MemoryChunk_t::MemoryChunk_t(MemoryChunk_t&& from) {
+      BulkAllocatorBase<T>::MemoryChunk_t::MemoryChunk_t(MemoryChunk_t&& from)
+      {
         std::swap(allocator, from.allocator);
         std::swap(begin, from.begin);
         std::swap(end, from.end);
@@ -398,8 +401,8 @@ namespace lar {
       } // BulkAllocatorBase<T>::MemoryChunk_t::MemoryChunk_t(MemoryChunk_t&&)
 
       template <typename T>
-      typename BulkAllocatorBase<T>::MemoryChunk_t&
-        BulkAllocatorBase<T>::MemoryChunk_t::operator= (MemoryChunk_t&& from)
+      typename BulkAllocatorBase<T>::MemoryChunk_t& BulkAllocatorBase<T>::MemoryChunk_t::operator=(
+        MemoryChunk_t&& from)
       {
         std::swap(allocator, from.allocator);
         std::swap(begin, from.begin);
@@ -408,119 +411,104 @@ namespace lar {
         return *this;
       } // BulkAllocatorBase<T>::MemoryChunk_t::operator= (MemoryChunk_t&&)
 
+      template <typename T>
+      typename BulkAllocatorBase<T>::size_type BulkAllocatorBase<T>::DefaultChunkSize = 10000;
 
       template <typename T>
-      typename BulkAllocatorBase<T>::size_type
-        BulkAllocatorBase<T>::DefaultChunkSize = 10000;
-
-      template <typename T>
-      BulkAllocatorBase<T>::BulkAllocatorBase
-        (size_type NewChunkSize, bool bPreallocate /* = false */):
-        ChunkSize(NewChunkSize), MemoryPool()
+      BulkAllocatorBase<T>::BulkAllocatorBase(size_type NewChunkSize,
+                                              bool bPreallocate /* = false */)
+        : ChunkSize(NewChunkSize), MemoryPool()
       {
-        Preallocate(bPreallocate? ChunkSize: 0);
+        Preallocate(bPreallocate ? ChunkSize : 0);
         if (bDebug) {
-          std::cout << "BulkAllocatorBase[" << ((void*) this)
-            << "] created for type " << demangle<value_type>()
-            << " with chunk size " << GetChunkSize()
-            << " x" << sizeof(value_type) << " byte => "
-            << (GetChunkSize()*sizeof(value_type)) << " bytes/chunk"
-            << std::endl;
+          std::cout << "BulkAllocatorBase[" << ((void*)this) << "] created for type "
+                    << demangle<value_type>() << " with chunk size " << GetChunkSize() << " x"
+                    << sizeof(value_type) << " byte => " << (GetChunkSize() * sizeof(value_type))
+                    << " bytes/chunk" << std::endl;
         } // if debug
-      } // BulkAllocatorBase<T>::BulkAllocatorBase()
-
+      }   // BulkAllocatorBase<T>::BulkAllocatorBase()
 
       template <typename T>
-      void BulkAllocatorBase<T>::Free() {
+      void BulkAllocatorBase<T>::Free()
+      {
         if (bDebug) {
-          std::cout << "BulkAllocatorBase[" << ((void*) this) << "] freeing "
-            << NChunks() << " memory chunks with " << AllocatedCount()
-            << " elements" << std::endl;
+          std::cout << "BulkAllocatorBase[" << ((void*)this) << "] freeing " << NChunks()
+                    << " memory chunks with " << AllocatedCount() << " elements" << std::endl;
         } // if debug
         MemoryPool.clear();
       } // BulkAllocatorBase<T>::Free()
 
-
       template <typename T>
-      bool BulkAllocatorBase<T>::RemoveUser() {
+      bool BulkAllocatorBase<T>::RemoveUser()
+      {
         ReferenceCounter::RemoveUser();
         if (hasUsers()) return true;
         Free();
         return false;
       } // BulkAllocatorBase<T>::RemoveUser()
 
-
       template <typename T>
-      void BulkAllocatorBase<T>::AddUser
-        (size_type NewChunkSize, bool bPreallocate /* = false */)
+      void BulkAllocatorBase<T>::AddUser(size_type NewChunkSize, bool bPreallocate /* = false */)
       {
         AddUser();
         SetChunkSize(NewChunkSize);
-        Preallocate(bPreallocate? ChunkSize: 0);
+        Preallocate(bPreallocate ? ChunkSize : 0);
       } // BulkAllocatorBase<T>::AddUser(size_type, bool )
 
-
       template <typename T>
-      void BulkAllocatorBase<T>::Preallocate(size_type n) {
+      void BulkAllocatorBase<T>::Preallocate(size_type n)
+      {
         if (MemoryPool.empty() || (MemoryPool.front().available() < n))
           MemoryPool.emplace_back(allocator, n);
       } // BulkAllocatorBase<T>::RemoveUser()
 
-
       template <typename T>
-      typename BulkAllocatorBase<T>::size_type
-        BulkAllocatorBase<T>::AllocatedCount() const
+      typename BulkAllocatorBase<T>::size_type BulkAllocatorBase<T>::AllocatedCount() const
       {
         size_type n = 0;
-        for (const auto& chunk: MemoryPool) n += chunk.size();
+        for (const auto& chunk : MemoryPool)
+          n += chunk.size();
         return n;
       } // AllocatedCount()
 
-
       template <typename T>
-      typename BulkAllocatorBase<T>::size_type
-        BulkAllocatorBase<T>::UsedCount() const
+      typename BulkAllocatorBase<T>::size_type BulkAllocatorBase<T>::UsedCount() const
       {
         size_type n = 0;
-        for (const auto& chunk: MemoryPool) n += chunk.used();
+        for (const auto& chunk : MemoryPool)
+          n += chunk.used();
         return n;
       } // BulkAllocatorBase<T>::UsedCount()
 
-
       template <typename T>
-      std::array<typename BulkAllocatorBase<T>::size_type, 2>
-        BulkAllocatorBase<T>::GetCounts() const
+      std::array<typename BulkAllocatorBase<T>::size_type, 2> BulkAllocatorBase<T>::GetCounts()
+        const
       {
         // BUG the double brace syntax is required to work around clang bug 21629
         // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-        std::array<BulkAllocatorBase<T>::size_type, 2> stats = {{ 0U, 0U }};
-        for (const auto& chunk: MemoryPool) {
+        std::array<BulkAllocatorBase<T>::size_type, 2> stats = {{0U, 0U}};
+        for (const auto& chunk : MemoryPool) {
           stats[0] += chunk.used();
           stats[1] += chunk.available();
         } // for
         return stats;
       } // BulkAllocatorBase<T>::GetCounts()
 
-
       template <typename T>
-      void BulkAllocatorBase<T>::SetChunkSize
-        (size_type NewChunkSize, bool force /* = false */)
+      void BulkAllocatorBase<T>::SetChunkSize(size_type NewChunkSize, bool force /* = false */)
       {
         if ((GetChunkSize() == NewChunkSize) && !force) return;
         if (bDebug) {
-          std::cout << "BulkAllocatorBase[" << ((void*) this) << "]"
-            << " changing chunk size: " << GetChunkSize() << " => "
-            << NewChunkSize << ": x" << sizeof(value_type) << " byte => "
-            << (NewChunkSize*sizeof(value_type)) << " bytes/chunk"
-            << std::endl;
+          std::cout << "BulkAllocatorBase[" << ((void*)this) << "]"
+                    << " changing chunk size: " << GetChunkSize() << " => " << NewChunkSize << ": x"
+                    << sizeof(value_type) << " byte => " << (NewChunkSize * sizeof(value_type))
+                    << " bytes/chunk" << std::endl;
         }
         ChunkSize = NewChunkSize;
       } // BulkAllocatorBase<T>::SetChunkSize()
 
-
       template <typename T>
-      inline typename BulkAllocatorBase<T>::pointer BulkAllocatorBase<T>::Get
-        (size_type n)
+      inline typename BulkAllocatorBase<T>::pointer BulkAllocatorBase<T>::Get(size_type n)
       {
         if (n == 0) return nullptr;
         // get the free pointer from the latest chunk (#0)
@@ -532,42 +520,38 @@ namespace lar {
         //   (if it fails, it fails... but how could that happen?)
         if (bDebug) {
           std::array<size_type, 2> stats = GetCounts();
-          std::cout << "BulkAllocatorBase[" << ((void*) this)
-            << "] allocating " << std::max(ChunkSize, n)
-            << " more elements (on top of the current " << (stats[0] + stats[1])
-            << " elements, " << stats[1] << " unused)" << std::endl;
+          std::cout << "BulkAllocatorBase[" << ((void*)this) << "] allocating "
+                    << std::max(ChunkSize, n) << " more elements (on top of the current "
+                    << (stats[0] + stats[1]) << " elements, " << stats[1] << " unused)"
+                    << std::endl;
         } // if debug
-        return MemoryPool.emplace
-          (MemoryPool.begin(), allocator, std::max(ChunkSize, n))->get(n);
+        return MemoryPool.emplace(MemoryPool.begin(), allocator, std::max(ChunkSize, n))->get(n);
       } // BulkAllocatorBase<T>::Get()
 
-
     } // namespace bulk_allocator
-  } // namespace details
-
-
-  template <typename T>
-  typename BulkAllocator<T>::SharedAllocator_t
-    BulkAllocator<T>::GlobalAllocator;
+  }   // namespace details
 
   template <typename T>
-  void BulkAllocator<T>::CreateGlobalAllocator
-    (size_type ChunkSize, bool bPreallocate /* = false */)
+  typename BulkAllocator<T>::SharedAllocator_t BulkAllocator<T>::GlobalAllocator;
+
+  template <typename T>
+  void BulkAllocator<T>::CreateGlobalAllocator(size_type ChunkSize, bool bPreallocate /* = false */)
   {
     GlobalAllocator.AddUser(ChunkSize, bPreallocate);
   } // BulkAllocator<T>::CreateGlobalAllocator()
 
   template <typename T>
-  inline typename BulkAllocator<T>::pointer BulkAllocator<T>::allocate
-    (size_type n, const void * /* hint = 0 */)
-    { return GlobalAllocator.Get(n); }
+  inline typename BulkAllocator<T>::pointer BulkAllocator<T>::allocate(size_type n,
+                                                                       const void* /* hint = 0 */)
+  {
+    return GlobalAllocator.Get(n);
+  }
 
   template <typename T>
-  inline void BulkAllocator<T>::deallocate(pointer p, size_type n) {
+  inline void BulkAllocator<T>::deallocate(pointer p, size_type n)
+  {
     return GlobalAllocator.Release(p);
   } // BulkAllocator<T>::deallocate()
 } // namespace lar
 
-
 #endif // BULKALLOCATOR_H
-

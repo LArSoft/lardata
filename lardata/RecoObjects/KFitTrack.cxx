@@ -62,8 +62,7 @@ namespace trkf {
   /// The two tracks being combined should be on the same surface
   /// (throw exception if not).
   ///
-  bool
-  KFitTrack::combineFit(const KFitTrack& trf)
+  bool KFitTrack::combineFit(const KFitTrack& trf)
   {
     // Make sure that the two track surfaces are the same.
     // Throw an exception if they are not.
@@ -111,8 +110,7 @@ namespace trkf {
   }
 
   /// Printout
-  std::ostream&
-  KFitTrack::Print(std::ostream& out, bool doTitle) const
+  std::ostream& KFitTrack::Print(std::ostream& out, bool doTitle) const
   {
     if (doTitle) out << "KFitTrack:\n";
 

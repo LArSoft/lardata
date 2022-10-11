@@ -6,16 +6,15 @@
  */
 
 // C/C++ standard libraries
-#include <random> // std::default_random_engine, std::uniform_real_distribution
-#include <ios> // std::fixed
 #include <iomanip> // std::setprecision
+#include <ios>     // std::fixed
+#include <random>  // std::default_random_engine, std::uniform_real_distribution
 
 // art libraries
-#include "messagefacility/MessageLogger/MessageLogger.h"
-#include "fhiclcpp/ParameterSet.h"
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
-
+#include "fhiclcpp/ParameterSet.h"
+#include "messagefacility/MessageLogger/MessageLogger.h"
 
 namespace lar {
 
@@ -49,43 +48,39 @@ namespace lar {
    *   get its own specific sequence
    * - <b>Verbose</b> (boolean, default: false) writes the result into the log
    */
-  class ComputePi: public art::EDAnalyzer {
-      public:
+  class ComputePi : public art::EDAnalyzer {
+  public:
     using Counter_t = unsigned long long; ///< type used for integral counters
     using Seed_t = std::default_random_engine::result_type;
-                                           ///< type for seed and random numbers
+    ///< type for seed and random numbers
 
-    explicit ComputePi(fhicl::ParameterSet const & p);
+    explicit ComputePi(fhicl::ParameterSet const& p);
 
     virtual ~ComputePi() = default;
 
     virtual void analyze(const art::Event&) override;
 
     /// Returns the current best estimation of pi
-    double best_pi() const
-      { return tries? 4. * double(hits) / double(tries): 3.0; }
+    double best_pi() const { return tries ? 4. * double(hits) / double(tries) : 3.0; }
 
     /// Returns the current best estimation of pi
     Counter_t best_pi_tries() const { return tries; }
 
-
     static const char* VersionString; ///< version of the algorithm
 
-      private:
+  private:
     Counter_t samples; ///< number of samples to try on each event
-    Seed_t seed; ///< number of digits to compute
-    bool bFixed; ///< whether the random sequence is always the same
-    bool bVerbose; ///< whether to put stuff on screen
+    Seed_t seed;       ///< number of digits to compute
+    bool bFixed;       ///< whether the random sequence is always the same
+    bool bVerbose;     ///< whether to put stuff on screen
 
     std::default_random_engine generator; ///< random generator
-    Counter_t hits = 0; ///< total number of hits
-    Counter_t tries = 0; ///< total number of tries (samples)
-
+    Counter_t hits = 0;                   ///< total number of hits
+    Counter_t tries = 0;                  ///< total number of tries (samples)
 
   }; // class ComputePi
 
 } // namespace lar
-
 
 //------------------------------------------------------------------------------
 
@@ -94,24 +89,25 @@ DEFINE_ART_MODULE(lar::ComputePi)
 const char* lar::ComputePi::VersionString = "1.0";
 
 template <typename T>
-inline constexpr T sqr(T v) { return v*v; }
-
-
-lar::ComputePi::ComputePi(const fhicl::ParameterSet& p):
-  EDAnalyzer(p),
-  samples(p.get<Counter_t>("Ksamples", 10000) * 1000),
-  seed(p.get<Seed_t>("Seed", 314159)),
-  bFixed(p.get<bool>("Fixed", false)),
-  bVerbose(p.get<bool>("Verbose", false)),
-  generator(seed)
+inline constexpr T sqr(T v)
 {
-  mf::LogInfo("ComputePi")
-    << "version " << VersionString
-    << " using " << samples << " samples per event, random seed " << seed;
+  return v * v;
+}
+
+lar::ComputePi::ComputePi(const fhicl::ParameterSet& p)
+  : EDAnalyzer(p)
+  , samples(p.get<Counter_t>("Ksamples", 10000) * 1000)
+  , seed(p.get<Seed_t>("Seed", 314159))
+  , bFixed(p.get<bool>("Fixed", false))
+  , bVerbose(p.get<bool>("Verbose", false))
+  , generator(seed)
+{
+  mf::LogInfo("ComputePi") << "version " << VersionString << " using " << samples
+                           << " samples per event, random seed " << seed;
 } // lar::ComputePi::ComputePi()
 
-
-void lar::ComputePi::analyze(const art::Event&) {
+void lar::ComputePi::analyze(const art::Event&)
+{
 
   // prepare our personal pseudo-random engine;
   // we'll use always the same sequence!
@@ -132,12 +128,9 @@ void lar::ComputePi::analyze(const art::Event&) {
   tries += samples;
 
   if (bVerbose) {
-    mf::LogInfo("ComputePi") << "today's pi = "
-      << std::fixed << std::setprecision(9) << local_pi
-      << " (pi = "
-      << std::fixed << std::setprecision(12) << best_pi()
-      << " after " << best_pi_tries() << " samples)";
+    mf::LogInfo("ComputePi") << "today's pi = " << std::fixed << std::setprecision(9) << local_pi
+                             << " (pi = " << std::fixed << std::setprecision(12) << best_pi()
+                             << " after " << best_pi_tries() << " samples)";
   } // if verbose
 
 } // lar::ComputePi::analyze()
-

@@ -27,8 +27,7 @@ namespace trkf {
   KGTrack::KGTrack(int prefplane) : fPrefPlane(prefplane) {}
 
   /// Track at start point.
-  const KHitTrack&
-  KGTrack::startTrack() const
+  const KHitTrack& KGTrack::startTrack() const
   {
     if (!isValid()) throw cet::exception("KGTrack") << "Starting track is not valid.\n";
 
@@ -38,8 +37,7 @@ namespace trkf {
   }
 
   /// Track at end point.
-  const KHitTrack&
-  KGTrack::endTrack() const
+  const KHitTrack& KGTrack::endTrack() const
   {
     /// Throw exception if track is not valid.
 
@@ -51,8 +49,7 @@ namespace trkf {
   }
 
   /// Modifiable track at start point.
-  KHitTrack&
-  KGTrack::startTrack()
+  KHitTrack& KGTrack::startTrack()
   {
     /// Throw exception if track is not valid.
 
@@ -64,8 +61,7 @@ namespace trkf {
   }
 
   /// Modifiable track at end point.
-  KHitTrack&
-  KGTrack::endTrack()
+  KHitTrack& KGTrack::endTrack()
   {
     /// Throw exception if track is not valid.
 
@@ -77,8 +73,7 @@ namespace trkf {
   }
 
   /// Add track.
-  void
-  KGTrack::addTrack(const KHitTrack& trh)
+  void KGTrack::addTrack(const KHitTrack& trh)
   {
     if (!trh.isValid()) throw cet::exception("KGTrack") << "Adding invalid track to KGTrack.\n";
     fTrackMap.insert(std::make_pair(trh.getPath() + trh.getHit()->getPredDistance(), trh));
@@ -90,8 +85,7 @@ namespace trkf {
   /// Offset the distance stored in the KHitTracks such that the minimum distance is zero.
   /// Also update multimap keys to agree with distance stored in track.
   ///
-  void
-  KGTrack::recalibrate()
+  void KGTrack::recalibrate()
   {
     std::multimap<double, KHitTrack> newmap;
 
@@ -122,10 +116,9 @@ namespace trkf {
   ///
   /// track - Track to fill.
   ///
-  void
-  KGTrack::fillTrack(detinfo::DetectorPropertiesData const& detProp,
-                     recob::Track& track,
-                     int id) const
+  void KGTrack::fillTrack(detinfo::DetectorPropertiesData const& detProp,
+                          recob::Track& track,
+                          int id) const
   {
 
     // Make propagator for propating to standard track surface.
@@ -220,8 +213,8 @@ namespace trkf {
   ///
   /// hits - Hit vector to fill.
   ///
-  void
-  KGTrack::fillHits(art::PtrVector<recob::Hit>& hits, std::vector<unsigned int>& hittpindex) const
+  void KGTrack::fillHits(art::PtrVector<recob::Hit>& hits,
+                         std::vector<unsigned int>& hittpindex) const
   {
     hits.reserve(hits.size() + fTrackMap.size());
 
@@ -255,8 +248,7 @@ namespace trkf {
   ///
   /// Printout
   ///
-  std::ostream&
-  KGTrack::Print(std::ostream& out) const
+  std::ostream& KGTrack::Print(std::ostream& out) const
   {
 
     int n = 0;
@@ -305,10 +297,6 @@ namespace trkf {
   }
 
   /// Output operator.
-  std::ostream&
-  operator<<(std::ostream& out, const KGTrack& trg)
-  {
-    return trg.Print(out);
-  }
+  std::ostream& operator<<(std::ostream& out, const KGTrack& trg) { return trg.Print(out); }
 
 } // end namespace trkf

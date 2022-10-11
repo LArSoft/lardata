@@ -11,8 +11,8 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
-#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "lardata/Utilities/LArFFT.h"
+#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 
 //-----------------------------------------------
 util::LArFFT::LArFFT(fhicl::ParameterSet const& pset, art::ActivityRegistry& reg)
@@ -36,8 +36,7 @@ util::LArFFT::LArFFT(fhicl::ParameterSet const& pset, art::ActivityRegistry& reg
 }
 
 //-----------------------------------------------
-void
-util::LArFFT::resetSizePerRun(art::Run const&)
+void util::LArFFT::resetSizePerRun(art::Run const&)
 {
   fSize = art::ServiceHandle<detinfo::DetectorPropertiesService const>()
             ->DataForJob()
@@ -46,8 +45,7 @@ util::LArFFT::resetSizePerRun(art::Run const&)
 }
 
 //-----------------------------------------------
-void
-util::LArFFT::InitializeFFT()
+void util::LArFFT::InitializeFFT()
 {
   int i;
   for (i = 1; i < fSize; i *= 2) {}
@@ -84,8 +82,7 @@ util::LArFFT::~LArFFT()
 }
 
 //------------------------------------------------
-void
-util::LArFFT::ReinitializeFFT(int size, std::string option, int fitbins)
+void util::LArFFT::ReinitializeFFT(int size, std::string option, int fitbins)
 {
   //delete these, which will be remade
   delete fFFT;
@@ -116,8 +113,7 @@ util::LArFFT::ReinitializeFFT(int size, std::string option, int fitbins)
 //According to the Fourier transform identity
 //f(x-a) = Inverse Transform(exp(-2*Pi*i*a*w)F(w))
 //--------------------------------------------------
-void
-util::LArFFT::ShiftData(std::vector<TComplex>& input, double shift)
+void util::LArFFT::ShiftData(std::vector<TComplex>& input, double shift)
 {
   double factor = -2.0 * TMath::Pi() * shift / (double)fSize;
 
@@ -126,4 +122,3 @@ util::LArFFT::ShiftData(std::vector<TComplex>& input, double shift)
 
   return;
 }
-

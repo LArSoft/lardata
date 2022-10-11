@@ -13,8 +13,8 @@
 #include "lardataalg/DetectorInfo/LArPropertiesStandard.h"
 
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
-#include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
+#include "art/Framework/Services/Registry/ServiceHandle.h"
 
 namespace art {
   class Run;
@@ -27,11 +27,7 @@ namespace detinfo {
     LArPropertiesServiceStandard(Parameters const& params, art::ActivityRegistry& reg);
 
   private:
-    provider_type const*
-    provider() const override
-    {
-      return &fProp;
-    }
+    provider_type const* provider() const override { return &fProp; }
 
     void preBeginRun(art::Run const& run);
 

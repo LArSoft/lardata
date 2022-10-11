@@ -13,7 +13,9 @@ namespace art {
   class SourceHelper;
   class SubRunPrincipal;
 }
-namespace fhicl { class ParameterSet; }
+namespace fhicl {
+  class ParameterSet;
+}
 
 #include "canvas/Persistency/Provenance/SubRunID.h"
 
@@ -28,30 +30,29 @@ namespace lris {
 class lris::LArRawInputDriverShortBo {
   /// Class to fill the constraints on a template argument to the class,
   /// FileReaderSource
- public:
+public:
   // Required constructor
-  LArRawInputDriverShortBo(fhicl::ParameterSet const &pset,
-                    art::ProductRegistryHelper &helper,
-                    art::SourceHelper const &pm);
+  LArRawInputDriverShortBo(fhicl::ParameterSet const& pset,
+                           art::ProductRegistryHelper& helper,
+                           art::SourceHelper const& pm);
 
   // Required by FileReaderSource:
   void closeCurrentFile();
-  void readFile(std::string const &name,
-                art::FileBlock* &fb);
-  bool readNext(art::RunPrincipal* const &inR,
-                art::SubRunPrincipal* const &inSR,
-                art::RunPrincipal* &outR,
-                art::SubRunPrincipal* &outSR,
-                art::EventPrincipal* &outE);
+  void readFile(std::string const& name, art::FileBlock*& fb);
+  bool readNext(art::RunPrincipal* const& inR,
+                art::SubRunPrincipal* const& inSR,
+                art::RunPrincipal*& outR,
+                art::SubRunPrincipal*& outSR,
+                art::EventPrincipal*& outE);
 
- private:
+private:
   // --- data members:
-  typedef  std::vector<std::string>  stringvec_t;
+  typedef std::vector<std::string> stringvec_t;
 
-  art::SourceHelper const&       principalMaker_;
-  std::string                    currentDir_;
-  stringvec_t                    inputfiles_;
-  stringvec_t::const_iterator    nextfile_;
-  stringvec_t::const_iterator    filesdone_;
-  art::SubRunID                  currentSubRunID_;
-};  // LArRawInputDriverShortBo
+  art::SourceHelper const& principalMaker_;
+  std::string currentDir_;
+  stringvec_t inputfiles_;
+  stringvec_t::const_iterator nextfile_;
+  stringvec_t::const_iterator filesdone_;
+  art::SubRunID currentSubRunID_;
+}; // LArRawInputDriverShortBo

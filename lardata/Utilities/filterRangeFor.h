@@ -10,10 +10,8 @@
 #ifndef LARDATA_UTILITIES_FILTERRANGEFOR_H
 #define LARDATA_UTILITIES_FILTERRANGEFOR_H
 
-
 // Boost libraries
 #include <boost/iterator/filter_iterator.hpp>
-
 
 namespace util {
 
@@ -61,7 +59,6 @@ namespace util {
 
 } // namespace util
 
-
 //------------------------------------------------------------------------------
 //--- implementation
 //------------------------------------------------------------------------------
@@ -75,51 +72,47 @@ namespace util {
 
       /// Extract the begin iterator from a range.
       static auto getBegin(Range&& range) -> decltype(auto)
-        { using std::begin; return begin(range); }
+      {
+        using std::begin;
+        return begin(range);
+      }
 
       /// Extract the end iterator from a range.
       static auto getEnd(Range&& range) -> decltype(auto)
-        { using std::end; return end(range); }
+      {
+        using std::end;
+        return end(range);
+      }
 
       /// Create a Boost filter iterator pointing to the beginning of data.
       static auto makeBeginIterator(Range&& range, Pred&& pred)
-        {
-          auto begin = getBegin(std::forward<Range>(range));
-          auto end = getEnd(std::forward<Range>(range));
-          return
-            boost::make_filter_iterator(std::forward<Pred>(pred), begin, end);
-        }
+      {
+        auto begin = getBegin(std::forward<Range>(range));
+        auto end = getEnd(std::forward<Range>(range));
+        return boost::make_filter_iterator(std::forward<Pred>(pred), begin, end);
+      }
 
       /// Create a Boost filter iterator pointing to the end of data.
       static auto makeEndIterator(Range&& range, Pred&& pred)
-        {
-          auto end = getEnd(std::forward<Range>(range));
-          return
-            boost::make_filter_iterator(std::forward<Pred>(pred), end, end);
-        }
+      {
+        auto end = getEnd(std::forward<Range>(range));
+        return boost::make_filter_iterator(std::forward<Pred>(pred), end, end);
+      }
 
-
-      using begin_iterator_t = decltype
-        (makeBeginIterator(std::declval<Range&&>(), std::declval<Pred&&>()));
-      using end_iterator_t = decltype
-        (makeEndIterator(std::declval<Range&&>(), std::declval<Pred&&>()));
+      using begin_iterator_t =
+        decltype(makeBeginIterator(std::declval<Range&&>(), std::declval<Pred&&>()));
+      using end_iterator_t =
+        decltype(makeEndIterator(std::declval<Range&&>(), std::declval<Pred&&>()));
 
       begin_iterator_t fBegin;
       end_iterator_t fEnd;
 
-        public:
-
+    public:
       /// Extracts the iterators from the specified range.
       FilterRangeForStruct(Range&& range, Pred&& pred)
-        : fBegin(
-          makeBeginIterator
-            (std::forward<Range>(range), std::forward<Pred>(pred))
-          )
-        , fEnd(
-          makeEndIterator
-            (std::forward<Range>(range), std::forward<Pred>(pred))
-          )
-        {}
+        : fBegin(makeBeginIterator(std::forward<Range>(range), std::forward<Pred>(pred)))
+        , fEnd(makeEndIterator(std::forward<Range>(range), std::forward<Pred>(pred)))
+      {}
 
       auto begin() const { return fBegin; }
       auto end() const { return fEnd; }
@@ -128,23 +121,19 @@ namespace util {
 
     //--------------------------------------------------------------------------
 
-
   } // namespace details
-
 
   //----------------------------------------------------------------------------
   template <typename Range, typename Pred>
   auto filterRangeFor(Range&& range, Pred&& pred) -> decltype(auto)
-    {
-      return details::FilterRangeForStruct<Range, Pred>
-        (std::forward<Range>(range), std::forward<Pred>(pred));
-    }
-
+  {
+    return details::FilterRangeForStruct<Range, Pred>(std::forward<Range>(range),
+                                                      std::forward<Pred>(pred));
+  }
 
   //----------------------------------------------------------------------------
 
 } // namespace util
-
 
 //------------------------------------------------------------------------------
 

@@ -6,16 +6,16 @@
  */
 
 // LArSoft includes
-#include "lardataobj/RecoBase/Track.h"
 #include "lardataobj/RecoBase/Hit.h"
-#include "lardataobj/RecoBase/SpacePoint.h"
 #include "lardataobj/RecoBase/PFParticle.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
+#include "lardataobj/RecoBase/Track.h"
 
 // support libraries
 #include "fhiclcpp/types/Atom.h"
-#include "fhiclcpp/types/Table.h"
-#include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/Comment.h"
+#include "fhiclcpp/types/Name.h"
+#include "fhiclcpp/types/Table.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // art libraries
@@ -27,20 +27,20 @@
 #include "canvas/Utilities/InputTag.h"
 
 // C//C++ standard libraries
-#include <string>
-#include <sstream>
-#include <iomanip> // std::setw()
-#include <algorithm> // std::max(), std::sort(), std::transform()
-#include <iterator> // std::back_inserter()
+#include <algorithm>  // std::max(), std::sort(), std::transform()
 #include <functional> // std::mem_fn()
-#include <memory> // std::unique_ptr()
-
+#include <iomanip>    // std::setw()
+#include <iterator>   // std::back_inserter()
+#include <memory>     // std::unique_ptr()
+#include <sstream>
+#include <string>
 
 namespace {
 
   /// Returns the length of the string representation of the specified object
   template <typename T>
-  size_t StringLength(const T& value) {
+  size_t StringLength(const T& value)
+  {
     std::ostringstream sstr;
     sstr << value;
     return sstr.str().length();
@@ -55,22 +55,20 @@ namespace {
    *
    */
   template <typename STREAM, typename CONT>
-  void PrintCompactIndexTable(
-    STREAM& log, const CONT& Indices, unsigned int IndicesPerLine,
-    std::string IndentStr = "")
+  void PrintCompactIndexTable(STREAM& log,
+                              const CONT& Indices,
+                              unsigned int IndicesPerLine,
+                              std::string IndentStr = "")
   {
     unsigned int Padding = StringLength(Indices.back());
 
-    typename CONT::const_iterator iIndex = Indices.begin(),
-      iend = Indices.end();
+    typename CONT::const_iterator iIndex = Indices.begin(), iend = Indices.end();
     size_t RangeStart = *iIndex, RangeStop = RangeStart;
     std::ostringstream output_line;
     size_t nItemsInLine = 0;
     while (++iIndex != iend) {
 
-      if (*iIndex == RangeStop + 1) {
-        ++RangeStop;
-      }
+      if (*iIndex == RangeStop + 1) { ++RangeStop; }
       else {
         // the new item does not belong to the current range:
         // - print the current range
@@ -80,11 +78,9 @@ namespace {
           ++nItemsInLine;
         }
         else {
-          char fill = (RangeStart + 1 == RangeStop)? ' ': '-';
-          output_line << std::setw(Padding) << RangeStart
-            << fill << fill
-            << std::setw(Padding) << std::setfill(fill) << RangeStop
-            << std::setfill(' ');
+          char fill = (RangeStart + 1 == RangeStop) ? ' ' : '-';
+          output_line << std::setw(Padding) << RangeStart << fill << fill << std::setw(Padding)
+                      << std::setfill(fill) << RangeStop << std::setfill(' ');
           nItemsInLine += 2;
         }
         // - start a new one
@@ -107,16 +103,12 @@ namespace {
     if (RangeStart == RangeStop)
       log << std::setw(Padding) << RangeStart;
     else {
-      char fill = (RangeStart + 1 == RangeStop)? ' ': '-';
-      log << std::setw(Padding) << RangeStart
-        << fill << fill
-        << std::setw(Padding) << std::setfill(fill) << RangeStop
-        << std::setfill(' ');
+      char fill = (RangeStart + 1 == RangeStop) ? ' ' : '-';
+      log << std::setw(Padding) << RangeStart << fill << fill << std::setw(Padding)
+          << std::setfill(fill) << RangeStop << std::setfill(' ');
     }
     log << std::endl;
   } // PrintCompactIndexTable()
-
-
 
   /**
    * @brief Prints a table with keys from a container of objects
@@ -130,16 +122,17 @@ namespace {
    * something that can be converted to a size_t.
    */
   template <typename STREAM, typename CONT, typename GETINDEX>
-  void PrintCompactIndexTable(
-    STREAM& log, const CONT& Objects, unsigned int IndicesPerLine,
-    GETINDEX IndexExtractor, std::string IndentStr)
+  void PrintCompactIndexTable(STREAM& log,
+                              const CONT& Objects,
+                              unsigned int IndicesPerLine,
+                              GETINDEX IndexExtractor,
+                              std::string IndentStr)
   {
     if ((IndicesPerLine == 0) || Objects.empty()) return;
 
     std::vector<size_t> Indices;
     Indices.reserve(Objects.size());
-    std::transform(Objects.begin(), Objects.end(), std::back_inserter(Indices),
-      IndexExtractor);
+    std::transform(Objects.begin(), Objects.end(), std::back_inserter(Indices), IndexExtractor);
     std::sort(Indices.begin(), Indices.end());
     PrintCompactIndexTable(log, Indices, IndicesPerLine, IndentStr);
 
@@ -157,16 +150,13 @@ namespace {
    * This is designed for containers like std::vector<art::Ptr<T>>.
    */
   template <typename STREAM, typename T>
-  inline void PrintAssociatedIndexTable(
-    STREAM& log, const std::vector<art::Ptr<T>>& Objects,
-    unsigned int IndicesPerLine, std::string IndentStr = ""
-  ) {
-    PrintCompactIndexTable(
-      log, Objects, IndicesPerLine, std::mem_fn(&art::Ptr<T>::key),
-      IndentStr
-      );
+  inline void PrintAssociatedIndexTable(STREAM& log,
+                                        const std::vector<art::Ptr<T>>& Objects,
+                                        unsigned int IndicesPerLine,
+                                        std::string IndentStr = "")
+  {
+    PrintCompactIndexTable(log, Objects, IndicesPerLine, std::mem_fn(&art::Ptr<T>::key), IndentStr);
   } // PrintAssociatedIndexTable()
-
 
   /**
    * @brief Prints a table with indices from a container of objects
@@ -180,19 +170,16 @@ namespace {
    * This is designed for containers like std::vector<art::Ptr<T>>.
    */
   template <typename STREAM, typename T>
-  inline void PrintAssociatedIDTable(
-    STREAM& log, const std::vector<art::Ptr<T>>& Objects,
-    unsigned int IndicesPerLine, std::string IndentStr = ""
-  ) {
+  inline void PrintAssociatedIDTable(STREAM& log,
+                                     const std::vector<art::Ptr<T>>& Objects,
+                                     unsigned int IndicesPerLine,
+                                     std::string IndentStr = "")
+  {
     PrintCompactIndexTable(
-      log, Objects, IndicesPerLine,
-      [](const art::Ptr<T>& ptr) { return ptr->ID(); },
-      IndentStr
-      );
+      log, Objects, IndicesPerLine, [](const art::Ptr<T>& ptr) { return ptr->ID(); }, IndentStr);
   } // PrintAssociatedIDTable()
 
 } // local namespace
-
 
 namespace recob {
 
@@ -226,52 +213,40 @@ namespace recob {
    *
    */
   class DumpTracks : public art::EDAnalyzer {
-      public:
-
+  public:
     /// Configuration object
     struct Config {
       using Comment = fhicl::Comment;
       using Name = fhicl::Name;
 
-      fhicl::Atom<art::InputTag> TrackModuleLabel{
-        Name("TrackModuleLabel"),
-        Comment("input tag for the tracks to be dumped")
-        };
+      fhicl::Atom<art::InputTag> TrackModuleLabel{Name("TrackModuleLabel"),
+                                                  Comment("input tag for the tracks to be dumped")};
       fhicl::Atom<std::string> OutputCategory{
         Name("OutputCategory"),
         Comment("name of the category used for message facility output"),
-        "DumpTracks"
-        };
-      fhicl::Atom<unsigned int> WayPoints{
-        Name("WayPoints"),
-        Comment("number of points along the trajectory printed"),
-        10U
-        };
+        "DumpTracks"};
+      fhicl::Atom<unsigned int> WayPoints{Name("WayPoints"),
+                                          Comment("number of points along the trajectory printed"),
+                                          10U};
       fhicl::Atom<bool> SpacePointAssociations{
         Name("SpacePointAssociations"),
         Comment("prints the number of space points associated to the track"),
-        true
-        };
+        true};
       fhicl::Atom<bool> PrintSpacePoints{
         Name("PrintSpacePoints"),
         Comment("prints the index of all space points associated to the track"),
-        false
-        };
+        false};
       fhicl::Atom<bool> HitAssociations{
         Name("HitAssociations"),
         Comment("prints the number of hits associated to the track"),
-        true
-        };
-      fhicl::Atom<bool> PrintHits{
-        Name("PrintHits"),
-        Comment("prints the index of all hits associated to the track"),
-        false
-        };
+        true};
+      fhicl::Atom<bool> PrintHits{Name("PrintHits"),
+                                  Comment("prints the index of all hits associated to the track"),
+                                  false};
       fhicl::Atom<bool> ParticleAssociations{
         Name("ParticleAssociations"),
         Comment("prints the number of PF particles associated to the track"),
-        true
-        };
+        true};
 
     }; // Config
 
@@ -281,20 +256,19 @@ namespace recob {
     explicit DumpTracks(Parameters const& config);
 
     /// Does the printing
-    void analyze (const art::Event& evt);
+    void analyze(const art::Event& evt);
 
-      private:
-
+  private:
     art::InputTag fTrackModuleLabel; ///< name of module that produced the tracks
-    std::string fOutputCategory; ///< category for LogInfo output
-    unsigned int fPrintWayPoints; ///< number of printed way points
+    std::string fOutputCategory;     ///< category for LogInfo output
+    unsigned int fPrintWayPoints;    ///< number of printed way points
 
-    bool fPrintNHits; ///< prints the number of associated hits
+    bool fPrintNHits;        ///< prints the number of associated hits
     bool fPrintNSpacePoints; ///< prints the number of associated space points
-    bool fPrintNParticles; ///< prints the number of associated PFParticles
-    bool fPrintHits; ///< prints the index of associated hits
-    bool fPrintSpacePoints; ///< prints the index of associated space points
-    bool fPrintParticles; ///< prints the index of associated PFParticles
+    bool fPrintNParticles;   ///< prints the number of associated PFParticles
+    bool fPrintHits;         ///< prints the index of associated hits
+    bool fPrintSpacePoints;  ///< prints the index of associated space points
+    bool fPrintParticles;    ///< prints the index of associated PFParticles
 
     /// Dumps information about the specified track
     void DumpTrack(unsigned int iTrack, recob::Track const& track) const;
@@ -303,67 +277,56 @@ namespace recob {
 
 } // namespace recob
 
-
 //------------------------------------------------------------------------------
 
 namespace recob {
 
   //-------------------------------------------------
   DumpTracks::DumpTracks(Parameters const& config)
-    : EDAnalyzer        (config)
-    , fTrackModuleLabel (config().TrackModuleLabel())
-    , fOutputCategory   (config().OutputCategory())
-    , fPrintWayPoints   (config().WayPoints())
-    , fPrintNHits       (config().HitAssociations())
+    : EDAnalyzer(config)
+    , fTrackModuleLabel(config().TrackModuleLabel())
+    , fOutputCategory(config().OutputCategory())
+    , fPrintWayPoints(config().WayPoints())
+    , fPrintNHits(config().HitAssociations())
     , fPrintNSpacePoints(config().SpacePointAssociations())
-    , fPrintNParticles  (config().ParticleAssociations())
-    , fPrintHits        (config().PrintHits())
-    , fPrintSpacePoints (config().PrintSpacePoints())
-    , fPrintParticles   (config().ParticleAssociations())
-    {}
+    , fPrintNParticles(config().ParticleAssociations())
+    , fPrintHits(config().PrintHits())
+    , fPrintSpacePoints(config().PrintSpacePoints())
+    , fPrintParticles(config().ParticleAssociations())
+  {}
 
   //-------------------------------------------------
-  void DumpTracks::analyze(const art::Event& evt) {
+  void DumpTracks::analyze(const art::Event& evt)
+  {
 
     // fetch the data to be dumped on screen
-    auto Tracks
-      = evt.getValidHandle<std::vector<recob::Track>>(fTrackModuleLabel);
+    auto Tracks = evt.getValidHandle<std::vector<recob::Track>>(fTrackModuleLabel);
 
-    mf::LogInfo(fOutputCategory)
-      << "The event contains " << Tracks->size() << " '"
-      << fTrackModuleLabel.encode() << "'tracks";
+    mf::LogInfo(fOutputCategory) << "The event contains " << Tracks->size() << " '"
+                                 << fTrackModuleLabel.encode() << "'tracks";
 
     std::unique_ptr<art::FindManyP<recob::Hit>> pHits(
-      fPrintNHits?
-      new art::FindManyP<recob::Hit>(Tracks, evt, fTrackModuleLabel):
-      nullptr
-      );
+      fPrintNHits ? new art::FindManyP<recob::Hit>(Tracks, evt, fTrackModuleLabel) : nullptr);
     if (pHits && !pHits->isValid()) {
       throw art::Exception(art::errors::ProductNotFound)
-        << "No hit associated with '" << fTrackModuleLabel.encode()
-        << "' tracks.\n";
+        << "No hit associated with '" << fTrackModuleLabel.encode() << "' tracks.\n";
     }
 
     std::unique_ptr<art::FindManyP<recob::SpacePoint>> pSpacePoints(
-      fPrintNSpacePoints?
-      new art::FindManyP<recob::SpacePoint>(Tracks, evt, fTrackModuleLabel):
-      nullptr
-      );
+      fPrintNSpacePoints ? new art::FindManyP<recob::SpacePoint>(Tracks, evt, fTrackModuleLabel) :
+                           nullptr);
     if (pSpacePoints && !pSpacePoints->isValid()) {
       throw art::Exception(art::errors::ProductNotFound)
-        << "No space point associated with '" << fTrackModuleLabel.encode()
-        << "' tracks.\n";
+        << "No space point associated with '" << fTrackModuleLabel.encode() << "' tracks.\n";
     }
 
     std::unique_ptr<art::FindManyP<recob::PFParticle>> pPFParticles(
-      fPrintNParticles?
-      new art::FindManyP<recob::PFParticle>(Tracks, evt, fTrackModuleLabel):
-      nullptr
-      );
+      fPrintNParticles ? new art::FindManyP<recob::PFParticle>(Tracks, evt, fTrackModuleLabel) :
+                         nullptr);
     if (pPFParticles && !pPFParticles->isValid()) {
       throw art::Exception(art::errors::ProductNotFound)
-        << "No particle-flow particle associated with '"
-        << fTrackModuleLabel.encode() << "' tracks.\n";
+        << "No particle-flow particle associated with '" << fTrackModuleLabel.encode()
+        << "' tracks.\n";
     }
 
     for (unsigned int iTrack = 0; iTrack < Tracks->size(); ++iTrack) {
@@ -375,12 +338,9 @@ namespace recob {
       mf::LogVerbatim log(fOutputCategory);
       if (pHits || pSpacePoints || pPFParticles) {
         log << "\n  associated with:";
-        if (pHits)
-          log << " " << pHits->at(iTrack).size() << " hits;";
-        if (pSpacePoints)
-          log << " " << pSpacePoints->at(iTrack).size() << " space points;";
-        if (pPFParticles)
-          log << " " << pPFParticles->at(iTrack).size() << " PF particles;";
+        if (pHits) log << " " << pHits->at(iTrack).size() << " hits;";
+        if (pSpacePoints) log << " " << pSpacePoints->at(iTrack).size() << " space points;";
+        if (pPFParticles) log << " " << pPFParticles->at(iTrack).size() << " PF particles;";
       } // if we have any association
 
       if (pHits && fPrintHits) {
@@ -392,48 +352,34 @@ namespace recob {
       if (pSpacePoints && fPrintSpacePoints) {
         const auto& SpacePoints = pSpacePoints->at(iTrack);
         log << "\n  space point IDs (" << SpacePoints.size() << "):\n";
-        PrintAssociatedIDTable
-          (log, SpacePoints, 10 /* 10 hits per line */, "    ");
+        PrintAssociatedIDTable(log, SpacePoints, 10 /* 10 hits per line */, "    ");
       } // if print individual space points
 
       if (pPFParticles && fPrintParticles) {
         const auto& PFParticles = pPFParticles->at(iTrack);
         log << "\n  particle indices (" << PFParticles.size() << "):\n";
         // currently a particle has no ID
-        PrintAssociatedIndexTable
-          (log, PFParticles, 10 /* 10 hits per line */, "    ");
+        PrintAssociatedIndexTable(log, PFParticles, 10 /* 10 hits per line */, "    ");
       } // if print individual particles
-    } // for tracks
-  } // DumpTracks::analyze()
-
+    }   // for tracks
+  }     // DumpTracks::analyze()
 
   //---------------------------------------------------------------------------
-  void DumpTracks::DumpTrack
-    (unsigned int iTrack, recob::Track const& track) const
+  void DumpTracks::DumpTrack(unsigned int iTrack, recob::Track const& track) const
   {
     // print a header for the track
     const unsigned int nPoints = track.NumberTrajectoryPoints();
     mf::LogVerbatim log(fOutputCategory);
-    log
-      << "Track #" << iTrack << " ID: " << track.ID()
-        << std::fixed << std::setprecision(3)
+    log << "Track #" << iTrack << " ID: " << track.ID() << std::fixed << std::setprecision(3)
         << " theta: " << track.Theta() << " rad, phi: " << track.Phi()
         << " rad, length: " << track.Length() << " cm"
-      << "\n  start at: ( " << track.Vertex().X()
-        << " ; " << track.Vertex().Y()
-        << " ; " << track.Vertex().Z()
-        << " ), direction: ( " << track.VertexDirection().X()
-        << " ; " << track.VertexDirection().Y()
-        << " ; " << track.VertexDirection().Z() << " )"
-      << "\n  end at:   ( " << track.End().X()
-        << " ; " << track.End().Y()
-        << " ; " << track.End().Z()
-        << " ), direction: ( " << track.EndDirection().X()
-        << " ; " << track.EndDirection().Y()
-        << " ; " << track.EndDirection().Z()
-        << " )"
-      << "\n  with "
-        << nPoints << " trajectory points";
+        << "\n  start at: ( " << track.Vertex().X() << " ; " << track.Vertex().Y() << " ; "
+        << track.Vertex().Z() << " ), direction: ( " << track.VertexDirection().X() << " ; "
+        << track.VertexDirection().Y() << " ; " << track.VertexDirection().Z() << " )"
+        << "\n  end at:   ( " << track.End().X() << " ; " << track.End().Y() << " ; "
+        << track.End().Z() << " ), direction: ( " << track.EndDirection().X() << " ; "
+        << track.EndDirection().Y() << " ; " << track.EndDirection().Z() << " )"
+        << "\n  with " << nPoints << " trajectory points";
 
     if (fPrintWayPoints > 0) {
       // print up to 10 (actually, 8 or 9) way points
@@ -442,13 +388,11 @@ namespace recob {
       unsigned int iPoint = 0;
       while ((iPoint += skip) < nPoints) {
         const auto& point = track.LocationAtPoint(iPoint);
-        log << "\n    [#" << iPoint << "] ("
-          << point.X() << ", " << point.Y() << ", " << point.Z()
-          << ")";
+        log << "\n    [#" << iPoint << "] (" << point.X() << ", " << point.Y() << ", " << point.Z()
+            << ")";
       } // while (iPoint)
-    } // if print way points
-  } // DumpTracks::DumpTrack()
-
+    }   // if print way points
+  }     // DumpTracks::DumpTrack()
 
   //---------------------------------------------------------------------------
   DEFINE_ART_MODULE(DumpTracks)

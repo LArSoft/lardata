@@ -39,12 +39,12 @@
 #ifndef KALMANLINEARALGEBRA_H
 #define KALMANLINEARALGEBRA_H
 
-#include <cmath>
-#include "boost/serialization/array_wrapper.hpp"  // workaround for deficiency in boost 1.64
-#include "boost/numeric/ublas/vector.hpp"
+#include "boost/numeric/ublas/lu.hpp"
 #include "boost/numeric/ublas/matrix.hpp"
 #include "boost/numeric/ublas/symmetric.hpp"
-#include "boost/numeric/ublas/lu.hpp"
+#include "boost/numeric/ublas/vector.hpp"
+#include "boost/serialization/array_wrapper.hpp" // workaround for deficiency in boost 1.64
+#include <cmath>
 
 namespace trkf {
 
@@ -52,38 +52,37 @@ namespace trkf {
   namespace ublas = boost::numeric::ublas;
 
   /// Vector, dimension N.
-  template<int N>
-  struct KVector
-  {
-    typedef ublas::vector<double, ublas::bounded_array<double, N> > type;
+  template <int N>
+  struct KVector {
+    typedef ublas::vector<double, ublas::bounded_array<double, N>> type;
   };
 
   /// Symmetric matrix, dimension NxN.
-  template<int N>
-  struct KSymMatrix
-  {
-    typedef ublas::symmetric_matrix<double, ublas::lower, ublas::row_major, ublas::bounded_array<double, N*(N+1)/2> > type;
+  template <int N>
+  struct KSymMatrix {
+    typedef ublas::symmetric_matrix<double,
+                                    ublas::lower,
+                                    ublas::row_major,
+                                    ublas::bounded_array<double, N*(N + 1) / 2>>
+      type;
   };
 
   /// General matrix, dimension NxM.
-  template<int N, int M>
-  struct KMatrix
-  {
-    typedef ublas::matrix<double, ublas::row_major, ublas::bounded_array<double, N*M> > type;
+  template <int N, int M>
+  struct KMatrix {
+    typedef ublas::matrix<double, ublas::row_major, ublas::bounded_array<double, N * M>> type;
   };
 
   /// Kalman H-matrix, dimension Nx5.
-  template<int N>
-  struct KHMatrix
-  {
-    typedef typename KMatrix<N,5>::type type;
+  template <int N>
+  struct KHMatrix {
+    typedef typename KMatrix<N, 5>::type type;
   };
 
   /// Kalman gain matrix, dimension 5xN.
-  template<int N>
-  struct KGMatrix
-  {
-    typedef typename KMatrix<5,N>::type type;
+  template <int N>
+  struct KGMatrix {
+    typedef typename KMatrix<5, N>::type type;
   };
 
   /// Track state vector, dimension 5.
@@ -93,7 +92,7 @@ namespace trkf {
   typedef typename KSymMatrix<5>::type TrackError;
 
   /// General 5x5 matrix.
-  typedef typename KMatrix<5,5>::type TrackMatrix;
+  typedef typename KMatrix<5, 5>::type TrackMatrix;
 
   /// Invert symmetric matrix (return false if singular).
   ///
@@ -115,69 +114,66 @@ namespace trkf {
     // D is diagonal matrix.
     // L is lower triangular with ones on the diagonal (ones not stored).
 
-    for(size_type i = 0; i < m.size1(); ++i) {
-      for(size_type j = 0; j <= i; ++j) {
+    for (size_type i = 0; i < m.size1(); ++i) {
+      for (size_type j = 0; j <= i; ++j) {
 
-	value_type ele = m(i,j);
+        value_type ele = m(i, j);
 
-	for(size_type k = 0; k < j; ++k)
-	  ele -= m(k,k) * m(i,k) * m(j,k);
+        for (size_type k = 0; k < j; ++k)
+          ele -= m(k, k) * m(i, k) * m(j, k);
 
-	// Diagonal elements (can't have zeroes).
+        // Diagonal elements (can't have zeroes).
 
-	if(i == j) {
-	  if(ele == 0.)
-	    return false;
-	}
+        if (i == j) {
+          if (ele == 0.) return false;
+        }
 
-	// Off-diagonal elements.
+        // Off-diagonal elements.
 
-	else
-	  ele = ele / m(j,j);
+        else
+          ele = ele / m(j, j);
 
-	// Replace element.
+        // Replace element.
 
-	m(i,j) = ele;
+        m(i, j) = ele;
       }
     }
 
     // In situ inversion of D by simple division.
     // In situ inversion of L by back-substitution.
 
-    for(size_type i = 0; i < m.size1(); ++i) {
-      for(size_type j = 0; j <= i; ++j) {
+    for (size_type i = 0; i < m.size1(); ++i) {
+      for (size_type j = 0; j <= i; ++j) {
 
-	value_type ele = m(i,j);
+        value_type ele = m(i, j);
 
-	// Diagonal elements.
+        // Diagonal elements.
 
-	if(i == j)
-	  m(i,i) = 1./ele;
+        if (i == j) m(i, i) = 1. / ele;
 
-	// Off diagonal elements.
+        // Off diagonal elements.
 
-	else {
-	  value_type sum = -ele;
-	  for(size_type k = j+1; k < i; ++k)
-	    sum -= m(i,k) * m(k,j);
-	  m(i,j) = sum;
-	}
+        else {
+          value_type sum = -ele;
+          for (size_type k = j + 1; k < i; ++k)
+            sum -= m(i, k) * m(k, j);
+          m(i, j) = sum;
+        }
       }
     }
 
     // Recompose the inverse matrix in situ by matrix multiplication m = L^T DL.
 
-    for(size_type i = 0; i < m.size1(); ++i) {
-      for(size_type j = 0; j <= i; ++j) {
+    for (size_type i = 0; i < m.size1(); ++i) {
+      for (size_type j = 0; j <= i; ++j) {
 
-	value_type sum = m(i,i);
-	if(i != j)
-	  sum *= m(i,j);
+        value_type sum = m(i, i);
+        if (i != j) sum *= m(i, j);
 
-	for(size_type k = i+1; k < m.size1(); ++k)
-	  sum += m(k,k) * m(k,i) * m(k,j);
+        for (size_type k = i + 1; k < m.size1(); ++k)
+          sum += m(k, k) * m(k, i) * m(k, j);
 
-	m(i,j) = sum;
+        m(i, j) = sum;
       }
     }
 
@@ -194,8 +190,7 @@ namespace trkf {
   {
     // Make sure matrix is square.
 
-    if(m.size1() != m.size2())
-      return false;
+    if (m.size1() != m.size2()) return false;
 
     // Create permutation matrix for pivoting.
 
@@ -209,8 +204,7 @@ namespace trkf {
     // This step will fail if matrix is singular.
 
     int res = lu_factorize(mcopy, pm);
-    if( res != 0 )
-      return false;
+    if (res != 0) return false;
 
     // Set original matrix to the identity matrix.
 
@@ -233,8 +227,8 @@ namespace trkf {
     typename M::size_type n = std::min(m.size1(), m.size2());
     typename M::value_type result = 0.;
 
-    for(typename M::size_type i = 0; i < n; ++i)
-      result += m(i,i);
+    for (typename M::size_type i = 0; i < n; ++i)
+      result += m(i, i);
 
     return result;
   }

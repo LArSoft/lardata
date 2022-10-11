@@ -8,7 +8,3 @@
 
 // this header
 #include "HitUtils.h"
-
-
-
-

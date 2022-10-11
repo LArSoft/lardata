@@ -27,11 +27,7 @@ namespace trkf {
     /// Constructor.
     PropAny(detinfo::DetectorPropertiesData const& detProp, double tcut, bool doDedx);
 
-    Propagator*
-    clone() const override
-    {
-      return new PropAny(*this);
-    }
+    Propagator* clone() const override { return new PropAny(*this); }
 
     /// Propagate without error.
     std::optional<double> short_vec_prop(KTrack& trk,

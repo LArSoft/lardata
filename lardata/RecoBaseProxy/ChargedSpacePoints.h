@@ -104,15 +104,13 @@
 #ifndef LARDATA_RECOBASEPROXY_CHARGEDSPACEPOINTS_H
 #define LARDATA_RECOBASEPROXY_CHARGEDSPACEPOINTS_H
 
-
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase.h" // proxy namespace
-#include "lardataobj/RecoBase/SpacePoint.h"
-#include "lardataobj/RecoBase/PointCharge.h"
 #include "larcorealg/Geometry/geo_vectors_utils.h" // geo::vect namespace
+#include "lardata/RecoBaseProxy/ProxyBase.h"       // proxy namespace
+#include "lardataobj/RecoBase/PointCharge.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
 
 // framework libraries
-
 
 namespace proxy {
 
@@ -229,8 +227,6 @@ namespace proxy {
 
   }; // struct ChargedSpacePoints
 
-
-
   //--------------------------------------------------------------------------
   /**
    * @brief Proxy class for charged space point proxy elements.
@@ -241,13 +237,12 @@ namespace proxy {
    * For details on the space point interface see `proxy::ChargedSpacePoints`.
    */
   template <typename CollProxy>
-  struct SpacePointWithCharge: public CollectionProxyElement<CollProxy> {
+  struct SpacePointWithCharge : public CollectionProxyElement<CollProxy> {
 
     using base_t = CollectionProxyElement<CollProxy>; ///< Base type.
-    using base_t::base_t; // inherit constructors
+    using base_t::base_t;                             // inherit constructors
 
-      public:
-
+  public:
     // --- BEGIN data object access --------------------------------------------
     /// @{
     /// @name Full data object access
@@ -261,7 +256,9 @@ namespace proxy {
     /// Returns the `recob::PointCharge` object with the complete charge
     /// information.
     recob::PointCharge const& chargeInfo() const
-      { return base_t::template get<ChargedSpacePoints::ChargeTag>(); }
+    {
+      return base_t::template get<ChargedSpacePoints::ChargeTag>();
+    }
 
     // --- BEGIN space point access --------------------------------------------
     /// @{
@@ -271,12 +268,10 @@ namespace proxy {
     auto ID() const { return point().ID(); }
 
     /// Returns the position of the space point.
-    geo::Point_t position() const
-      { return geo::vect::makePointFromCoords(point().XYZ()); }
+    geo::Point_t position() const { return geo::vect::makePointFromCoords(point().XYZ()); }
 
     /// @}
     // --- END space point access ----------------------------------------------
-
 
     // --- BEGIN charge access -------------------------------------------------
     /// @{
@@ -284,8 +279,7 @@ namespace proxy {
 
     /// Returns the charge associated to this point
     /// @see `recob::PointCharge::charge()`
-    recob::PointCharge::Charge_t charge() const
-      { return chargeInfo().charge(); }
+    recob::PointCharge::Charge_t charge() const { return chargeInfo().charge(); }
 
     /// Returns whether the charge associated to the space point is valid.
     /// @see `recob::PointCharge::hasCharge()`
@@ -294,9 +288,7 @@ namespace proxy {
     /// @}
     // --- END charge access ---------------------------------------------------
 
-
   }; // SpacePointWithCharge<>
-
 
   //----------------------------------------------------------------------------
   /**
@@ -321,26 +313,21 @@ namespace proxy {
    */
   template <typename MainColl, typename... AuxColl>
   class ChargedSpacePointsCollectionProxy
-    : public CollectionProxyBase<SpacePointWithCharge, MainColl, AuxColl...>
-  {
-    using base_t
-      = CollectionProxyBase<SpacePointWithCharge, MainColl, AuxColl...>;
+    : public CollectionProxyBase<SpacePointWithCharge, MainColl, AuxColl...> {
+    using base_t = CollectionProxyBase<SpacePointWithCharge, MainColl, AuxColl...>;
     using base_t::base_t;
 
-      public:
-
+  public:
     /// Returns the original collection of space points.
-    auto const& spacePoints() const
-      { return base_t::main(); }
+    auto const& spacePoints() const { return base_t::main(); }
 
     /// Returns the original collection of charge information.
     auto const& charges() const
-      {
-        return base_t::template get<ChargedSpacePoints::ChargeTag>().dataRef();
-      }
+    {
+      return base_t::template get<ChargedSpacePoints::ChargeTag>().dataRef();
+    }
 
   }; // ChargedSpacePointsCollectionProxy
-
 
   //----------------------------------------------------------------------------
   /**
@@ -362,8 +349,9 @@ namespace proxy {
    */
   template <typename Tag = proxy::ChargedSpacePoints::ChargeTag>
   auto withCharge(art::InputTag inputTag)
-    { return proxy::withParallelDataAs<recob::PointCharge, Tag>(inputTag); }
-
+  {
+    return proxy::withParallelDataAs<recob::PointCharge, Tag>(inputTag);
+  }
 
   /**
    * @brief Creates and returns a proxy to space points with associated charge.
@@ -391,14 +379,11 @@ namespace proxy {
    *
    */
   template <typename Event, typename... Args>
-  auto getChargedSpacePoints
-    (Event const& event, art::InputTag inputTag, Args&&... withArgs)
-    {
-      return proxy::getCollection<ChargedSpacePoints>(
-        event, inputTag, withCharge(inputTag), std::forward<Args>(withArgs)...
-        );
-    } // getChargedSpacePoints()
-
+  auto getChargedSpacePoints(Event const& event, art::InputTag inputTag, Args&&... withArgs)
+  {
+    return proxy::getCollection<ChargedSpacePoints>(
+      event, inputTag, withCharge(inputTag), std::forward<Args>(withArgs)...);
+  } // getChargedSpacePoints()
 
   //----------------------------------------------------------------------------
   /**
@@ -421,17 +406,13 @@ namespace proxy {
    */
   template <>
   struct CollectionProxyMakerTraits<ChargedSpacePoints>
-    : public
-      CollectionProxyMakerTraits<ChargedSpacePoints::SpacePointDataProduct_t>
-  {
+    : public CollectionProxyMakerTraits<ChargedSpacePoints::SpacePointDataProduct_t> {
     template <typename... Args>
     using collection_proxy_impl_t = ChargedSpacePointsCollectionProxy<Args...>;
   };
 
   //----------------------------------------------------------------------------
 
-
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_CHARGEDSPACEPOINTS_H

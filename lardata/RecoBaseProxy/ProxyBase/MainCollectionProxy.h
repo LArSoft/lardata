@@ -17,8 +17,6 @@
 // C/C++ standard
 #include <cstdlib> // std::size_t
 
-
-
 namespace proxy {
 
   //----------------------------------------------------------------------------
@@ -46,7 +44,7 @@ namespace proxy {
       using main_element_t = util::collection_value_t<MainColl>;
 
       /// Constructor: wraps the specified collection.
-      MainCollectionProxy(main_collection_t const& main): fMain(&main) {}
+      MainCollectionProxy(main_collection_t const& main) : fMain(&main) {}
 
       /// Returns the wrapped collection.
       main_collection_t const& main() const { return mainRef(); }
@@ -57,8 +55,7 @@ namespace proxy {
       /// Returns a pointer to the wrapped collection.
       main_collection_t const* mainPtr() const { return fMain; }
 
-
-        protected:
+    protected:
       /// This type.
       using this_t = MainCollectionProxy<main_collection_t>;
 
@@ -69,20 +66,17 @@ namespace proxy {
       this_t const& mainProxy() const { return *this; }
 
       /// Returns the specified item in the original collection.
-      auto getMainAt(std::size_t i) const -> decltype(auto)
-        { return fMain->operator[](i); }
+      auto getMainAt(std::size_t i) const -> decltype(auto) { return fMain->operator[](i); }
 
-        private:
+    private:
       main_collection_t const* fMain; /// Pointer to the original collection.
 
     }; // struct MainCollectionProxy<>
-
 
     //--------------------------------------------------------------------------
 
   } // namespace details
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_MAINCOLLECTIONPROXY_H

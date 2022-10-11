@@ -49,13 +49,12 @@ namespace util {
   // as those calculated with Get2Dangle
   // writes phi and theta in degrees.
   /////////////////////////////////////
-  Int_t
-  GeometryUtilities::Get3DaxisN(Int_t iplane0,
-                                Int_t iplane1,
-                                Double_t omega0,
-                                Double_t omega1,
-                                Double_t& phi,
-                                Double_t& theta) const
+  Int_t GeometryUtilities::Get3DaxisN(Int_t iplane0,
+                                      Int_t iplane1,
+                                      Double_t omega0,
+                                      Double_t omega1,
+                                      Double_t& phi,
+                                      Double_t& theta) const
   {
     // y, z, x coordinates
     Double_t ln(0), mn(0), nn(0);
@@ -183,11 +182,10 @@ namespace util {
   // Calculate theta in case phi~0
   // returns theta in angles
   ////////////////////////////////
-  Double_t
-  GeometryUtilities::Get3DSpecialCaseTheta(Int_t iplane0,
-                                           Int_t iplane1,
-                                           Double_t dw0,
-                                           Double_t dw1) const
+  Double_t GeometryUtilities::Get3DSpecialCaseTheta(Int_t iplane0,
+                                                    Int_t iplane1,
+                                                    Double_t dw0,
+                                                    Double_t dw1) const
   {
 
     Double_t splane, lplane; // plane in which the track is shorter and longer.
@@ -221,8 +219,7 @@ namespace util {
   // Calculate 3D pitch in beam coordinates
   //
   /////////////////////////////////////////////////////////
-  Double_t
-  GeometryUtilities::CalculatePitch(UInt_t iplane, Double_t phi, Double_t theta) const
+  Double_t GeometryUtilities::CalculatePitch(UInt_t iplane, Double_t phi, Double_t theta) const
   {
 
     Double_t pitch = -1.;
@@ -258,8 +255,7 @@ namespace util {
   // Calculate 3D pitch in polar coordinates
   //
   /////////////////////////////////////////////////////////
-  Double_t
-  GeometryUtilities::CalculatePitchPolar(UInt_t iplane, Double_t phi, Double_t theta) const
+  Double_t GeometryUtilities::CalculatePitchPolar(UInt_t iplane, Double_t phi, Double_t theta) const
   {
 
     Double_t pitch = -1.;
@@ -294,11 +290,10 @@ namespace util {
   // Calculate 2D slope
   // in "cm" "cm" coordinates
   /////////////////////////////////////////////////////////
-  Double_t
-  GeometryUtilities::Get2Dslope(Double_t wireend,
-                                Double_t wirestart,
-                                Double_t timeend,
-                                Double_t timestart) const
+  Double_t GeometryUtilities::Get2Dslope(Double_t wireend,
+                                         Double_t wirestart,
+                                         Double_t timeend,
+                                         Double_t timestart) const
   {
 
     return GeometryUtilities::Get2Dslope((wireend - wirestart) * fWiretoCm,
@@ -309,9 +304,8 @@ namespace util {
   // Calculate 2D slope
   // in "cm" "cm" coordinates
   /////////////////////////////////////////////////////////
-  double
-  GeometryUtilities::Get2Dslope(const util::PxPoint* endpoint,
-                                const util::PxPoint* startpoint) const
+  double GeometryUtilities::Get2Dslope(const util::PxPoint* endpoint,
+                                       const util::PxPoint* startpoint) const
   {
     return Get2Dslope(endpoint->w - startpoint->w, endpoint->t - startpoint->t);
   }
@@ -321,8 +315,7 @@ namespace util {
   // in wire time coordinates coordinates
   //
   /////////////////////////////////////////////////////////
-  Double_t
-  GeometryUtilities::Get2Dslope(Double_t dwire, Double_t dtime) const
+  Double_t GeometryUtilities::Get2Dslope(Double_t dwire, Double_t dtime) const
   {
     return tan(Get2Dangle(dwire, dtime)) / fWireTimetoCmCm;
   }
@@ -331,11 +324,10 @@ namespace util {
   // Calculate 2D angle
   // in "cm" "cm" coordinates
   /////////////////////////////////////////////////////////
-  Double_t
-  GeometryUtilities::Get2Dangle(Double_t wireend,
-                                Double_t wirestart,
-                                Double_t timeend,
-                                Double_t timestart) const
+  Double_t GeometryUtilities::Get2Dangle(Double_t wireend,
+                                         Double_t wirestart,
+                                         Double_t timeend,
+                                         Double_t timestart) const
   {
 
     return Get2Dangle((wireend - wirestart) * fWiretoCm, (timeend - timestart) * fTimetoCm);
@@ -346,9 +338,8 @@ namespace util {
   // in "cm" "cm" coordinates, endpoint and startpoint are assumed to be in
   // cm/cm space
   /////////////////////////////////////////////////////////
-  Double_t
-  GeometryUtilities::Get2Dangle(const util::PxPoint* endpoint,
-                                const util::PxPoint* startpoint) const
+  Double_t GeometryUtilities::Get2Dangle(const util::PxPoint* endpoint,
+                                         const util::PxPoint* startpoint) const
   {
     return Get2Dangle(endpoint->w - startpoint->w, endpoint->t - startpoint->t);
   }
@@ -357,8 +348,7 @@ namespace util {
   // Calculate 2D angle
   // in "cm" "cm" coordinates
   ////////////////////////////
-  Double_t
-  GeometryUtilities::Get2Dangle(Double_t dwire, Double_t dtime) const
+  Double_t GeometryUtilities::Get2Dangle(Double_t dwire, Double_t dtime) const
   {
     Double_t BC, AC;
     Double_t omega;
@@ -384,8 +374,7 @@ namespace util {
   // accepting phi and theta in degrees
   // returning in radians.
 
-  double
-  GeometryUtilities::Get2DangleFrom3D(unsigned int plane, double phi, double theta) const
+  double GeometryUtilities::Get2DangleFrom3D(unsigned int plane, double phi, double theta) const
   {
     TVector3 dummyvector(cos(theta * TMath::Pi() / 180.) * sin(phi * TMath::Pi() / 180.),
                          sin(theta * TMath::Pi() / 180.),
@@ -397,8 +386,7 @@ namespace util {
   // accepting TVector3
   // returning in radians as is customary,
 
-  double
-  GeometryUtilities::Get2DangleFrom3D(unsigned int plane, TVector3 dir_vector) const
+  double GeometryUtilities::Get2DangleFrom3D(unsigned int plane, TVector3 dir_vector) const
   {
     double alpha = 0.5 * TMath::Pi() - fGeom.WireAngleToVertical(fGeom.Plane(plane).View());
     // create dummy  xyz point in middle of detector and another one in unit
@@ -428,18 +416,17 @@ namespace util {
   // Calculate 2D distance
   // in "cm" "cm" coordinates
   ////////////////////////////////////////
-  Double_t
-  GeometryUtilities::Get2DDistance(Double_t wire1,
-                                   Double_t time1,
-                                   Double_t wire2,
-                                   Double_t time2) const
+  Double_t GeometryUtilities::Get2DDistance(Double_t wire1,
+                                            Double_t time1,
+                                            Double_t wire2,
+                                            Double_t time2) const
   {
 
     return std::hypot((wire1 - wire2) * fWiretoCm, (time1 - time2) * fTimetoCm);
   }
 
-  double
-  GeometryUtilities::Get2DDistance(const util::PxPoint* point1, const util::PxPoint* point2) const
+  double GeometryUtilities::Get2DDistance(const util::PxPoint* point1,
+                                          const util::PxPoint* point2) const
   {
     return std::hypot(point1->w - point2->w, point1->t - point2->t);
   }
@@ -448,8 +435,9 @@ namespace util {
   // Calculate 2D distance, using 2D angle
   // in "cm" "cm" coordinates
   ////////////////////////////
-  Double_t
-  GeometryUtilities::Get2DPitchDistance(Double_t angle, Double_t inwire, Double_t wire) const
+  Double_t GeometryUtilities::Get2DPitchDistance(Double_t angle,
+                                                 Double_t inwire,
+                                                 Double_t wire) const
   {
     Double_t radangle = TMath::Pi() * angle / 180;
     if (std::cos(radangle) == 0) return 9999;
@@ -457,8 +445,9 @@ namespace util {
   }
 
   //----------------------------------------------------------------------------
-  Double_t
-  GeometryUtilities::Get2DPitchDistanceWSlope(Double_t slope, Double_t inwire, Double_t wire) const
+  Double_t GeometryUtilities::Get2DPitchDistanceWSlope(Double_t slope,
+                                                       Double_t inwire,
+                                                       Double_t wire) const
   {
 
     return std::abs(wire - inwire) * TMath::Sqrt(1 + slope * slope) * fWiretoCm;
@@ -468,13 +457,12 @@ namespace util {
   // Calculate wire,time coordinates of the Hit projection onto a line
   //
   ///////////////////////////////////
-  Int_t
-  GeometryUtilities::GetPointOnLine(Double_t slope,
-                                    Double_t intercept,
-                                    Double_t wire1,
-                                    Double_t time1,
-                                    Double_t& wireout,
-                                    Double_t& timeout) const
+  Int_t GeometryUtilities::GetPointOnLine(Double_t slope,
+                                          Double_t intercept,
+                                          Double_t wire1,
+                                          Double_t time1,
+                                          Double_t& wireout,
+                                          Double_t& timeout) const
   {
     Double_t invslope = 0;
 
@@ -495,11 +483,10 @@ namespace util {
   // Calculate wire,time coordinates of the Hit projection onto a line
   //  all points are assumed to be in cm/cm space.
   ///////////////////////////////////
-  int
-  GeometryUtilities::GetPointOnLine(Double_t slope,
-                                    const util::PxPoint* startpoint,
-                                    const util::PxPoint* point1,
-                                    util::PxPoint& pointout) const
+  int GeometryUtilities::GetPointOnLine(Double_t slope,
+                                        const util::PxPoint* startpoint,
+                                        const util::PxPoint* point1,
+                                        util::PxPoint& pointout) const
   {
 
     double intercept = startpoint->t - slope * startpoint->w;
@@ -511,11 +498,10 @@ namespace util {
   // Calculate wire,time coordinates of the Hit projection onto a line
   //  all points assumed to be in cm/cm space.
   ///////////////////////////////////
-  int
-  GeometryUtilities::GetPointOnLine(double slope,
-                                    double intercept,
-                                    const util::PxPoint* point1,
-                                    util::PxPoint& pointout) const
+  int GeometryUtilities::GetPointOnLine(double slope,
+                                        double intercept,
+                                        const util::PxPoint* point1,
+                                        util::PxPoint& pointout) const
   {
     double invslope = 0;
 
@@ -537,14 +523,13 @@ namespace util {
   // Calculate wire,time coordinates of the Hit projection onto a line
   //
   ///////////////////////////////////
-  Int_t
-  GeometryUtilities::GetPointOnLine(Double_t slope,
-                                    Double_t wirestart,
-                                    Double_t timestart,
-                                    Double_t wire1,
-                                    Double_t time1,
-                                    Double_t& wireout,
-                                    Double_t& timeout) const
+  Int_t GeometryUtilities::GetPointOnLine(Double_t slope,
+                                          Double_t wirestart,
+                                          Double_t timestart,
+                                          Double_t wire1,
+                                          Double_t time1,
+                                          Double_t& wireout,
+                                          Double_t& timeout) const
   {
     Double_t intercept = timestart - slope * (Double_t)wirestart;
 
@@ -555,12 +540,11 @@ namespace util {
   // Calculate wire,time coordinates of the Hit projection onto a line
   //
   ///////////////////////////////////
-  Int_t
-  GeometryUtilities::GetPointOnLineWSlopes(Double_t slope,
-                                           Double_t intercept,
-                                           Double_t ort_intercept,
-                                           Double_t& wireout,
-                                           Double_t& timeout) const
+  Int_t GeometryUtilities::GetPointOnLineWSlopes(Double_t slope,
+                                                 Double_t intercept,
+                                                 Double_t ort_intercept,
+                                                 Double_t& wireout,
+                                                 Double_t& timeout) const
   {
     Double_t invslope = 0;
 
@@ -581,11 +565,10 @@ namespace util {
   // Calculate wire,time coordinates of the Hit projection onto a line
   // slope should be in cm/cm space. PxPoint should be in cm/cm space.
   ///////////////////////////////////
-  Int_t
-  GeometryUtilities::GetPointOnLineWSlopes(double slope,
-                                           double intercept,
-                                           double ort_intercept,
-                                           util::PxPoint& pointonline) const
+  Int_t GeometryUtilities::GetPointOnLineWSlopes(double slope,
+                                                 double intercept,
+                                                 double ort_intercept,
+                                                 util::PxPoint& pointonline) const
   {
     Double_t invslope = 0;
 
@@ -597,8 +580,9 @@ namespace util {
   }
 
   //////////////////////////////////////////////////////////
-  Int_t
-  GeometryUtilities::GetProjectedPoint(const PxPoint* p0, const PxPoint* p1, PxPoint& pN) const
+  Int_t GeometryUtilities::GetProjectedPoint(const PxPoint* p0,
+                                             const PxPoint* p1,
+                                             PxPoint& pN) const
   {
 
     // determine third plane number
@@ -630,8 +614,7 @@ namespace util {
   }
 
   //////////////////////////////////////////////////////////
-  Int_t
-  GeometryUtilities::GetYZ(const PxPoint* p0, const PxPoint* p1, Double_t* yz) const
+  Int_t GeometryUtilities::GetYZ(const PxPoint* p0, const PxPoint* p1, Double_t* yz) const
   {
     Double_t y, z;
 
@@ -691,8 +674,7 @@ namespace util {
   }
 
   //////////////////////////////////////////////////////////
-  Int_t
-  GeometryUtilities::GetXYZ(const PxPoint* p0, const PxPoint* p1, Double_t* xyz) const
+  Int_t GeometryUtilities::GetXYZ(const PxPoint* p0, const PxPoint* p1, Double_t* xyz) const
   {
     const double origin[3] = {0.};
     Double_t pos[3] = {0.};
@@ -711,8 +693,7 @@ namespace util {
 
   //////////////////////////////////////////////////////////////
 
-  PxPoint
-  GeometryUtilities::Get2DPointProjection(Double_t* xyz, Int_t plane) const
+  PxPoint GeometryUtilities::Get2DPointProjection(Double_t* xyz, Int_t plane) const
   {
 
     PxPoint pN(0, 0, 0);
@@ -740,8 +721,7 @@ namespace util {
   // on the previous version. A.S. 03/26/14
   //////////////////////////////////////
 
-  PxPoint
-  GeometryUtilities::Get2DPointProjectionCM(std::vector<double> xyz, int plane) const
+  PxPoint GeometryUtilities::Get2DPointProjectionCM(std::vector<double> xyz, int plane) const
   {
 
     PxPoint pN(0, 0, 0);
@@ -758,8 +738,7 @@ namespace util {
     return pN;
   }
 
-  PxPoint
-  GeometryUtilities::Get2DPointProjectionCM(double* xyz, int plane) const
+  PxPoint GeometryUtilities::Get2DPointProjectionCM(double* xyz, int plane) const
   {
 
     PxPoint pN(0, 0, 0);
@@ -776,16 +755,14 @@ namespace util {
     return pN;
   }
 
-  PxPoint
-  GeometryUtilities::Get2DPointProjectionCM(TLorentzVector* xyz, int plane) const
+  PxPoint GeometryUtilities::Get2DPointProjectionCM(TLorentzVector* xyz, int plane) const
   {
     double xyznew[3] = {(*xyz)[0], (*xyz)[1], (*xyz)[2]};
 
     return Get2DPointProjectionCM(xyznew, plane);
   }
 
-  Double_t
-  GeometryUtilities::GetTimeTicks(Double_t x, Int_t plane) const
+  Double_t GeometryUtilities::GetTimeTicks(Double_t x, Int_t plane) const
   {
 
     const double origin[3] = {0.};
@@ -799,8 +776,7 @@ namespace util {
   //----------------------------------------------------------------------
   // provide projected wire pitch for the view // copied from track.cxx and
   // modified
-  Double_t
-  GeometryUtilities::PitchInView(UInt_t plane, Double_t phi, Double_t theta) const
+  Double_t GeometryUtilities::PitchInView(UInt_t plane, Double_t phi, Double_t theta) const
   {
     Double_t dirs[3] = {0.};
     GetDirectionCosines(phi, theta, dirs);
@@ -830,8 +806,7 @@ namespace util {
   }
 
   //////////////////////////////////////////////////
-  void
-  GeometryUtilities::GetDirectionCosines(Double_t phi, Double_t theta, Double_t* dirs) const
+  void GeometryUtilities::GetDirectionCosines(Double_t phi, Double_t theta, Double_t* dirs) const
   {
     theta *= (TMath::Pi() / 180);
     phi *= (TMath::Pi() / 180); // working on copies, it's ok.
@@ -840,13 +815,12 @@ namespace util {
     dirs[2] = TMath::Cos(theta) * TMath::Cos(phi);
   }
 
-  void
-  GeometryUtilities::SelectLocalHitlist(const std::vector<util::PxHit>& hitlist,
-                                        std::vector<const util::PxHit*>& hitlistlocal,
-                                        util::PxPoint& startHit,
-                                        Double_t& linearlimit,
-                                        Double_t& ortlimit,
-                                        Double_t& lineslopetest) const
+  void GeometryUtilities::SelectLocalHitlist(const std::vector<util::PxHit>& hitlist,
+                                             std::vector<const util::PxHit*>& hitlistlocal,
+                                             util::PxPoint& startHit,
+                                             Double_t& linearlimit,
+                                             Double_t& ortlimit,
+                                             Double_t& lineslopetest) const
   {
     util::PxHit testHit;
     SelectLocalHitlist(
@@ -857,14 +831,13 @@ namespace util {
   ////
   ///////////////////////////////////////////////////////////////////////////////////
 
-  void
-  GeometryUtilities::SelectLocalHitlist(const std::vector<util::PxHit>& hitlist,
-                                        std::vector<const util::PxHit*>& hitlistlocal,
-                                        util::PxPoint& startHit,
-                                        Double_t& linearlimit,
-                                        Double_t& ortlimit,
-                                        Double_t& lineslopetest,
-                                        util::PxHit& averageHit) const
+  void GeometryUtilities::SelectLocalHitlist(const std::vector<util::PxHit>& hitlist,
+                                             std::vector<const util::PxHit*>& hitlistlocal,
+                                             util::PxPoint& startHit,
+                                             Double_t& linearlimit,
+                                             Double_t& ortlimit,
+                                             Double_t& lineslopetest,
+                                             util::PxHit& averageHit) const
   {
 
     hitlistlocal.clear();
@@ -891,13 +864,12 @@ namespace util {
     }
   }
 
-  void
-  GeometryUtilities::SelectLocalHitlistIndex(const std::vector<util::PxHit>& hitlist,
-                                             std::vector<unsigned int>& hitlistlocal_index,
-                                             util::PxPoint& startHit,
-                                             Double_t& linearlimit,
-                                             Double_t& ortlimit,
-                                             Double_t& lineslopetest) const
+  void GeometryUtilities::SelectLocalHitlistIndex(const std::vector<util::PxHit>& hitlist,
+                                                  std::vector<unsigned int>& hitlistlocal_index,
+                                                  util::PxPoint& startHit,
+                                                  Double_t& linearlimit,
+                                                  Double_t& ortlimit,
+                                                  Double_t& lineslopetest) const
   {
 
     hitlistlocal_index.clear();
@@ -923,9 +895,8 @@ namespace util {
   //////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////
 
-  void
-  GeometryUtilities::SelectPolygonHitList(std::vector<util::PxHit> const& hitlist,
-                                          std::vector<util::PxHit const*>& hitlistlocal) const
+  void GeometryUtilities::SelectPolygonHitList(std::vector<util::PxHit> const& hitlist,
+                                               std::vector<util::PxHit const*>& hitlistlocal) const
   {
     if (empty(hitlist)) { throw UtilException("Provided empty hit list!"); }
 
@@ -1074,9 +1045,8 @@ namespace util {
     if (unique_index.size() > 8) throw UtilException("Size of the polygon > 8!");
   }
 
-  std::vector<size_t>
-  GeometryUtilities::PolyOverlap(std::vector<const util::PxHit*> ordered_hits,
-                                 std::vector<size_t> candidate_polygon) const
+  std::vector<size_t> GeometryUtilities::PolyOverlap(std::vector<const util::PxHit*> ordered_hits,
+                                                     std::vector<size_t> candidate_polygon) const
   {
     // loop over edges
     for (unsigned int i = 0; i < (candidate_polygon.size() - 1); i++) {
@@ -1112,29 +1082,26 @@ namespace util {
     return candidate_polygon;
   }
 
-  bool
-  GeometryUtilities::Clockwise(double const Ax,
-                               double const Ay,
-                               double const Bx,
-                               double const By,
-                               double const Cx,
-                               double const Cy) const
+  bool GeometryUtilities::Clockwise(double const Ax,
+                                    double const Ay,
+                                    double const Bx,
+                                    double const By,
+                                    double const Cx,
+                                    double const Cy) const
   {
     return (Cy - Ay) * (Bx - Ax) > (By - Ay) * (Cx - Ax);
   }
 
-  util::PxHit
-  GeometryUtilities::FindClosestHit(std::vector<util::PxHit> const& hitlist,
-                                    unsigned int const wirein,
-                                    double const timein) const
+  util::PxHit GeometryUtilities::FindClosestHit(std::vector<util::PxHit> const& hitlist,
+                                                unsigned int const wirein,
+                                                double const timein) const
   {
     return hitlist[FindClosestHitIndex(hitlist, wirein, timein)];
   }
 
-  unsigned int
-  GeometryUtilities::FindClosestHitIndex(std::vector<util::PxHit> const& hitlist,
-                                         unsigned int const wirein,
-                                         double const timein) const
+  unsigned int GeometryUtilities::FindClosestHitIndex(std::vector<util::PxHit> const& hitlist,
+                                                      unsigned int const wirein,
+                                                      double const timein) const
   {
     double min_length_from_start = 99999;
     unsigned int ret_ind = 0;

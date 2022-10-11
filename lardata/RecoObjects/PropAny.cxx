@@ -51,13 +51,12 @@ namespace trkf {
   ///
   /// Returned value: propagation distance + success flag.
   ///
-  std::optional<double>
-  PropAny::short_vec_prop(KTrack& trk,
-                          const std::shared_ptr<const Surface>& psurf,
-                          Propagator::PropDirection dir,
-                          bool doDedx,
-                          TrackMatrix* prop_matrix,
-                          TrackError* noise_matrix) const
+  std::optional<double> PropAny::short_vec_prop(KTrack& trk,
+                                                const std::shared_ptr<const Surface>& psurf,
+                                                Propagator::PropDirection dir,
+                                                bool doDedx,
+                                                TrackMatrix* prop_matrix,
+                                                TrackError* noise_matrix) const
   {
     // Default result.
 
@@ -92,10 +91,9 @@ namespace trkf {
   ///
   /// Propagation distance is always zero after successful propagation.
   ///
-  std::optional<double>
-  PropAny::origin_vec_prop(KTrack& trk,
-                           const std::shared_ptr<const Surface>& porient,
-                           TrackMatrix* prop_matrix) const
+  std::optional<double> PropAny::origin_vec_prop(KTrack& trk,
+                                                 const std::shared_ptr<const Surface>& porient,
+                                                 TrackMatrix* prop_matrix) const
   {
     // Default result.
 

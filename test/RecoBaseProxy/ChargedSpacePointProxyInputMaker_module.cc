@@ -8,25 +8,24 @@
 
 // LArSoft libraries
 #include "lardata/ArtDataHelper/ChargedSpacePointCreator.h"
-#include "lardataobj/RecoBase/SpacePoint.h"
 #include "lardataobj/RecoBase/PointCharge.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
 
 // framework libraries
 #include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
 
-#include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/types/Atom.h"
-#include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/Comment.h"
+#include "fhiclcpp/types/Name.h"
+#include "messagefacility/MessageLogger/MessageLogger.h"
 
 // Boost libraries
 #include "boost/test/unit_test.hpp"
 
 // C/C++ standard libraries
 #include <memory> // std::make_unique()
-
 
 namespace lar {
   namespace test {
@@ -46,18 +45,17 @@ namespace lar {
     *     generate
     *
     */
-    class ChargedSpacePointProxyInputMaker: public art::EDProducer {
-        public:
-
+    class ChargedSpacePointProxyInputMaker : public art::EDProducer {
+    public:
       struct Config {
         using Name = fhicl::Name;
         using Comment = fhicl::Comment;
 
-        fhicl::Atom<unsigned int> nPoints {
+        fhicl::Atom<unsigned int> nPoints{
           Name("nPoints"),
           Comment("number of points to generate."),
           10U // default
-          };
+        };
 
       }; // struct Config
 
@@ -67,23 +65,20 @@ namespace lar {
 
       virtual void produce(art::Event& event) override;
 
-        private:
+    private:
       unsigned int nPoints; ///< Number of points to generate.
 
-    };  // ChargedSpacePointProxyInputMaker
+    }; // ChargedSpacePointProxyInputMaker
 
     // -------------------------------------------------------------------------
-
 
   } // namespace test
 } // namespace lar
 
-
 // -----------------------------------------------------------------------------
-lar::test::ChargedSpacePointProxyInputMaker::ChargedSpacePointProxyInputMaker
-  (Parameters const& config)
-  : EDProducer{config}
-  , nPoints(config().nPoints())
+lar::test::ChargedSpacePointProxyInputMaker::ChargedSpacePointProxyInputMaker(
+  Parameters const& config)
+  : EDProducer{config}, nPoints(config().nPoints())
 {
 
   // declare production of recob::SpacePoint and recob::PointCharge collections:
@@ -92,33 +87,31 @@ lar::test::ChargedSpacePointProxyInputMaker::ChargedSpacePointProxyInputMaker
 } // ChargedSpacePointProxyInputMaker::ChargedSpacePointProxyInputMaker()
 
 // -----------------------------------------------------------------------------
-void lar::test::ChargedSpacePointProxyInputMaker::produce(art::Event& event) {
+void lar::test::ChargedSpacePointProxyInputMaker::produce(art::Event& event)
+{
 
   auto spacePoints = recob::ChargedSpacePointCollectionCreator::forPtrs(event);
 
   BOOST_TEST(spacePoints.empty());
 
-  const double err[6U] = { 1.0, 0.0, 1.0, 0.0, 0.0, 1.0 };
+  const double err[6U] = {1.0, 0.0, 1.0, 0.0, 0.0, 1.0};
 
   for (unsigned int iPoint = 0; iPoint < nPoints; ++iPoint) {
-    BOOST_TEST(spacePoints.size() == (std::size_t) iPoint);
+    BOOST_TEST(spacePoints.size() == (std::size_t)iPoint);
 
-    double const pos[3U]
-      = { double(iPoint), double(2.0 * iPoint), double(4.0 * iPoint) };
+    double const pos[3U] = {double(iPoint), double(2.0 * iPoint), double(4.0 * iPoint)};
 
-    spacePoints.add(
-      { pos, err, 1.0 /* chisq */, int(iPoint) /* id */ }, // space point
-      { recob::PointCharge::Charge_t(iPoint) }                  // charge
-      );
+    spacePoints.add({pos, err, 1.0 /* chisq */, int(iPoint) /* id */}, // space point
+                    {recob::PointCharge::Charge_t(iPoint)}             // charge
+    );
 
     mf::LogVerbatim("ChargedSpacePointProxyInputMaker")
       << "[#" << iPoint << "] point: " << spacePoints.lastSpacePoint()
-      << " (ptr: " << spacePoints.lastSpacePointPtr()
-      << "); charge: " << spacePoints.lastCharge()
+      << " (ptr: " << spacePoints.lastSpacePointPtr() << "); charge: " << spacePoints.lastCharge()
       << " (ptr: " << spacePoints.lastChargePtr() << ")";
 
   } // for (iPoint)
-  BOOST_TEST(spacePoints.size() == (std::size_t) nPoints);
+  BOOST_TEST(spacePoints.size() == (std::size_t)nPoints);
 
   mf::LogInfo("ChargedSpacePointProxyInputMaker")
     << "Produced " << spacePoints.size() << " points and charges.";

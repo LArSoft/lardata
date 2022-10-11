@@ -18,11 +18,10 @@
 #include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard
-#include <tuple> // std::tuple_element_t<>, std::get(), ...
-#include <utility> // std::forward(), std::move(), std::make_index_sequence()...
+#include <cstdlib>     // std::size_t
+#include <tuple>       // std::tuple_element_t<>, std::get(), ...
 #include <type_traits> // std::is_convertible<>, std::decay_t<>, ...
-#include <cstdlib> // std::size_t
-
+#include <utility>     // std::forward(), std::move(), std::make_index_sequence()...
 
 namespace proxy {
 
@@ -50,18 +49,12 @@ namespace proxy {
      * This is not a customization point: to have a custom associated data
      * produced, choose and then specialize the `ProxyAsAuxProxyMaker` class.
      */
-    template <
-      typename AuxProxy,
-      typename ArgTuple,
-      typename AuxTag = AuxProxy
-      >
+    template <typename AuxProxy, typename ArgTuple, typename AuxTag = AuxProxy>
     class WithProxyAsAuxStructBase {
 
       static_assert(
-        std::is_convertible
-          <std::decay_t<std::tuple_element_t<0U, ArgTuple>>, art::InputTag>(),
-        "The first argument of WithProxyAsAuxStructBase must be art::InputTag."
-        );
+        std::is_convertible<std::decay_t<std::tuple_element_t<0U, ArgTuple>>, art::InputTag>(),
+        "The first argument of WithProxyAsAuxStructBase must be art::InputTag.");
 
       /// Type of main data product element from a proxy of type `CollProxy`.
       template <typename CollProxy>
@@ -75,53 +68,43 @@ namespace proxy {
 
       /// Class to create the data proxy associated to a `CollProxy`.
       template <typename CollProxy>
-      using proxy_maker_t
-        = ProxyAsAuxProxyMaker<main_t<CollProxy>, aux_proxy_t, CollProxy, tag>;
+      using proxy_maker_t = ProxyAsAuxProxyMaker<main_t<CollProxy>, aux_proxy_t, CollProxy, tag>;
 
-        public:
-
+    public:
       /// Constructor: steals the arguments, to be used by
       /// `createAuxProxyMaker()`.
-      WithProxyAsAuxStructBase(ArgTuple&& args): args(std::move(args)) {}
+      WithProxyAsAuxStructBase(ArgTuple&& args) : args(std::move(args)) {}
 
       /// Creates the associated data proxy by means of `ProxyAsAuxProxyMaker`.
-      template
-        <typename CollProxy, typename Event, typename Handle, typename MainArgs>
-      auto createAuxProxyMaker
-        (Event const& event, Handle&& mainHandle, MainArgs const& mainArgs)
-        {
-          return createAuxProxyImpl<CollProxy>(
-            event, std::forward<Handle>(mainHandle), mainArgs,
-            std::make_index_sequence<NArgs>()
-            );
-        } // construct()
+      template <typename CollProxy, typename Event, typename Handle, typename MainArgs>
+      auto createAuxProxyMaker(Event const& event, Handle&& mainHandle, MainArgs const& mainArgs)
+      {
+        return createAuxProxyImpl<CollProxy>(
+          event, std::forward<Handle>(mainHandle), mainArgs, std::make_index_sequence<NArgs>());
+      } // construct()
 
-
-        protected:
-
+    protected:
       ArgTuple args; ///< Argument construction storage as tuple.
 
       /// Number of arguments stored.
       static constexpr std::size_t NArgs = std::tuple_size<ArgTuple>();
 
       // this method allows unpacking the arguments from the tuple
-      template<
-        typename CollProxy, typename Event, typename Handle, typename MainArgs,
-        std::size_t... I
-        >
-      auto createAuxProxyImpl(
-        Event const& event, Handle&& mainHandle, MainArgs const& mainArgs,
-        std::index_sequence<I...>
-        )
-        {
-          return proxy_maker_t<CollProxy>::make(
-            event, mainHandle, mainArgs,
-            std::get<I>(std::forward<ArgTuple>(args))...
-            );
-        }
+      template <typename CollProxy,
+                typename Event,
+                typename Handle,
+                typename MainArgs,
+                std::size_t... I>
+      auto createAuxProxyImpl(Event const& event,
+                              Handle&& mainHandle,
+                              MainArgs const& mainArgs,
+                              std::index_sequence<I...>)
+      {
+        return proxy_maker_t<CollProxy>::make(
+          event, mainHandle, mainArgs, std::get<I>(std::forward<ArgTuple>(args))...);
+      }
 
     }; // struct WithProxyAsAuxStructBase
-
 
     /// @}
     /// --- END LArSoftProxiesAuxProxy -----------------------------------------
@@ -129,6 +112,5 @@ namespace proxy {
   } // namespace details
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_WITHPROXYASAUXSTRUCTBASE_H

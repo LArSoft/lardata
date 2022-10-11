@@ -10,8 +10,8 @@
 
 // support libraries
 #include "fhiclcpp/types/Atom.h"
-#include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/Comment.h"
+#include "fhiclcpp/types/Name.h"
 
 // art libraries
 #include "art/Framework/Core/EDAnalyzer.h"
@@ -38,44 +38,38 @@ namespace pid {
    *   used for the output (useful for filtering)
    *
    */
-  class DumpParticleIDs: public art::EDAnalyzer {
-      public:
-
+  class DumpParticleIDs : public art::EDAnalyzer {
+  public:
     struct Config {
       using Name = fhicl::Name;
       using Comment = fhicl::Comment;
 
       fhicl::Atom<art::InputTag> ParticleIDModuleLabel{
         Name("ParticleIDModuleLabel"),
-        Comment("tag of the producer used to create the anab::ParticleID collection")
-        };
+        Comment("tag of the producer used to create the anab::ParticleID collection")};
 
       fhicl::Atom<std::string> OutputCategory{
         Name("OutputCategory"),
         Comment("the messagefacility category used for the output"),
-        "DumpParticleIDs"
-        };
+        "DumpParticleIDs"};
 
     }; // Config
 
     using Parameters = art::EDAnalyzer::Table<Config>;
 
-
     /// Default constructor
     explicit DumpParticleIDs(Parameters const& config);
 
     /// Does the printing
-    void analyze (const art::Event& evt) override;
+    void analyze(const art::Event& evt) override;
 
-      private:
-
+  private:
     art::InputTag const fParticleIDsModuleLabel; ///< name of module that produced the pids
-    std::string const fOutputCategory;    ///< category for LogInfo output
+    std::string const fOutputCategory;           ///< category for LogInfo output
 
   }; // class DumpParticleIDs
 
 } // namespace pid
-
 
 //------------------------------------------------------------------------------
 //---  module implementation
@@ -92,29 +86,28 @@ namespace pid {
 // LArSoft includes
 #include "lardataobj/AnalysisBase/ParticleID.h"
 
-
 namespace pid {
 
   //-------------------------------------------------
   DumpParticleIDs::DumpParticleIDs(Parameters const& config)
-    : EDAnalyzer              (config)
-    , fParticleIDsModuleLabel (config().ParticleIDModuleLabel())
-    , fOutputCategory         (config().OutputCategory())
-    {}
-
+    : EDAnalyzer(config)
+    , fParticleIDsModuleLabel(config().ParticleIDModuleLabel())
+    , fOutputCategory(config().OutputCategory())
+  {}
 
   //-------------------------------------------------
-  void DumpParticleIDs::analyze(const art::Event& evt) {
+  void DumpParticleIDs::analyze(const art::Event& evt)
+  {
 
     // fetch the data to be dumped on screen
-    auto const& ParticleIDs = evt.getProduct<std::vector<anab::ParticleID>>(fParticleIDsModuleLabel);
+    auto const& ParticleIDs =
+      evt.getProduct<std::vector<anab::ParticleID>>(fParticleIDsModuleLabel);
 
-    mf::LogInfo(fOutputCategory)
-      << "The event contains " << ParticleIDs.size() << " '"
-      << fParticleIDsModuleLabel.encode() << "' particle IDs";
+    mf::LogInfo(fOutputCategory) << "The event contains " << ParticleIDs.size() << " '"
+                                 << fParticleIDsModuleLabel.encode() << "' particle IDs";
 
     unsigned int ipid = 0;
-    for (const anab::ParticleID& pid: ParticleIDs) {
+    for (const anab::ParticleID& pid : ParticleIDs) {
 
       // print a header for the cluster
       mf::LogVerbatim log(fOutputCategory);
@@ -123,7 +116,7 @@ namespace pid {
       auto scores = pid.ParticleIDAlgScores();
       log << "Number of algorithms = " << scores.size() << '\n';
       int ialg = 0;
-      for(const anab::sParticleIDAlgScores score: scores) {
+      for (const anab::sParticleIDAlgScores score : scores) {
         log << "  ParticleID #" << ipid << ", Algorithm " << ialg << '\n'
             << "    Algorithm name = " << score.fAlgName << '\n'
             << "    Variable type  = " << score.fVariableType << '\n'

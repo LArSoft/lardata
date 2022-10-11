@@ -13,8 +13,7 @@
 namespace trkf {
 
   /// Default constructor.
-  KHitTrack::KHitTrack()
-  {}
+  KHitTrack::KHitTrack() {}
 
   /// Initializing constructor - KFitTrack + measurement.
   ///
@@ -23,9 +22,8 @@ namespace trkf {
   /// trf - KFitTrack.
   /// hit - Measurement.
   ///
-  KHitTrack::KHitTrack(const KFitTrack& trf, const std::shared_ptr<const KHitBase>& hit) :
-    KFitTrack(trf),
-    fHit(hit)
+  KHitTrack::KHitTrack(const KFitTrack& trf, const std::shared_ptr<const KHitBase>& hit)
+    : KFitTrack(trf), fHit(hit)
   {}
 
   /// Initializing constructor - KETrack.
@@ -34,19 +32,15 @@ namespace trkf {
   ///
   /// tre - KETrack.
   ///
-  KHitTrack::KHitTrack(const KETrack& tre) :
-    KFitTrack(tre)
-  {}
+  KHitTrack::KHitTrack(const KETrack& tre) : KFitTrack(tre) {}
 
   /// Destructor.
-  KHitTrack::~KHitTrack()
-  {}
+  KHitTrack::~KHitTrack() {}
 
   /// Printout
   std::ostream& KHitTrack::Print(std::ostream& out, bool doTitle) const
   {
-    if(doTitle)
-      out << "KHitTrack:\n";
+    if (doTitle) out << "KHitTrack:\n";
 
     // Print base class.
 
@@ -54,8 +48,7 @@ namespace trkf {
 
     // Print information specific to this class.
 
-    if(fHit.get() != 0)
-      out << "  " << *fHit;
+    if (fHit.get() != 0) out << "  " << *fHit;
     return out;
   }
 

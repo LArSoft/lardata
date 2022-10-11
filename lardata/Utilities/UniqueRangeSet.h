@@ -14,8 +14,8 @@
 #ifndef UNIQUERANGESET_H
 #define UNIQUERANGESET_H
 
-#include <set>
 #include "Range.h"
+#include <set>
 
 namespace util {
 
@@ -33,28 +33,31 @@ namespace util {
      instance will result in 1 huge util::Range.
   */
   template <class T>
-  class UniqueRangeSet : public std::set<util::Range<T> > {
+  class UniqueRangeSet : public std::set<util::Range<T>> {
   public:
     /// default ctor
-    UniqueRangeSet(){}
+    UniqueRangeSet() {}
     /// default dtor
-    ~UniqueRangeSet(){}
+    ~UniqueRangeSet() {}
 
     /// Merge two UniqueRangeSet<T>
     void Merge(const UniqueRangeSet<T>& in)
-    { for(auto const& r : in) emplace(r._window.first,r._window.second); }
+    {
+      for (auto const& r : in)
+        emplace(r._window.first, r._window.second);
+    }
 
     /// Very first "start" of all contained range
     const T& Start() const
     {
-      if(!(this->size())) throw std::runtime_error("Nothing in the set!");
+      if (!(this->size())) throw std::runtime_error("Nothing in the set!");
       return (*(this->begin()))._window.first;
     }
 
     /// Very last "end" of all contained range
     const T& End() const
     {
-      if(!(this->size())) throw std::runtime_error("Nothing in the set!");
+      if (!(this->size())) throw std::runtime_error("Nothing in the set!");
       return (*(this->rbegin()))._window.second;
     }
 
@@ -67,52 +70,49 @@ namespace util {
     {
       UniqueRangeSet<T> res;
 
-      auto start_iter = std::lower_bound(this->begin(),this->end(),start);
-      auto end_iter   = std::lower_bound(this->begin(),this->end(),end);
+      auto start_iter = std::lower_bound(this->begin(), this->end(), start);
+      auto end_iter = std::lower_bound(this->begin(), this->end(), end);
 
       // Anything to add to the head?
-      if(start < (*start_iter)._window.first) res.emplace(start,(*start_iter)._window.first);
+      if (start < (*start_iter)._window.first) res.emplace(start, (*start_iter)._window.first);
 
       auto iter = start_iter;
-      T  tmp_end=end;
-      while(iter != this->end()) {
-	if(iter != start_iter)
-	  res.emplace(tmp_end,(*iter)._window.first);
-	tmp_end   = (*iter)._window.second;
-	if(iter == end_iter) break;
-	++iter;
+      T tmp_end = end;
+      while (iter != this->end()) {
+        if (iter != start_iter) res.emplace(tmp_end, (*iter)._window.first);
+        tmp_end = (*iter)._window.second;
+        if (iter == end_iter) break;
+        ++iter;
       }
 
       // Anything to add to the tail?
-      if(tmp_end < end)
-	res.emplace(tmp_end,end);
+      if (tmp_end < end) res.emplace(tmp_end, end);
 
       return res;
     }
 
     /// Modified emplace that merges overlapping range. Return = # merged range.
-    size_t emplace(const T& start,const T& end) {
+    size_t emplace(const T& start, const T& end)
+    {
 
-      auto res = std::set<util::Range<T> >::emplace(start,end);
-      if(res.second) return 0;
+      auto res = std::set<util::Range<T>>::emplace(start, end);
+      if (res.second) return 0;
 
       auto& iter = res.first;
-      auto tmp_a = Range<T>(start,end);
-      size_t ctr=0;
-      while(iter != this->end()) {
-	tmp_a.Merge((*iter));
-	this->erase(iter);
-	iter = this->find(tmp_a);
-	++ctr;
+      auto tmp_a = Range<T>(start, end);
+      size_t ctr = 0;
+      while (iter != this->end()) {
+        tmp_a.Merge((*iter));
+        this->erase(iter);
+        iter = this->find(tmp_a);
+        ++ctr;
       }
       this->insert(tmp_a);
       return ctr;
     }
 
     /// Modified insert that merges overlapping range. Return = # merged range.
-    size_t insert(const Range<T>& a)
-    {return emplace(a._window.first,a._window.second);}
-
+    size_t insert(const Range<T>& a) { return emplace(a._window.first, a._window.second); }
   };
 }
 

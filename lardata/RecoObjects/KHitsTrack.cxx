@@ -13,8 +13,7 @@
 namespace trkf {
 
   /// Default constructor.
-  KHitsTrack::KHitsTrack()
-  {}
+  KHitsTrack::KHitsTrack() {}
 
   /// Initializing constructor - KFitTrack.
   ///
@@ -22,9 +21,7 @@ namespace trkf {
   ///
   /// trf - KFitTrack.
   ///
-  KHitsTrack::KHitsTrack(const KFitTrack& trf) :
-    KFitTrack(trf)
-  {}
+  KHitsTrack::KHitsTrack(const KFitTrack& trf) : KFitTrack(trf) {}
 
   /// Initializing constructor - KETrack.
   ///
@@ -32,19 +29,15 @@ namespace trkf {
   ///
   /// tre - KETrack.
   ///
-  KHitsTrack::KHitsTrack(const KETrack& tre) :
-    KFitTrack(tre)
-  {}
+  KHitsTrack::KHitsTrack(const KETrack& tre) : KFitTrack(tre) {}
 
   /// Destructor.
-  KHitsTrack::~KHitsTrack()
-  {}
+  KHitsTrack::~KHitsTrack() {}
 
   /// Printout
   std::ostream& KHitsTrack::Print(std::ostream& out, bool doTitle) const
   {
-    if(doTitle)
-      out << "KHitsTrack:\n";
+    if (doTitle) out << "KHitsTrack:\n";
 
     // Print information specific to this class.
 

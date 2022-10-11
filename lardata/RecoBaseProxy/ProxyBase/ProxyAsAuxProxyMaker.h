@@ -12,16 +12,15 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_PROXYASAUXPROXYMAKER_H
 
 // LArSoft libraries
+#include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
 #include "lardata/RecoBaseProxy/ProxyBase/ProxyAsParallelData.h"
 #include "lardata/RecoBaseProxy/ProxyBase/getCollection.h"
-#include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
 
 // framework libraries
 #include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard
 #include <utility> // std::forward(), std::move()
-
 
 namespace proxy {
 
@@ -41,11 +40,7 @@ namespace proxy {
    * the specializations of the latter can still inherit from this one if they
    * its facilities.
    */
-  template <
-    typename Main,
-    typename AuxProxy,
-    typename AuxTag = AuxProxy
-    >
+  template <typename Main, typename AuxProxy, typename AuxTag = AuxProxy>
   struct ProxyAsAuxProxyMakerBase {
 
     /// Tag labelling the associated data we are going to produce.
@@ -75,38 +70,29 @@ namespace proxy {
      * The tag of the main collection proxy is ignored even if present, and
      * the caller must specify it.
      */
-    template
-      <typename Event, typename Handle, typename MainArgs, typename... AuxArgs>
-    static auto make(
-      Event const& event, Handle&&, MainArgs const&,
-      art::InputTag const& auxProxyTag, AuxArgs&&... args
-      )
-      {
-        auto auxProxy = makeAuxiliaryProxy
-          (event, auxProxyTag, std::forward<AuxArgs>(args)...);
-        return makeProxyAsParallelData
-          <data_tag, util::collection_value_t<decltype(auxProxy)>>
-          (std::move(auxProxy));
-      }
+    template <typename Event, typename Handle, typename MainArgs, typename... AuxArgs>
+    static auto make(Event const& event,
+                     Handle&&,
+                     MainArgs const&,
+                     art::InputTag const& auxProxyTag,
+                     AuxArgs&&... args)
+    {
+      auto auxProxy = makeAuxiliaryProxy(event, auxProxyTag, std::forward<AuxArgs>(args)...);
+      return makeProxyAsParallelData<data_tag, util::collection_value_t<decltype(auxProxy)>>(
+        std::move(auxProxy));
+    }
 
-
-      private:
-
+  private:
     /// Creates the proxy to be used as parallel data.
     template <typename Event, typename... AuxArgs>
-    static auto makeAuxiliaryProxy(
-      Event const& event,
-      art::InputTag const& auxProxyTag,
-      AuxArgs&&... args
-    )
-      {
-        return getCollection<aux_proxy_t>
-          (event, auxProxyTag, std::forward<AuxArgs>(args)...);
-      }
-
+    static auto makeAuxiliaryProxy(Event const& event,
+                                   art::InputTag const& auxProxyTag,
+                                   AuxArgs&&... args)
+    {
+      return getCollection<aux_proxy_t>(event, auxProxyTag, std::forward<AuxArgs>(args)...);
+    }
 
   }; // struct ProxyAsAuxProxyMakerBase<>
-
 
   //--------------------------------------------------------------------------
   /**
@@ -140,22 +126,15 @@ namespace proxy {
    * The template argument `CollProxy` is designed for specialization of
    * auxiliary data in the context of a specific proxy type.
    */
-  template <
-    typename Main,
-    typename AuxProxy,
-    typename CollProxy,
-    typename Tag = util::collection_value_t<AuxProxy>
-    >
-  class ProxyAsAuxProxyMaker
-    : public ProxyAsAuxProxyMakerBase<Main, AuxProxy, Tag>
-    {};
-
+  template <typename Main,
+            typename AuxProxy,
+            typename CollProxy,
+            typename Tag = util::collection_value_t<AuxProxy>>
+  class ProxyAsAuxProxyMaker : public ProxyAsAuxProxyMakerBase<Main, AuxProxy, Tag> {};
 
   /// @}
   /// --- END LArSoftProxiesAuxProxy -------------------------------------------
 
-
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_PROXYASAUXPROXYMAKER_H

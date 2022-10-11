@@ -12,43 +12,36 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_WITHPARALLELDATA_H
 
 // LArSoft libraries
+#include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
 #include "lardata/RecoBaseProxy/ProxyBase/ParallelDataProxyMaker.h"
 #include "lardata/RecoBaseProxy/ProxyBase/WithAssociatedStructBase.h"
-#include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
 
 // C/C++ standard
 #include <tuple>
 #include <utility> // std::forward(), std::move()
 
-
 namespace proxy {
-
 
   //----------------------------------------------------------------------------
   namespace details {
 
     template <typename Aux, typename ArgTuple, typename AuxTag = Aux>
-    using WithParallelCollectionStruct = WithAssociatedStructBase<
-      Aux,
-      void, // no metadata concept for parallel collections
-      ArgTuple,
-      ParallelDataProxyMakerWrapper<Aux, AuxTag>::template maker_t,
-      AuxTag
-      >;
+    using WithParallelCollectionStruct =
+      WithAssociatedStructBase<Aux,
+                               void, // no metadata concept for parallel collections
+                               ArgTuple,
+                               ParallelDataProxyMakerWrapper<Aux, AuxTag>::template maker_t,
+                               AuxTag>;
 
-
-    template
-      <typename Aux, typename ArgTuple, typename AuxColl, typename AuxTag = Aux>
+    template <typename Aux, typename ArgTuple, typename AuxColl, typename AuxTag = Aux>
     using WithWrappedParallelCollectionStruct = WithAssociatedStructBase<
       Aux,
       void, // no metadata concept for parallel collections
       ArgTuple,
       ParallelDataProxyMakerWrapper<Aux, AuxTag, AuxColl>::template maker_t,
-      AuxTag
-      >;
+      AuxTag>;
 
   } // namespace details
-
 
   // --- BEGIN Parallel data collections ---------------------------------------
   /**
@@ -93,11 +86,11 @@ namespace proxy {
    * proxy resulting from that.
    */
   template <typename Aux, typename AuxTag, typename... Args>
-  auto withParallelDataAs(Args&&... args) {
+  auto withParallelDataAs(Args&&... args)
+  {
     using ArgTuple_t = std::tuple<Args&&...>;
     ArgTuple_t argsTuple(std::forward<Args>(args)...);
-    return details::WithParallelCollectionStruct<Aux, ArgTuple_t, AuxTag>
-      (std::move(argsTuple));
+    return details::WithParallelCollectionStruct<Aux, ArgTuple_t, AuxTag>(std::move(argsTuple));
   } // withParallelDataAs()
 
   //----------------------------------------------------------------------------
@@ -180,8 +173,9 @@ namespace proxy {
    */
   template <typename Aux, typename... Args>
   auto withParallelData(Args&&... args)
-    { return withParallelDataAs<Aux, Aux>(std::forward<Args>(args)...); }
-
+  {
+    return withParallelDataAs<Aux, Aux>(std::forward<Args>(args)...);
+  }
 
   //----------------------------------------------------------------------------
   /**
@@ -230,13 +224,14 @@ namespace proxy {
    * scope).
    */
   template <typename AuxTag, typename AuxColl>
-  auto wrapParallelDataAs(AuxColl const& auxColl) {
-    std::tuple<AuxColl const&> args = { auxColl };
-    return details::WithWrappedParallelCollectionStruct
-      <util::collection_value_t<AuxColl>, decltype(args), AuxColl, AuxTag>
-      (std::move(args));
+  auto wrapParallelDataAs(AuxColl const& auxColl)
+  {
+    std::tuple<AuxColl const&> args = {auxColl};
+    return details::WithWrappedParallelCollectionStruct<util::collection_value_t<AuxColl>,
+                                                        decltype(args),
+                                                        AuxColl,
+                                                        AuxTag>(std::move(args));
   } // wrapParallelDataAs()
-
 
   /**
    * @brief Uses a collection as auxiliary data for a collection proxy.
@@ -259,13 +254,13 @@ namespace proxy {
    */
   template <typename AuxColl>
   auto wrapParallelData(AuxColl const& auxColl)
-    { return wrapParallelDataAs<util::collection_value_t<AuxColl>>(auxColl); }
-
+  {
+    return wrapParallelDataAs<util::collection_value_t<AuxColl>>(auxColl);
+  }
 
   /// @}
   // --- END Parallel data collections -----------------------------------------
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_WITHPARALLELDATA_H

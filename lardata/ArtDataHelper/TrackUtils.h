@@ -17,7 +17,9 @@
 // LArSoft libraries
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h" // geo::View_t
 
-namespace recob { class Track; }
+namespace recob {
+  class Track;
+}
 
 namespace lar::util {
 
@@ -33,7 +35,6 @@ namespace lar::util {
    *
    */
   double TrackProjectedLength(recob::Track const& track, geo::View_t view);
-
 
   /**
    * @brief Returns the projected length of track on a wire pitch step [cm]
@@ -61,11 +62,10 @@ namespace lar::util {
    * positive number, regardless the direction of the track, and never
    * smaller than the wire pitch on the projection wire plane.
    */
-  double TrackPitchInView
-    (recob::Track const& track, geo::View_t view, size_t trajectory_point = 0U);
-
+  double TrackPitchInView(recob::Track const& track,
+                          geo::View_t view,
+                          size_t trajectory_point = 0U);
 
 } // namespace lar::util
-
 
 #endif // LARDATA_ARTDATAHELPER_TRACKUTILS_H

@@ -28,5 +28,4 @@ proxy::Track proxy::Tracks::getProxyAt(std::size_t index) const {
 
 } // proxy::Tracks::getProxyAt()
 
-
 #endif // 0

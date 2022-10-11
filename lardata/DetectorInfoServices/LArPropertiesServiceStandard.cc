@@ -13,9 +13,7 @@ detinfo::LArPropertiesServiceStandard::LArPropertiesServiceStandard(Parameters c
 }
 
 //----------------------------------------------
-void
-detinfo::LArPropertiesServiceStandard::preBeginRun(art::Run const& run)
+void detinfo::LArPropertiesServiceStandard::preBeginRun(art::Run const& run)
 {
   fProp.Update(run.run());
 }
-

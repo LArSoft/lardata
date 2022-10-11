@@ -10,9 +10,8 @@
 #define DETECTORINFOSERVICE_SERVICEPACK_H 1
 
 // LArSoft libraries
-#include "larcorealg/CoreUtils/ProviderPack.h"
 #include "larcore/CoreUtils/ServiceUtil.h" // lar::providerFrom()
-
+#include "larcorealg/CoreUtils/ProviderPack.h"
 
 namespace lar {
   /*
@@ -23,8 +22,7 @@ namespace lar {
 
   /// Type of provider pack with providers from all specified Services
   template <typename... Services>
-  using ProviderPackFromServices
-    = lar::ProviderPack<typename Services::provider_type...>;
+  using ProviderPackFromServices = lar::ProviderPack<typename Services::provider_type...>;
 
   /**
    * @brief Returns a provider pack with providers from specified services
@@ -52,7 +50,9 @@ namespace lar {
    */
   template <typename... Services>
   ProviderPackFromServices<Services...> extractProviders()
-    { return { lar::providerFrom<Services>()... }; }
+  {
+    return {lar::providerFrom<Services>()...};
+  }
 
 } // namespace lar
 
@@ -70,4 +70,3 @@ namespace lar {
 */
 
 #endif // DETECTORINFOSERVICE_SERVICEPACK_H
-

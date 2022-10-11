@@ -18,11 +18,9 @@ namespace lar {
     /// Implementation of utility details
     namespace details {
 
-
       /// Class compiling only if type T exists (then, it's std::true_type)
       template <typename T>
-      struct is_type: public std::true_type {};
-
+      struct is_type : public std::true_type {};
 
       //@{
       /**
@@ -48,17 +46,14 @@ namespace lar {
        * available, since it is more specialized.
        */
       template <typename T, typename Enable = void>
-      struct has_dereference_class: public std::false_type {};
+      struct has_dereference_class : public std::false_type {};
 
       template <typename T>
       struct has_dereference_class<
         T,
-        typename std::enable_if<is_type<decltype(*(T()))>::value, void>::type
-        >:
-        public std::true_type
-      {};
+        typename std::enable_if<is_type<decltype(*(T()))>::value, void>::type>
+        : public std::true_type {};
       //@}
-
 
       //@{
       /**
@@ -98,7 +93,7 @@ namespace lar {
        */
       template <typename T, bool CanDereference>
       struct dereferenced_type {
-      //  using type = typename std::add_lvalue_reference<T>::type;
+        //  using type = typename std::add_lvalue_reference<T>::type;
         using type = T;
       }; // dereferenced_type <>
 
@@ -107,8 +102,6 @@ namespace lar {
         using type = decltype(*T());
       }; // dereferenced_type<T, true>
       //@}
-
-
 
       //@{
       /**
@@ -131,23 +124,21 @@ namespace lar {
       template <typename T, bool CanDereference>
       struct dereference_class {
         using argument_type = T;
-        using reference_type = typename std::add_lvalue_reference
-          <typename dereferenced_type<T, CanDereference>::type>::type;
+        using reference_type = typename std::add_lvalue_reference<
+          typename dereferenced_type<T, CanDereference>::type>::type;
 
-        reference_type operator() (argument_type& ref) const { return ref; }
+        reference_type operator()(argument_type& ref) const { return ref; }
       }; // dereference_class<T, bool>
-
 
       template <typename T>
       struct dereference_class<T, true> {
         using argument_type = T;
-        using reference_type = typename std::add_lvalue_reference
-          <typename dereferenced_type<T, true>::type>::type;
+        using reference_type =
+          typename std::add_lvalue_reference<typename dereferenced_type<T, true>::type>::type;
 
-        reference_type operator() (argument_type& ref) const { return *ref; }
+        reference_type operator()(argument_type& ref) const { return *ref; }
       }; // dereference_class<T, true>
       //@}
-
 
       //@{
       /**
@@ -170,25 +161,23 @@ namespace lar {
       template <typename T, bool CanDereference>
       struct make_pointer_class {
         using argument_type = T;
-        using pointer_type = typename std::add_pointer
-          <typename dereferenced_type<T, CanDereference>::type>::type;
+        using pointer_type =
+          typename std::add_pointer<typename dereferenced_type<T, CanDereference>::type>::type;
 
-        pointer_type operator() (argument_type& ref) const { return &ref; }
+        pointer_type operator()(argument_type& ref) const { return &ref; }
       }; // make_pointer_class<T, bool>
-
 
       template <typename T>
       struct make_pointer_class<T, true> {
         using argument_type = T;
-        using pointer_type = typename std::add_pointer
-          <typename dereferenced_type<T, true>::type>::type;
+        using pointer_type =
+          typename std::add_pointer<typename dereferenced_type<T, true>::type>::type;
 
-        pointer_type operator() (argument_type& ref) const { return &*ref; }
+        pointer_type operator()(argument_type& ref) const { return &*ref; }
       }; // make_pointer_class<T, true>
       //@}
 
     } // namespace details
-
 
     /** ************************************************************************
      * @brief Class defining the dereferenced type of the specified type
@@ -213,10 +202,8 @@ namespace lar {
      * operators (`T::operator* () const`) has not been investigated.
      */
     template <typename T>
-    struct dereferenced_type: public
-      details::dereferenced_type<T, details::has_dereference_class<T>::value>
-    {};
-
+    struct dereferenced_type
+      : public details::dereferenced_type<T, details::has_dereference_class<T>::value> {};
 
     /** ************************************************************************
      * @brief Returns the value pointed by the argument, or the argument itself
@@ -249,13 +236,12 @@ namespace lar {
      */
     template <typename T>
     inline
-    typename details::dereference_class
-      <T, details::has_dereference_class<T>::value>::reference_type
-    dereference(T& v)
-      {
-        return details::dereference_class
-          <T, details::has_dereference_class<T>::value>()(v);
-      }
+      typename details::dereference_class<T,
+                                          details::has_dereference_class<T>::value>::reference_type
+      dereference(T& v)
+    {
+      return details::dereference_class<T, details::has_dereference_class<T>::value>()(v);
+    }
 
     /** ************************************************************************
      * @brief Returns a pointer to the value of argument, or the argument itself
@@ -288,13 +274,12 @@ namespace lar {
      */
     template <typename T>
     inline
-    typename details::make_pointer_class
-      <T, details::has_dereference_class<T>::value>::pointer_type
-    make_pointer(T& v)
-      {
-        return details::make_pointer_class
-          <T, details::has_dereference_class<T>::value>()(v);
-      }
+      typename details::make_pointer_class<T,
+                                           details::has_dereference_class<T>::value>::pointer_type
+      make_pointer(T& v)
+    {
+      return details::make_pointer_class<T, details::has_dereference_class<T>::value>()(v);
+    }
 
   } // namespace util
 

@@ -21,7 +21,6 @@
 // C/C++ standard
 #include <utility> // std::pair
 
-
 namespace lar {
 
   namespace util {
@@ -38,7 +37,6 @@ namespace lar {
      */
     /// @{
 
-
     //--------------------------------------------------------------------------
     // was proxy::details::hasMetadata
     /// Trait: `value` true if `Assns` (association or its node) has metadata.
@@ -50,7 +48,6 @@ namespace lar {
     template <typename Assns>
     constexpr bool assns_has_metadata_v = assns_has_metadata<Assns>::value;
 
-
     // was: proxy::details::AssnsMetadataTypeStruct, proxy::details::AssnNodeMetadataType
     /// Trait: `type` is metadata in `Assns` (association or its node).
     template <typename Assns>
@@ -60,7 +57,6 @@ namespace lar {
     /// Trait: type of metadata in `Assns` (association or its node).
     template <typename Assns>
     using assns_metadata_t = typename assns_metadata_type<Assns>::type;
-
 
     //--------------------------------------------------------------------------
     // FIXME simplify this code if issue #18769 is accepted
@@ -101,7 +97,6 @@ namespace lar {
     template <typename Assns>
     struct assns_traits;
 
-
     //--------------------------------------------------------------------------
 
     ///@}
@@ -110,8 +105,6 @@ namespace lar {
   } // namespace util
 
 } // namespace lar
-
-
 
 //------------------------------------------------------------------------------
 //---  template implementation
@@ -125,7 +118,6 @@ namespace lar {
       // was: proxy::details::isAssnMetadata
       template <typename T>
       using isAssnMetadata = ::util::is_not_same<T, void>;
-
 
       template <typename Assns>
       struct node_of;
@@ -161,13 +153,9 @@ namespace lar {
       using type = void;
     };
 
-
     //--------------------------------------------------------------------------
     template <typename Assns>
-    struct assns_has_metadata
-      : details::isAssnMetadata<assns_metadata_t<Assns>>
-    {};
-
+    struct assns_has_metadata : details::isAssnMetadata<assns_metadata_t<Assns>> {};
 
     //--------------------------------------------------------------------------
     template <typename L, typename R, typename D>
@@ -175,24 +163,22 @@ namespace lar {
       using type = typename art::Assns<L, R, D>::const_iterator;
     }; // struct assns_iterator_type
 
-
     template <typename L, typename R>
     struct assns_iterator_type<art::Assns<L, R, void>> {
       using type = typename art::Assns<L, R, void>::const_iterator;
     };
-
 
     //--------------------------------------------------------------------------
     // was proxy::details::AssnsNodeTraitsBase
     template <typename L, typename R, typename D>
     struct assns_traits<art::Assns<L, R, D>> {
 
-      using left_t = L; ///< Type at the left side of the association.
-      using right_t = R; ///< Type at the right side of the association.
-      using data_t = D; ///< Type of data bound to the association.
-      using leftptr_t = art::Ptr<left_t>; ///< Art pointer to the left side.
+      using left_t = L;                     ///< Type at the left side of the association.
+      using right_t = R;                    ///< Type at the right side of the association.
+      using data_t = D;                     ///< Type of data bound to the association.
+      using leftptr_t = art::Ptr<left_t>;   ///< Art pointer to the left side.
       using rightptr_t = art::Ptr<right_t>; ///< Art pointer to the right side.
-      using dataptr_t = data_t const*; ///< Pointer to the bound metadata.
+      using dataptr_t = data_t const*;      ///< Pointer to the bound metadata.
 
       using assns_t = art::Assns<L, R, D>; ///< Type of the association.
 
@@ -207,23 +193,17 @@ namespace lar {
 
     }; // struct assns_traits<Assns<L,R,D>>
 
-
     template <typename L, typename R, typename D>
-    struct assns_traits<art::AssnsNode<L, R, D>>
-      : public assns_traits<art::Assns<L, R, D>>
-    {};
+    struct assns_traits<art::AssnsNode<L, R, D>> : public assns_traits<art::Assns<L, R, D>> {};
 
     template <typename L, typename R>
     struct assns_traits<std::pair<art::Ptr<L>, art::Ptr<R>>>
-      : public assns_traits<art::Assns<L, R>>
-    {};
-
+      : public assns_traits<art::Assns<L, R>> {};
 
     //--------------------------------------------------------------------------
 
   } // namespace util
 
 } // namespace lar
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_ASSNSTRAITS_H

@@ -154,14 +154,13 @@ namespace util {
    *
    */
   // MARK CreateAssn_01
-  template<class T, class U>
-  bool CreateAssn(art::Event            &evt,
-                  std::vector<T>   const&a,
-                  art::Ptr<U>      const&b,
-                  art::Assns<U,T>       &assn,
-                  std::string           a_instance,
-                  size_t                index=UINT_MAX
-                  );
+  template <class T, class U>
+  bool CreateAssn(art::Event& evt,
+                  std::vector<T> const& a,
+                  art::Ptr<U> const& b,
+                  art::Assns<U, T>& assn,
+                  std::string a_instance,
+                  size_t index = UINT_MAX);
 
   /**
    * @brief Creates a single one-to-one association
@@ -210,14 +209,15 @@ namespace util {
    *
    */
   // MARK CreateAssn_02
-  template<class T, class U>
-  inline bool CreateAssn(art::Event            &evt,
-                         std::vector<T>   const&a,
-                         art::Ptr<U>      const&b,
-                         art::Assns<U,T>       &assn,
-                         size_t                index=UINT_MAX)
-    { return CreateAssn(evt, a, b, assn, std::string(), index); }
-
+  template <class T, class U>
+  inline bool CreateAssn(art::Event& evt,
+                         std::vector<T> const& a,
+                         art::Ptr<U> const& b,
+                         art::Assns<U, T>& assn,
+                         size_t index = UINT_MAX)
+  {
+    return CreateAssn(evt, a, b, assn, std::string(), index);
+  }
 
   /**
    * @brief Creates a single one-to-one association
@@ -233,13 +233,11 @@ namespace util {
    * Neither the event not the producer references are used.
    */
   // MARK CreateAssn_03
-  template<class T, class U>
-  bool CreateAssn(
-    art::Event           & evt,
-    art::Ptr<T>     const& a,
-    art::Ptr<U>     const& b,
-    art::Assns<U,T>      & assn
-    );
+  template <class T, class U>
+  bool CreateAssn(art::Event& evt,
+                  art::Ptr<T> const& a,
+                  art::Ptr<U> const& b,
+                  art::Assns<U, T>& assn);
 
   /**
    * @brief Creates a single one-to-many association
@@ -259,14 +257,12 @@ namespace util {
    * parameter that we pretent not to exist).
    */
   // MARK CreateAssn_04
-  template<class T, class U>
-  bool CreateAssn(
-    art::Event             & evt,
-    std::vector<T>    const& a,
-    art::PtrVector<U> const& b,
-    art::Assns<T,U>        & assn,
-    size_t                   index = UINT_MAX
-    );
+  template <class T, class U>
+  bool CreateAssn(art::Event& evt,
+                  std::vector<T> const& a,
+                  art::PtrVector<U> const& b,
+                  art::Assns<T, U>& assn,
+                  size_t index = UINT_MAX);
 
   /**
    * @brief Creates a single one-to-many association
@@ -287,13 +283,11 @@ namespace util {
   // index is the location in the input std::vector<T> of the object you wish to
   // associate with the art::PtrVector<U>
   // MARK CreateAssn_05
-  template<class T, class U>
-  bool CreateAssn(
-    art::Event                    & evt,
-    art::Ptr<T>              const& a,
-    std::vector<art::Ptr<U>> const& b,
-    art::Assns<T,U>               & assn
-    );
+  template <class T, class U>
+  bool CreateAssn(art::Event& evt,
+                  art::Ptr<T> const& a,
+                  std::vector<art::Ptr<U>> const& b,
+                  art::Assns<T, U>& assn);
 
   /**
    * @brief Creates a single one-to-many association
@@ -313,14 +307,12 @@ namespace util {
    * parameter that we pretent not to exist).
    */
   // MARK CreateAssn_06
-  template<class T, class U>
-  bool CreateAssn(
-    art::Event                    & evt,
-    std::vector<T>           const& a,
-    std::vector<art::Ptr<U>> const& b,
-    art::Assns<T,U>               & assn,
-    size_t                          index = UINT_MAX
-    );
+  template <class T, class U>
+  bool CreateAssn(art::Event& evt,
+                  std::vector<T> const& a,
+                  std::vector<art::Ptr<U>> const& b,
+                  art::Assns<T, U>& assn,
+                  size_t index = UINT_MAX);
 
   /**
    * @brief Creates a single one-to-many association
@@ -349,16 +341,14 @@ namespace util {
    * parameter that we pretent not to exist).
    */
   // MARK CreateAssn_07
-  template<class T, class U>
-  bool CreateAssn(
-    art::Event           & evt,
-    std::vector<T>  const& a,
-    std::vector<U>  const& b,
-    art::Assns<T,U>      & assn,
-    size_t                 startU,
-    size_t                 endU,
-    size_t                 index = UINT_MAX
-    );
+  template <class T, class U>
+  bool CreateAssn(art::Event& evt,
+                  std::vector<T> const& a,
+                  std::vector<U> const& b,
+                  art::Assns<T, U>& assn,
+                  size_t startU,
+                  size_t endU,
+                  size_t index = UINT_MAX);
 
   /**
    * @brief Creates a single one-to-many association
@@ -386,15 +376,13 @@ namespace util {
    * parameter that we pretent not to exist).
    */
   // MARK CreateAssn_07a
-  template<class T, class U>
-  bool CreateAssn(
-    art::Event           & evt,
-    std::vector<T>  const& a,
-    std::vector<U>  const& b,
-    art::Assns<T,U>      & assn,
-    std::vector<size_t> const& indices,
-    size_t                 index = UINT_MAX
-    );
+  template <class T, class U>
+  bool CreateAssn(art::Event& evt,
+                  std::vector<T> const& a,
+                  std::vector<U> const& b,
+                  art::Assns<T, U>& assn,
+                  std::vector<size_t> const& indices,
+                  size_t index = UINT_MAX);
 
   /**
    * @brief Creates a single one-to-many association
@@ -435,13 +423,11 @@ namespace util {
    */
   // MARK CreateAssn_08
   template <typename T, typename U, typename Iter>
-  bool CreateAssn(
-    art::Event           & evt,
-    art::Assns<T,U>      & assn,
-    size_t                 first_index,
-    Iter                   from_second_index,
-    Iter                   to_second_index
-    );
+  bool CreateAssn(art::Event& evt,
+                  art::Assns<T, U>& assn,
+                  size_t first_index,
+                  Iter from_second_index,
+                  Iter to_second_index);
 
   //@{
   /**
@@ -500,24 +486,19 @@ namespace util {
   // MARK CreateAssnD_01
   // MARK CreateAssnD_01a
   template <typename T, typename U, typename D>
-  bool CreateAssnD(
-    art::Event                         & evt,
-    art::Assns<T,U,D>                  & assn,
-    size_t                               first_index,
-    size_t                               second_index,
-    typename art::Assns<T,U,D>::data_t&& data
-    );
+  bool CreateAssnD(art::Event& evt,
+                   art::Assns<T, U, D>& assn,
+                   size_t first_index,
+                   size_t second_index,
+                   typename art::Assns<T, U, D>::data_t&& data);
   // MARK CreateAssnD_01b
   template <typename T, typename U, typename D>
-  bool CreateAssnD(
-    art::Event                              & evt,
-    art::Assns<T,U,D>                       & assn,
-    size_t                                    first_index,
-    size_t                                    second_index,
-    typename art::Assns<T,U,D>::data_t const& data
-    );
+  bool CreateAssnD(art::Event& evt,
+                   art::Assns<T, U, D>& assn,
+                   size_t first_index,
+                   size_t second_index,
+                   typename art::Assns<T, U, D>::data_t const& data);
   //@}
-
 
   // method to return all objects of type U that are not associated to
   // objects of type T. Label is the module label that would have produced
@@ -526,11 +507,10 @@ namespace util {
   // for example if you want to get all recob::Hits
   // that are not associated to recob::Clusters
   // std::vector<const recob::Hit*> hits = FindUNotAssociatedToU<recob::Cluster>(art::Handle<recob::Hit>, ...);
-  template<class T, class U>
-  std::vector<const U*>
-  FindUNotAssociatedToT(art::Handle<U>     b,
-                        art::Event  const& evt,
-                        std::string const& label);
+  template <class T, class U>
+  std::vector<const U*> FindUNotAssociatedToT(art::Handle<U> b,
+                                              art::Event const& evt,
+                                              std::string const& label);
 
   // method to return all objects of type U that are not associated to
   // objects of type T. Label is the module label that would have produced
@@ -539,11 +519,10 @@ namespace util {
   // for example if you want to get all recob::Hits
   // that are not associated to recob::Clusters
   // std::vector< art::Ptr<recob::Hit> > hits = FindUNotAssociatedToTP<recob::Cluster>(art::Handle<recob::Hit>, ...);
-  template<class T, class U>
-  std::vector< art::Ptr<U> >
-  FindUNotAssociatedToTP(art::Handle<U>     b,
-                         art::Event  const& evt,
-                         std::string const& label);
+  template <class T, class U>
+  std::vector<art::Ptr<U>> FindUNotAssociatedToTP(art::Handle<U> b,
+                                                  art::Event const& evt,
+                                                  std::string const& label);
 
   // Methods make getting simple ART-independent association information.
   // --- GetAssociatedVectorOneI takes in a handle to an association, and a handle to a product on the event.
@@ -559,46 +538,40 @@ namespace util {
   //     The ouput is a vector of with the same number of entries as the handle to the product, containing a vector
   //     of pointers to all associated products.
 
-  template<class T,class U>
-  std::vector<size_t>
-  GetAssociatedVectorOneI(art::Handle< art::Assns<T,U> > h,
-                          art::Handle< std::vector<T> > index_p);
-  template<class T,class U>
-  std::vector<const U*>
-  GetAssociatedVectorOneP(art::Handle< art::Assns<T,U> > h,
-                          art::Handle< std::vector<T> > index_p);
+  template <class T, class U>
+  std::vector<size_t> GetAssociatedVectorOneI(art::Handle<art::Assns<T, U>> h,
+                                              art::Handle<std::vector<T>> index_p);
+  template <class T, class U>
+  std::vector<const U*> GetAssociatedVectorOneP(art::Handle<art::Assns<T, U>> h,
+                                                art::Handle<std::vector<T>> index_p);
 
-  template<class T,class U>
-  std::vector< std::vector<size_t> >
-  GetAssociatedVectorManyI(art::Handle< art::Assns<T,U> > h,
-                           art::Handle< std::vector<T> > index_p);
-  template<class T,class U>
-  std::vector< std::vector<const U*> >
-  GetAssociatedVectorManyP(art::Handle< art::Assns<T,U> > h,
-                           art::Handle< std::vector<T> > index_p);
+  template <class T, class U>
+  std::vector<std::vector<size_t>> GetAssociatedVectorManyI(art::Handle<art::Assns<T, U>> h,
+                                                            art::Handle<std::vector<T>> index_p);
+  template <class T, class U>
+  std::vector<std::vector<const U*>> GetAssociatedVectorManyP(art::Handle<art::Assns<T, U>> h,
+                                                              art::Handle<std::vector<T>> index_p);
 
-
-}// end namespace
+} // end namespace
 
 //----------------------------------------------------------------------
 // MARK CreateAssn_01
-template<class T, class U>
-bool util::CreateAssn(
-  art::Event           & evt,
-  std::vector<T>  const& a,
-  art::Ptr<U>     const& b,
-  art::Assns<U,T>      & assn,
-  std::string            a_instance,
-  size_t                 index /* = UINT_MAX */
-  )
+template <class T, class U>
+bool util::CreateAssn(art::Event& evt,
+                      std::vector<T> const& a,
+                      art::Ptr<U> const& b,
+                      art::Assns<U, T>& assn,
+                      std::string a_instance,
+                      size_t index /* = UINT_MAX */
+)
 {
-  if (index == UINT_MAX) index = a.size()-1;
+  if (index == UINT_MAX) index = a.size() - 1;
 
-  try{
+  try {
     assn.addSingle(b, art::PtrMaker<T>{evt, a_instance}(index));
     return true;
   }
-  catch(cet::exception &e){
+  catch (cet::exception& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -606,21 +579,19 @@ bool util::CreateAssn(
 
 } // util::CreateAssn() [01]
 
-
 //----------------------------------------------------------------------
 // MARK CreateAssn_03
-template<class T, class U>
-bool util::CreateAssn(
-  art::Event           &,
-  art::Ptr<T>     const& a,
-  art::Ptr<U>     const& b,
-  art::Assns<U,T>      & assn
-) {
+template <class T, class U>
+bool util::CreateAssn(art::Event&,
+                      art::Ptr<T> const& a,
+                      art::Ptr<U> const& b,
+                      art::Assns<U, T>& assn)
+{
 
-  try{
+  try {
     assn.addSingle(b, a);
   }
-  catch(cet::exception &e){
+  catch (cet::exception& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -629,24 +600,24 @@ bool util::CreateAssn(
   return true;
 } // util::CreateAssn() [03]
 
-
 //----------------------------------------------------------------------
 // MARK CreateAssn_04
-template<class T, class U>
-bool util::CreateAssn(
-  art::Event             & evt,
-  std::vector<T>    const& a,
-  art::PtrVector<U> const& b,
-  art::Assns<T,U>        & assn,
-  size_t                   index /* = UINT_MAX */
-) {
-  if(index == UINT_MAX) index = a.size() - 1;
+template <class T, class U>
+bool util::CreateAssn(art::Event& evt,
+                      std::vector<T> const& a,
+                      art::PtrVector<U> const& b,
+                      art::Assns<T, U>& assn,
+                      size_t index /* = UINT_MAX */
+)
+{
+  if (index == UINT_MAX) index = a.size() - 1;
 
-  try{
+  try {
     auto const aptr = art::PtrMaker<T>{evt}(index);
-    for(art::Ptr<U> const& b_item: b) assn.addSingle(aptr, b_item);
+    for (art::Ptr<U> const& b_item : b)
+      assn.addSingle(aptr, b_item);
   }
-  catch(cet::exception &e){
+  catch (cet::exception& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -657,18 +628,18 @@ bool util::CreateAssn(
 
 //----------------------------------------------------------------------
 // MARK CreateAssn_05
-template<class T, class U>
-bool util::CreateAssn(
-  art::Event                    &,
-  art::Ptr<T>              const& a,
-  std::vector<art::Ptr<U>> const& b,
-  art::Assns<T,U>               & assn
-) {
+template <class T, class U>
+bool util::CreateAssn(art::Event&,
+                      art::Ptr<T> const& a,
+                      std::vector<art::Ptr<U>> const& b,
+                      art::Assns<T, U>& assn)
+{
 
-  try{
-    for (art::Ptr<U> const& b_item: b) assn.addSingle(a, b_item);
+  try {
+    for (art::Ptr<U> const& b_item : b)
+      assn.addSingle(a, b_item);
   }
-  catch(cet::exception const& e){
+  catch (cet::exception const& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -679,22 +650,23 @@ bool util::CreateAssn(
 
 //----------------------------------------------------------------------
 // MARK CreateAssn_06
-template<class T, class U>
-bool util::CreateAssn(
-  art::Event                    & evt,
-  std::vector<T>           const& a,
-  std::vector<art::Ptr<U>> const& b,
-  art::Assns<T,U>               & assn,
-  size_t                          index /* = UINT_MAX */
-) {
+template <class T, class U>
+bool util::CreateAssn(art::Event& evt,
+                      std::vector<T> const& a,
+                      std::vector<art::Ptr<U>> const& b,
+                      art::Assns<T, U>& assn,
+                      size_t index /* = UINT_MAX */
+)
+{
 
   if (index == UINT_MAX) index = a.size() - 1;
 
-  try{
+  try {
     auto const aptr = art::PtrMaker<T>{evt}(index);
-    for (art::Ptr<U> const& b_item: b) assn.addSingle(aptr, b_item);
+    for (art::Ptr<U> const& b_item : b)
+      assn.addSingle(aptr, b_item);
   }
-  catch(cet::exception &e){
+  catch (cet::exception& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -705,27 +677,27 @@ bool util::CreateAssn(
 
 //----------------------------------------------------------------------
 // MARK CreateAssn_07
-template<class T, class U>
-bool util::CreateAssn(
-  art::Event           & evt,
-  std::vector<T>  const& a,
-  std::vector<U>  const& /* b */,
-  art::Assns<T,U>      & assn,
-  size_t                 startU,
-  size_t                 endU,
-  size_t                 index /* = UINT_MAX */
-) {
+template <class T, class U>
+bool util::CreateAssn(art::Event& evt,
+                      std::vector<T> const& a,
+                      std::vector<U> const& /* b */,
+                      art::Assns<T, U>& assn,
+                      size_t startU,
+                      size_t endU,
+                      size_t index /* = UINT_MAX */
+)
+{
 
-  if(index == UINT_MAX) index = a.size() - 1;
+  if (index == UINT_MAX) index = a.size() - 1;
 
-  try{
+  try {
     auto const aptr = art::PtrMaker<T>{evt}(index);
     art::PtrMaker<U> const make_bptr{evt};
-    for(size_t i = startU; i < endU; ++i){
+    for (size_t i = startU; i < endU; ++i) {
       assn.addSingle(aptr, make_bptr(i));
     }
   }
-  catch(cet::exception &e){
+  catch (cet::exception& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -736,26 +708,26 @@ bool util::CreateAssn(
 
 //----------------------------------------------------------------------
 // MARK CreateAssn_07a
-template<class T, class U>
-bool util::CreateAssn(
-  art::Event           & evt,
-  std::vector<T>  const& a,
-  std::vector<U>  const& /* b */,
-  art::Assns<T,U>      & assn,
-  std::vector<size_t> const& indices,
-  size_t                 index /* = UINT_MAX */
-) {
+template <class T, class U>
+bool util::CreateAssn(art::Event& evt,
+                      std::vector<T> const& a,
+                      std::vector<U> const& /* b */,
+                      art::Assns<T, U>& assn,
+                      std::vector<size_t> const& indices,
+                      size_t index /* = UINT_MAX */
+)
+{
 
-  if(index == UINT_MAX) index = a.size() - 1;
+  if (index == UINT_MAX) index = a.size() - 1;
 
-  try{
+  try {
     auto const aptr = art::PtrMaker<T>{evt}(index);
     art::PtrMaker<U> const make_bptr{evt};
-    for(size_t index: indices){
+    for (size_t index : indices) {
       assn.addSingle(aptr, make_bptr(index));
     }
   }
-  catch(cet::exception &e){
+  catch (cet::exception& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -767,15 +739,14 @@ bool util::CreateAssn(
 //----------------------------------------------------------------------
 // MARK CreateAssn_08
 template <typename T, typename U, typename Iter>
-bool util::CreateAssn(
-  art::Event           & evt,
-  art::Assns<T,U>      & assn,
-  size_t                 first_index,
-  Iter                   from_second_index,
-  Iter                   to_second_index
-) {
+bool util::CreateAssn(art::Event& evt,
+                      art::Assns<T, U>& assn,
+                      size_t first_index,
+                      Iter from_second_index,
+                      Iter to_second_index)
+{
 
-  try{
+  try {
     // we declare here that we want to associate the element first_index of the
     // (only) data product of type std::vector<T> with other objects.
     // This is the pointer to that element:
@@ -788,7 +759,7 @@ bool util::CreateAssn(
       assn.addSingle(first_ptr, make_second_ptr(*from_second_index));
     } // while
   }
-  catch(cet::exception &e){
+  catch (cet::exception& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -797,19 +768,17 @@ bool util::CreateAssn(
   return true;
 } // util::CreateAssn() [08]
 
-
 //----------------------------------------------------------------------
 // MARK CreateAssnD_01a
 template <typename T, typename U, typename D>
-bool util::CreateAssnD(
-  art::Event                         & evt,
-  art::Assns<T,U,D>                  & assn,
-  size_t                               first_index,
-  size_t                               second_index,
-  typename art::Assns<T,U,D>::data_t&& data
-) {
+bool util::CreateAssnD(art::Event& evt,
+                       art::Assns<T, U, D>& assn,
+                       size_t first_index,
+                       size_t second_index,
+                       typename art::Assns<T, U, D>::data_t&& data)
+{
 
-  try{
+  try {
     // we declare here that we want to associate the element first_index of the
     // (only) data product of type std::vector<T> with the other object
     auto const first_ptr = art::PtrMaker<T>{evt}(first_index);
@@ -820,7 +789,7 @@ bool util::CreateAssnD(
 
     assn.addSingle(first_ptr, second_ptr, std::move(data));
   }
-  catch(cet::exception &e){
+  catch (cet::exception& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -830,15 +799,14 @@ bool util::CreateAssnD(
 } // util::CreateAssnD() [01a]
 
 template <typename T, typename U, typename D>
-bool util::CreateAssnD(
-  art::Event                              & evt,
-  art::Assns<T,U,D>                       & assn,
-  size_t                                    first_index,
-  size_t                                    second_index,
-  typename art::Assns<T,U,D>::data_t const& data
-) {
+bool util::CreateAssnD(art::Event& evt,
+                       art::Assns<T, U, D>& assn,
+                       size_t first_index,
+                       size_t second_index,
+                       typename art::Assns<T, U, D>::data_t const& data)
+{
 
-  try{
+  try {
     // we declare here that we want to associate the element first_index of the
     // (only) data product of type std::vector<T> with the other object
     auto const first_ptr = art::PtrMaker<T>{evt}(first_index);
@@ -849,7 +817,7 @@ bool util::CreateAssnD(
 
     assn.addSingle(first_ptr, second_ptr, data);
   }
-  catch(cet::exception &e){
+  catch (cet::exception& e) {
     mf::LogWarning("AssociationUtil")
       << "unable to create requested art:Assns, exception thrown: " << e;
     return false;
@@ -859,11 +827,10 @@ bool util::CreateAssnD(
 } // util::CreateAssnD() [01b]
 
 //----------------------------------------------------------------------
-template<class T, class U>
-inline std::vector<const U*>
-util::FindUNotAssociatedToT(art::Handle<U>     b,
-                            art::Event  const& evt,
-                            std::string const& label)
+template <class T, class U>
+inline std::vector<const U*> util::FindUNotAssociatedToT(art::Handle<U> b,
+                                                         art::Event const& evt,
+                                                         std::string const& label)
 {
   // Do a FindOne for type T for each object of type U
   // If the FindOne returns an invalid maybe ref, add the pointer
@@ -873,9 +840,9 @@ util::FindUNotAssociatedToT(art::Handle<U>     b,
 
   art::FindOne<T> const fa(b, evt, label);
 
-  for(size_t u = 0; u < b->size(); ++u){
+  for (size_t u = 0; u < b->size(); ++u) {
     cet::maybe_ref<T const> t(fa.at(u));
-    if( !t.isValid() ){
+    if (!t.isValid()) {
       art::Ptr<U> ptr(b, u);
       notAssociated.push_back(ptr.get());
     }
@@ -885,73 +852,66 @@ util::FindUNotAssociatedToT(art::Handle<U>     b,
 }
 
 //----------------------------------------------------------------------
-template<class T, class U>
-inline std::vector< art::Ptr<U> >
-util::FindUNotAssociatedToTP(art::Handle<U>     b,
-                             art::Event  const& evt,
-                             std::string const& label)
+template <class T, class U>
+inline std::vector<art::Ptr<U>> util::FindUNotAssociatedToTP(art::Handle<U> b,
+                                                             art::Event const& evt,
+                                                             std::string const& label)
 {
   // Do a FindOneP for type T for each object of type U
   // If the FindOne returns an invalid maybe ref, add the pointer
   // of object type U to the return vector
 
-  std::vector< art::Ptr<U> > notAssociated;
+  std::vector<art::Ptr<U>> notAssociated;
 
   art::FindOneP<T> const fa(b, evt, label);
 
-  for(size_t u = 0; u < b->size(); ++u){
+  for (size_t u = 0; u < b->size(); ++u) {
     cet::maybe_ref<T const> t(fa.at(u));
-    if( !t.isValid() ){
-      notAssociated.emplace_back(b, u);
-    }
+    if (!t.isValid()) { notAssociated.emplace_back(b, u); }
   }
 
   return notAssociated;
 }
 
-
-
-template<class T,class U>
-inline std::vector<size_t>
-util::GetAssociatedVectorOneI(art::Handle< art::Assns<T,U> > h,
-                              art::Handle< std::vector<T> > index_p)
+template <class T, class U>
+inline std::vector<size_t> util::GetAssociatedVectorOneI(art::Handle<art::Assns<T, U>> h,
+                                                         art::Handle<std::vector<T>> index_p)
 {
   std::vector<size_t> associated_index(index_p->size());
-  for(auto const& pair : *h)
+  for (auto const& pair : *h)
     associated_index.at(pair.first.key()) = pair.second.key();
   return associated_index;
 }
 
-template<class T,class U>
-inline std::vector<const U*>
-util::GetAssociatedVectorOneP(art::Handle< art::Assns<T,U> > h,
-                              art::Handle< std::vector<T> > index_p)
+template <class T, class U>
+inline std::vector<const U*> util::GetAssociatedVectorOneP(art::Handle<art::Assns<T, U>> h,
+                                                           art::Handle<std::vector<T>> index_p)
 {
   std::vector<const U*> associated_pointer(index_p->size());
-  for(auto const& pair : *h)
+  for (auto const& pair : *h)
     associated_pointer.at(pair.first.key()) = &(*(pair.second));
   return associated_pointer;
 }
 
-template<class T,class U>
-inline std::vector< std::vector<size_t> >
-util::GetAssociatedVectorManyI(art::Handle< art::Assns<T,U> > h,
-                               art::Handle< std::vector<T> > index_p)
+template <class T, class U>
+inline std::vector<std::vector<size_t>> util::GetAssociatedVectorManyI(
+  art::Handle<art::Assns<T, U>> h,
+  art::Handle<std::vector<T>> index_p)
 {
-  std::vector< std::vector<size_t> > associated_indices(index_p->size());
-  for(auto const& pair : *h)
+  std::vector<std::vector<size_t>> associated_indices(index_p->size());
+  for (auto const& pair : *h)
     associated_indices.at(pair.first.key()).push_back(pair.second.key());
   return associated_indices;
 }
 
-template<class T,class U>
-inline std::vector< std::vector<const U*> >
-util::GetAssociatedVectorManyP(art::Handle< art::Assns<T,U> > h,
-                               art::Handle< std::vector<T> > index_p)
+template <class T, class U>
+inline std::vector<std::vector<const U*>> util::GetAssociatedVectorManyP(
+  art::Handle<art::Assns<T, U>> h,
+  art::Handle<std::vector<T>> index_p)
 {
-  std::vector< std::vector<const U*> > associated_pointers(index_p->size());
-  for(auto const& pair : *h)
-    associated_pointers.at(pair.first.key()).push_back( &(*(pair.second)) );
+  std::vector<std::vector<const U*>> associated_pointers(index_p->size());
+  for (auto const& pair : *h)
+    associated_pointers.at(pair.first.key()).push_back(&(*(pair.second)));
   return associated_pointers;
 }
 
@@ -969,16 +929,18 @@ util::GetAssociatedVectorManyP(art::Handle< art::Assns<T,U> > h,
 
 namespace util {
   template <typename Producer, typename... Args>
-  std::enable_if_t<std::is_base_of_v<art::EDProducer, Producer>, bool>
-  CreateAssn(Producer const&, Args&&... args) {
+  std::enable_if_t<std::is_base_of_v<art::EDProducer, Producer>, bool> CreateAssn(Producer const&,
+                                                                                  Args&&... args)
+  {
     return CreateAssn(std::forward<Args>(args)...);
   }
 
   template <typename Producer, typename... Args>
-  std::enable_if_t<std::is_base_of_v<art::EDProducer, Producer>, bool>
-  CreateAssnD(Producer const&, Args&&... args) {
+  std::enable_if_t<std::is_base_of_v<art::EDProducer, Producer>, bool> CreateAssnD(Producer const&,
+                                                                                   Args&&... args)
+  {
     return CreateAssnD(std::forward<Args>(args)...);
   }
 }
 
-#endif  //ASSOCIATIONUTIL_H
+#endif //ASSOCIATIONUTIL_H

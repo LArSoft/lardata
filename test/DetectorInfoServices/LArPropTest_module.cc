@@ -33,8 +33,7 @@ namespace util {
 
   LArPropTest::LArPropTest(const fhicl::ParameterSet& pset) : EDAnalyzer(pset) {}
 
-  void
-  LArPropTest::beginJob()
+  void LArPropTest::beginJob()
   {
     // Make sure assert is enabled.
 
@@ -126,7 +125,5 @@ namespace util {
     std::cout.flags(flags);
   }
 
-  void
-  LArPropTest::analyze(const art::Event& /* evt */)
-  {}
+  void LArPropTest::analyze(const art::Event& /* evt */) {}
 }

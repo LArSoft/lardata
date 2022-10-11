@@ -9,6 +9,4 @@
 
 #include "lardata/ArtDataHelper/MVAWriter.h"
 
-namespace anab {
-
-} // namespace anab
+namespace anab {} // namespace anab

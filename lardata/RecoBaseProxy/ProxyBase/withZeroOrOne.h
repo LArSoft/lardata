@@ -19,22 +19,17 @@
 #include <tuple>
 #include <utility> // std::forward(), std::move()
 
-
 namespace proxy {
 
   namespace details {
 
-    template <
-      typename Aux, typename Metadata, typename ArgTuple,
-      typename AuxTag = Aux
-      >
+    template <typename Aux, typename Metadata, typename ArgTuple, typename AuxTag = Aux>
     using WithOneTo01AssociatedStruct = WithAssociatedStructBase<
       Aux,
       Metadata,
       ArgTuple,
       OneTo01DataProxyMakerWrapper<Aux, Metadata, AuxTag>::template maker_t,
-      AuxTag
-      >;
+      AuxTag>;
 
   } // namespace details
 
@@ -66,23 +61,21 @@ namespace proxy {
   /// @ingroup LArSoftProxyBase
   /// @todo Metadata is not supported yet.
   template <typename Aux, typename Metadata, typename AuxTag, typename... Args>
-  auto withZeroOrOneMetaAs(Args&&... args) {
+  auto withZeroOrOneMetaAs(Args&&... args)
+  {
     using ArgTuple_t = std::tuple<Args&&...>;
     ArgTuple_t argsTuple(std::forward<Args>(args)...);
-    return
-      details::WithOneTo01AssociatedStruct<Aux, Metadata, ArgTuple_t, AuxTag>
-      (std::move(argsTuple));
+    return details::WithOneTo01AssociatedStruct<Aux, Metadata, ArgTuple_t, AuxTag>(
+      std::move(argsTuple));
   } // withZeroOrOneAs()
-
 
   /// The same as `withZeroOrOne()`, but it also specified a tag for the data.
   /// @ingroup LArSoftProxyBase
   template <typename Aux, typename AuxTag, typename... Args>
   auto withZeroOrOneAs(Args&&... args)
-    {
-      return
-        withZeroOrOneMetaAs<Aux, void, AuxTag>(std::forward<Args>(args)...);
-    }
+  {
+    return withZeroOrOneMetaAs<Aux, void, AuxTag>(std::forward<Args>(args)...);
+  }
 
   /**
    * @brief Helper function to merge one-to-(zero-or-one) associated data.
@@ -149,22 +142,22 @@ namespace proxy {
    */
   template <typename Aux, typename Metadata, typename... Args>
   auto withZeroOrOneMeta(Args&&... args)
-    {
-      return
-        withZeroOrOneMetaAs<Aux, Metadata, Aux>(std::forward<Args>(args)...);
-    }
+  {
+    return withZeroOrOneMetaAs<Aux, Metadata, Aux>(std::forward<Args>(args)...);
+  }
 
   /// Works like `withZeroOrOneMeta()`, but for associations with no metadata.
   /// @ingroup LArSoftProxyBase
   /// @see withZeroOrOneAs(), withZeroOrOneMeta()
   template <typename Aux, typename... Args>
   auto withZeroOrOne(Args&&... args)
-    { return withZeroOrOneMeta<Aux, void>(std::forward<Args>(args)...); }
+  {
+    return withZeroOrOneMeta<Aux, void>(std::forward<Args>(args)...);
+  }
 
   /// @}
   // --- END One-to-one (optional) associations --------------------------------
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_WITHZEROORONE_H

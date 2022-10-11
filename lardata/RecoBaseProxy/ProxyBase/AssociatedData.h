@@ -12,11 +12,11 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_ASSOCIATEDDATA_H
 
 // LArSoft libraries
+#include "larcorealg/CoreUtils/MetaUtils.h" // util::is_not_same<>
 #include "lardata/RecoBaseProxy/ProxyBase/AssnsNodeAsTuple.h"
 #include "lardata/RecoBaseProxy/ProxyBase/AssnsTraits.h"
 #include "lardata/Utilities/CollectionView.h"
 #include "lardata/Utilities/TupleLookupByTag.h" // util::add_tag_t, ...
-#include "larcorealg/CoreUtils/MetaUtils.h" // util::is_not_same<>
 
 // framework libraries
 #include "canvas/Persistency/Common/Assns.h"
@@ -25,17 +25,15 @@
 // C/C++ standard libraries
 #include <vector>
 // #include <tuple> // std::tuple_element_t<>, std::get()
-#include <iterator> // std::distance(), std::forward_iterator_tag, ...
 #include <algorithm> // std::min()
-#include <memory> // std::addressof()
-#include <utility> // std::forward(), std::declval(), ...
-#include <type_traits> // std::is_same<>, std::enable_if_t<>, ...
-#include <cstdlib> // std::size_t
 #include <cassert>
-
+#include <cstdlib>     // std::size_t
+#include <iterator>    // std::distance(), std::forward_iterator_tag, ...
+#include <memory>      // std::addressof()
+#include <type_traits> // std::is_same<>, std::enable_if_t<>, ...
+#include <utility>     // std::forward(), std::declval(), ...
 
 namespace proxy {
-
 
   //----------------------------------------------------------------------------
   /**
@@ -95,16 +93,12 @@ namespace proxy {
      * that would perform the transformation on dereference.
      *
      */
-    template <
-      typename Iter,
-      typename DataIter,
-      typename ValueType = typename DataIter::value_type
-      >
-    class IteratorWrapperBase: private DataIter {
-        protected:
+    template <typename Iter, typename DataIter, typename ValueType = typename DataIter::value_type>
+    class IteratorWrapperBase : private DataIter {
+    protected:
       using data_iterator_t = DataIter;
 
-        public:
+    public:
       using iterator = Iter; ///!< The type of base iterator wrapper.
 
       /// @{
@@ -120,57 +114,61 @@ namespace proxy {
       IteratorWrapperBase() = default;
 
       /// Copy-from-base constructor.
-      IteratorWrapperBase(data_iterator_t const& from): data_iterator_t(from) {}
+      IteratorWrapperBase(data_iterator_t const& from) : data_iterator_t(from) {}
 
       /// Prefix increment operator.
       iterator& operator++()
-        { data_iterator_t::operator++(); return asIterator(); }
+      {
+        data_iterator_t::operator++();
+        return asIterator();
+      }
 
       /// Comparison with a data iterator (makes unnecessary to wrap end iterators).
-      bool operator!=(data_iterator_t const& other) const
-        { return other != asDataIterator(); }
+      bool operator!=(data_iterator_t const& other) const { return other != asDataIterator(); }
 
       /// Comparison with another iterator.
-      bool operator!=(iterator const& other) const
-        { return operator!=(other.asDataIterator()); }
+      bool operator!=(iterator const& other) const { return operator!=(other.asDataIterator()); }
 
       auto operator[](std::size_t index) const -> decltype(auto)
-        { return asIterator().transform(asDataIterator() + index); }
+      {
+        return asIterator().transform(asDataIterator() + index);
+      }
 
       /// Dereference operator; need to be redefined by derived classes.
-      auto operator*() const -> decltype(auto)
-        { return asIterator().transform(asDataIterator()); }
+      auto operator*() const -> decltype(auto) { return asIterator().transform(asDataIterator()); }
 
       /// Dereference operator; need to be redefined by derived classes.
-      auto operator->() const -> decltype(auto)
-        { return makeValuePointer(operator*()); }
+      auto operator-> () const -> decltype(auto) { return makeValuePointer(operator*()); }
 
-
-        protected:
+    protected:
       /// Transforms and returns the value at the specified data iterator.
       static auto transform(data_iterator_t const&) -> decltype(auto)
-        { return data_iterator_t::operator*(); }
+      {
+        return data_iterator_t::operator*();
+      }
 
       data_iterator_t const& asDataIterator() const
-        { return static_cast<data_iterator_t const&>(*this); }
+      {
+        return static_cast<data_iterator_t const&>(*this);
+      }
 
-        private:
+    private:
       /// Value box for use with pointer dereference `operator->()`.
       template <typename Value>
       class ValuePtr {
         Value value; ///< Value to return the address of (may be reference).
-          public:
-        ValuePtr(Value const& value): value(value) {}
+      public:
+        ValuePtr(Value const& value) : value(value) {}
         /// Access the contained value via its pointer.
-        auto operator->() const -> decltype(auto)
-          { return std::addressof(value); }
+        auto operator-> () const -> decltype(auto) { return std::addressof(value); }
       }; // class ValuePtr<>
       template <typename Value>
       static ValuePtr<Value> makeValuePointer(Value&& value)
-        { return { std::forward<Value>(value) }; }
+      {
+        return {std::forward<Value>(value)};
+      }
 
-      iterator const& asIterator() const
-        { return static_cast<iterator const&>(*this); }
+      iterator const& asIterator() const { return static_cast<iterator const&>(*this); }
       iterator& asIterator() { return static_cast<iterator&>(*this); }
 
     }; // IteratorWrapperBase<>
@@ -213,17 +211,16 @@ namespace proxy {
 
     /// This type extends the interface of the art pointer to Assns right side.
     template <typename ArtAssnsIterValue>
-    class AssnsNode: private ArtAssnsIterValue {
+    class AssnsNode : private ArtAssnsIterValue {
 
-      using base_t = ArtAssnsIterValue; ///< Base class type.
+      using base_t = ArtAssnsIterValue;            ///< Base class type.
       using this_t = AssnsNode<ArtAssnsIterValue>; ///< This class.
-      using node_t = ArtAssnsIterValue; ///< Type of the wrapped node.
+      using node_t = ArtAssnsIterValue;            ///< Type of the wrapped node.
 
       /// Set of traits of the node.
       using assns_node_traits_t = lar::util::assns_traits<node_t>;
 
-        public:
-
+    public:
       /// Type of the main (left) object in the association.
       using main_t = typename assns_node_traits_t::left_t;
 
@@ -277,12 +274,16 @@ namespace proxy {
       /// Returns whether this node type supports metadata.
       template <typename Node = node_t>
       static constexpr bool hasMetadata()
-        { return lar::util::assns_has_metadata_v<Node>; }
+      {
+        return lar::util::assns_has_metadata_v<Node>;
+      }
 
       /// Returns the pointer to the metadata on this association node.
       template <typename Node = node_t>
       std::enable_if_t<hasMetadata<Node>(), dataptr_t> dataPtr() const
-        { return base_t::data; }
+      {
+        return base_t::data;
+      }
 
       // this is even more complicate, since if `data_t` is void we can't write
       // `data_t const&` as type of enable_if, because it does not depend on
@@ -290,20 +291,19 @@ namespace proxy {
       // and C++ does not like references to `void`...
       /// Returns a reference to the metadata on this association node.
       template <typename Node = node_t>
-      std::enable_if_t<
-        hasMetadata<Node>(),
-        typename lar::util::assns_traits<Node>::data_t const&
-        >
-      data() const { return *dataPtr(); }
+      std::enable_if_t<hasMetadata<Node>(), typename lar::util::assns_traits<Node>::data_t const&>
+      data() const
+      {
+        return *dataPtr();
+      }
 
       /// @}
-
 
       /// @{
       /// @name Interface to the art pointer to the associated (right) value
 
       /// Implicit conversion to _art_ pointer of the associated object.
-      operator valueptr_t const& () const& { return valuePtr(); }
+      operator valueptr_t const&() const& { return valuePtr(); }
 
       /// Implicit conversion to _art_ pointer of the associated object.
       operator valueptr_t() const&& { return valuePtr(); }
@@ -312,7 +312,7 @@ namespace proxy {
       value_t const& operator*() const { return value(); }
 
       /// Returns the associated value (alias of `valuePtr()`).
-      valueptr_t operator-> () const { return valuePtr(); }
+      valueptr_t operator->() const { return valuePtr(); }
 
       /// Returns the key of the _art_ pointer to the value.
       auto key() const -> decltype(auto) { return valuePtr().key(); }
@@ -321,44 +321,42 @@ namespace proxy {
       auto id() const -> decltype(auto) { return valuePtr().id(); }
       /// @}
 
-
       /// Reinterprets the specified association node as a `AssnsNode`.
-      static this_t const& makeFrom(node_t const& from)
-        { return static_cast<this_t const&>(from); }
+      static this_t const& makeFrom(node_t const& from) { return static_cast<this_t const&>(from); }
 
     }; // class AssnsNode<>
 
-
     template <typename ArtAssnsIterValue>
-    bool operator== (
-      AssnsNode<ArtAssnsIterValue> const& A,
-      typename AssnsNode<ArtAssnsIterValue>::valueptr_t const& B
-      )
-      { return A.valuePtr() == B; }
+    bool operator==(AssnsNode<ArtAssnsIterValue> const& A,
+                    typename AssnsNode<ArtAssnsIterValue>::valueptr_t const& B)
+    {
+      return A.valuePtr() == B;
+    }
     template <typename ArtAssnsIterValue>
-    bool operator== (
-      typename AssnsNode<ArtAssnsIterValue>::valueptr_t const& A,
-      AssnsNode<ArtAssnsIterValue> const& B
-      )
-      { return A == B.valuePtr(); }
+    bool operator==(typename AssnsNode<ArtAssnsIterValue>::valueptr_t const& A,
+                    AssnsNode<ArtAssnsIterValue> const& B)
+    {
+      return A == B.valuePtr();
+    }
     template <typename ArtAssnsIterValue>
-    bool operator!= (
-      AssnsNode<ArtAssnsIterValue> const& A,
-      typename AssnsNode<ArtAssnsIterValue>::valueptr_t const& B
-      )
-      { return A.valuePtr() != B; }
+    bool operator!=(AssnsNode<ArtAssnsIterValue> const& A,
+                    typename AssnsNode<ArtAssnsIterValue>::valueptr_t const& B)
+    {
+      return A.valuePtr() != B;
+    }
     template <typename ArtAssnsIterValue>
-    bool operator!= (
-      typename AssnsNode<ArtAssnsIterValue>::valueptr_t const& A,
-      AssnsNode<ArtAssnsIterValue> const& B
-      )
-      { return A != B.valuePtr(); }
-
+    bool operator!=(typename AssnsNode<ArtAssnsIterValue>::valueptr_t const& A,
+                    AssnsNode<ArtAssnsIterValue> const& B)
+    {
+      return A != B.valuePtr();
+    }
 
     /// Reinterprets the specified association node as a `AssnsNode`.
     template <typename ArtAssnsIterValue>
     AssnsNode<ArtAssnsIterValue> const& makeAssnsNode(ArtAssnsIterValue const& from)
-        { return AssnsNode<ArtAssnsIterValue>::makeFrom(from); }
+    {
+      return AssnsNode<ArtAssnsIterValue>::makeFrom(from);
+    }
 
   } // namespace details
 } // namespace proxy
@@ -370,42 +368,33 @@ namespace lar {
     // specialization for the art node wrapper
     template <typename ArtAssnsIterValue>
     struct assns_metadata_type<proxy::details::AssnsNode<ArtAssnsIterValue>>
-      : assns_metadata_type<ArtAssnsIterValue>
-    {};
+      : assns_metadata_type<ArtAssnsIterValue> {};
 
   } // namespace util
 } // namespace lar
 
 // back to what we were doing:
 namespace proxy {
-  namespace details{
+  namespace details {
 
     //--------------------------------------------------------------------------
     /// Traits for a association iterator.
     template <typename ArtAssnsIter>
-    struct AssnsIterTraits
-      : public lar::util::assns_traits<typename ArtAssnsIter::value_type>
-    {
+    struct AssnsIterTraits : public lar::util::assns_traits<typename ArtAssnsIter::value_type> {
       using art_node_t = typename ArtAssnsIter::value_type;
       using node_t = AssnsNode<art_node_t>;
     }; // struct AssnsIterTraits
 
-
     /// Modified iterator returning a association node interface.
     /// The basic iterator interface is to the associated (right) _art_ pointer.
     template <typename ArtAssnsIter>
-    class assns_node_iterator:
-      public IteratorWrapperBase<
-        assns_node_iterator<ArtAssnsIter>,
-        ArtAssnsIter,
-        typename AssnsIterTraits<ArtAssnsIter>::node_t
-        >
-    {
-      using base_iterator_t = IteratorWrapperBase<
-        assns_node_iterator<ArtAssnsIter>,
-        ArtAssnsIter,
-        typename AssnsIterTraits<ArtAssnsIter>::node_t
-        >;
+    class assns_node_iterator
+      : public IteratorWrapperBase<assns_node_iterator<ArtAssnsIter>,
+                                   ArtAssnsIter,
+                                   typename AssnsIterTraits<ArtAssnsIter>::node_t> {
+      using base_iterator_t = IteratorWrapperBase<assns_node_iterator<ArtAssnsIter>,
+                                                  ArtAssnsIter,
+                                                  typename AssnsIterTraits<ArtAssnsIter>::node_t>;
 
       using art_assns_iter_t = ArtAssnsIter;
       using traits_t = AssnsIterTraits<art_assns_iter_t>;
@@ -414,30 +403,29 @@ namespace proxy {
       using AssnsNode_t = typename traits_t::node_t;
       using ArtAssnsNode_t = typename traits_t::art_node_t;
 
-        public:
+    public:
       using base_iterator_t::base_iterator_t;
 
       /// Constructor from a base iterator (explicitly allowed).
-      assns_node_iterator(base_iterator_t const& from)
-        : base_iterator_t(from) {}
+      assns_node_iterator(base_iterator_t const& from) : base_iterator_t(from) {}
 
       /// Returns the full information the iterator points to.
       AssnsNode_t const& info() const { return base_iterator_t::operator*(); }
 
       /// Returns the full information the iterator points to.
-      AssnsNode_t const& operator() () const { return info(); }
+      AssnsNode_t const& operator()() const { return info(); }
 
       //--- BEGIN Access to the full association information -------------------
       /// @name Access to the full association information
       /// This interface is a replica of the one of `AssnsNode_t`.
       /// @{
 
-      using main_t     = typename AssnsNode_t::main_t;
-      using value_t    = typename AssnsNode_t::value_t;
-      using data_t     = typename AssnsNode_t::data_t;
-      using mainptr_t  = typename AssnsNode_t::mainptr_t;
+      using main_t = typename AssnsNode_t::main_t;
+      using value_t = typename AssnsNode_t::value_t;
+      using data_t = typename AssnsNode_t::data_t;
+      using mainptr_t = typename AssnsNode_t::mainptr_t;
       using valueptr_t = typename AssnsNode_t::valueptr_t;
-      using dataptr_t  = typename AssnsNode_t::dataptr_t;
+      using dataptr_t = typename AssnsNode_t::dataptr_t;
 
       /// Returns the _art_ pointer to the associated value.
       valueptr_t valuePtr() const { return info().valuePtr(); }
@@ -455,21 +443,25 @@ namespace proxy {
       /// Returns whether this node type supports metadata.
       template <typename Node = AssnsNode_t>
       static constexpr bool hasMetadata()
-        { return lar::util::assns_has_metadata_v<Node>; }
+      {
+        return lar::util::assns_has_metadata_v<Node>;
+      }
 
       /// Returns the pointer to the metadata on this association node.
       template <typename ArtNode = ArtAssnsNode_t>
       std::enable_if_t<hasMetadata<ArtNode>(), dataptr_t> dataPtr() const
-        { return info().dataPtr(); }
+      {
+        return info().dataPtr();
+      }
 
       /// Returns a reference to the metadata on this association node.
       template <typename ArtNode = ArtAssnsNode_t>
-      std::enable_if_t<
-        hasMetadata<ArtNode>(),
-        typename lar::util::assns_traits<ArtNode>::data_t const&
-        >
+      std::enable_if_t<hasMetadata<ArtNode>(),
+                       typename lar::util::assns_traits<ArtNode>::data_t const&>
       data() const
-        { return info().data(); }
+      {
+        return info().data();
+      }
 
       /// @}
       //--- END Access to the full association information ---------------------
@@ -491,13 +483,11 @@ namespace proxy {
        * should not be extremely taxing. It is possible to change this, at the
        * cost of additional complexity of the implementation.
        */
-      static AssnsNode_t const& transform(art_assns_iter_t const& v)
-        { return makeAssnsNode(*v); }
+      static AssnsNode_t const& transform(art_assns_iter_t const& v) { return makeAssnsNode(*v); }
 
     }; // class assns_node_iterator<>
 
     //--- END iterators for art::Assns -----------------------------------------
-
 
     //--------------------------------------------------------------------------
     //--- stuff for associated data (a form of auxiliary data)
@@ -506,49 +496,40 @@ namespace proxy {
     /// Interface providing begin and end iterator of a range.
     /// @tparam BoundaryIter iterator to the first of the range iterators.
     template <typename BoundaryIter>
-    class BoundaryListRangeBase: private BoundaryIter {
+    class BoundaryListRangeBase : private BoundaryIter {
       using boundary_iterator_t = BoundaryIter;
 
       /// Returns the iterator to the begin iterator.
-      auto boundaryIter() const
-        { return static_cast<BoundaryIter const&>(*this); }
+      auto boundaryIter() const { return static_cast<BoundaryIter const&>(*this); }
 
-        public:
+    public:
       /// Constructor: copies the specified base iterator.
-      BoundaryListRangeBase(boundary_iterator_t const& it)
-        : boundary_iterator_t(it) {}
+      BoundaryListRangeBase(boundary_iterator_t const& it) : boundary_iterator_t(it) {}
 
       /// Returns the begin iterator of the range.
-      auto begin() const -> decltype(auto)
-        { return *(boundaryIter()); }
+      auto begin() const -> decltype(auto) { return *(boundaryIter()); }
 
       /// Returns the end iterator of the range (next to the begin iterator).
-      auto end() const -> decltype(auto)
-        { return *(std::next(boundaryIter())); }
+      auto end() const -> decltype(auto) { return *(std::next(boundaryIter())); }
 
     }; // BoundaryListRangeBase<>
 
-
     /// A `BoundaryListRangeBase` with a full container interface.
     template <typename BoundaryIter>
-    class BoundaryListRange
-      : public lar::CollectionView<BoundaryListRangeBase<BoundaryIter>>
-    {
+    class BoundaryListRange : public lar::CollectionView<BoundaryListRangeBase<BoundaryIter>> {
       // A CollectionView can't be constructed except from deriver classes;
       // we define here such a class.
 
       using rangebase_t = BoundaryListRangeBase<BoundaryIter>;
       using base_t = lar::CollectionView<rangebase_t>;
-        public:
+
+    public:
       using boundary_iterator_t = BoundaryIter;
 
       /// Constructor: from an iterator to the begin iterator.
-      BoundaryListRange(boundary_iterator_t const& iBegin)
-        : base_t(rangebase_t(iBegin))
-        {}
+      BoundaryListRange(boundary_iterator_t const& iBegin) : base_t(rangebase_t(iBegin)) {}
 
     }; // class BoundaryListRange<>
-
 
     /**
      * @brief Reinterprets a iterator to boundaries list as a range collection.
@@ -571,10 +552,10 @@ namespace proxy {
      * in `BoundaryList`: `BoundaryList::boundaries_t::const_iterator`.
      */
     template <typename BoundaryIter>
-    BoundaryListRange<BoundaryIter> makeBoundaryListRange
-      (BoundaryIter const& iBegin)
-      { return { iBegin }; }
-
+    BoundaryListRange<BoundaryIter> makeBoundaryListRange(BoundaryIter const& iBegin)
+    {
+      return {iBegin};
+    }
 
     /**
      * @brief Iterator exposing elements of a boundary list as ranges.
@@ -604,23 +585,18 @@ namespace proxy {
      */
     template <typename BoundaryIter>
     class BoundaryListRangeIterator
-      : public IteratorWrapperBase
-        <BoundaryListRangeIterator<BoundaryIter>, BoundaryIter>
-    {
-      using base_t = IteratorWrapperBase
-        <BoundaryListRangeIterator<BoundaryIter>, BoundaryIter>;
+      : public IteratorWrapperBase<BoundaryListRangeIterator<BoundaryIter>, BoundaryIter> {
+      using base_t = IteratorWrapperBase<BoundaryListRangeIterator<BoundaryIter>, BoundaryIter>;
 
-        public:
+    public:
       using boundary_iterator_t = BoundaryIter; ///< Type of boundary iterator.
 
       /// Type of range returned when dereferencing.
-      using rangeview_t
-        = decltype(makeBoundaryListRange(std::declval<boundary_iterator_t>()));
+      using rangeview_t = decltype(makeBoundaryListRange(std::declval<boundary_iterator_t>()));
 
       using value_type = rangeview_t;
       using pointer = std::add_pointer_t<std::decay_t<value_type>>;
       using reference = std::add_lvalue_reference_t<std::decay_t<value_type>>;
-
 
       using base_t::base_t; // import constructors (explicitly allowed)
 
@@ -632,11 +608,9 @@ namespace proxy {
        * overlaid on a different data structure.
        * As such, it may be not copiable and need to be propagated by reference.
        */
-      static auto transform(BoundaryIter const& iter)
-        { return makeBoundaryListRange(iter); }
+      static auto transform(BoundaryIter const& iter) { return makeBoundaryListRange(iter); }
 
     }; // class BoundaryListRangeIterator<>
-
 
     /**
      * @brief Builds and keeps track of internal boundaries in a sequence.
@@ -668,13 +642,13 @@ namespace proxy {
     template <typename Iter>
     class BoundaryList {
       using boundarylist_t = BoundaryList<Iter>;
-        public:
+
+    public:
       using data_iterator_t = Iter;
       using boundaries_t = std::vector<data_iterator_t>;
 
       /// Iterator on the ranges contained in the collection.
-      using range_iterator_t
-        = BoundaryListRangeIterator<typename boundaries_t::const_iterator>;
+      using range_iterator_t = BoundaryListRangeIterator<typename boundaries_t::const_iterator>;
 
       /// Structure holding begin and end iterator for a single range.
       // BoundaryListRange<data_iterator_t> const&
@@ -683,30 +657,28 @@ namespace proxy {
       /// Range object directly containing the boundary iterators.
       using range_t = lar::RangeAsCollection_t<data_iterator_t>;
 
-
       /// Constructor: steals the specified boundary list.
-      explicit BoundaryList(boundaries_t&& boundaries)
-        : boundaries(std::move(boundaries))
-        { assert(this->boundaries.size() >= 1); }
+      explicit BoundaryList(boundaries_t&& boundaries) : boundaries(std::move(boundaries))
+      {
+        assert(this->boundaries.size() >= 1);
+      }
 
       /// Returns the number of ranges contained in the list.
-      std::size_t nRanges() const
-        { return boundaries.size() - 1; }
+      std::size_t nRanges() const { return boundaries.size() - 1; }
       /// Returns the begin iterator of the `i`-th range (end if overflow).
       data_iterator_t const& rangeBegin(std::size_t i) const
-        { return boundaries[std::min(i, nRanges())]; }
+      {
+        return boundaries[std::min(i, nRanges())];
+      }
       /// Returns the end iterator of the `i`-th range (end if overflow).
-      data_iterator_t const& rangeEnd(std::size_t i) const
-        { return rangeBegin(i + 1); }
+      data_iterator_t const& rangeEnd(std::size_t i) const { return rangeBegin(i + 1); }
 
       /// Returns the number of ranges contained in the list.
       std::size_t size() const { return nRanges(); }
       /// Returns the begin iterator of the first range.
-      range_iterator_t begin() const
-        { return { boundaries.begin() }; }
+      range_iterator_t begin() const { return {boundaries.begin()}; }
       /// Returns the end iterator of the last range.
-      range_iterator_t end() const
-        { return { std::prev(boundaries.end()) }; }
+      range_iterator_t end() const { return {std::prev(boundaries.end())}; }
       /**
        * @brief Returns the specified range.
        * @param i index of the range to be returned
@@ -721,8 +693,7 @@ namespace proxy {
        * `BoundaryList` object is destroyed.
        * If this is not acceptable, use `range()` instead.
        */
-      range_ref_t rangeRef(std::size_t i) const
-        { return { std::next(boundaries.begin(), i) }; }
+      range_ref_t rangeRef(std::size_t i) const { return {std::next(boundaries.begin(), i)}; }
       /**
        * @brief Returns the specified range in an object holding the iterators.
        * @param i index of the range to be returned
@@ -737,19 +708,19 @@ namespace proxy {
        * iterators of the range are.
        */
       range_t range(std::size_t i) const
-        { return lar::makeCollectionView(rangeBegin(i), rangeEnd(i)); }
+      {
+        return lar::makeCollectionView(rangeBegin(i), rangeEnd(i));
+      }
 
       /// Returns the begin iterator of the `i`-th range (unchecked).
       /// @see `range()`
-      auto operator[](std::size_t i) const -> decltype(auto)
-        { return range(i); }
+      auto operator[](std::size_t i) const -> decltype(auto) { return range(i); }
 
-        private:
+    private:
       /// Begin iterator of each range, plus end iterator of whole sequence.
       boundaries_t boundaries;
 
     }; // class BoundaryList
-
 
     /**
      * @brief Object to draft associated data interface.
@@ -774,63 +745,58 @@ namespace proxy {
      * objects associated to a `Left` can be accessed by index, and the `Right`
      * objects within can be accessed with `Right` index in the `Left`.
      */
-    template <
-      typename Main, typename Aux, typename Metadata /* = void */,
-      typename Tag /* = Aux */
-      >
+    template <typename Main, typename Aux, typename Metadata /* = void */, typename Tag /* = Aux */
+              >
     class AssociatedData {
       using This_t = AssociatedData<Main, Aux, Metadata, Tag>; ///< This type.
 
-        public:
+    public:
       /// Type of _art_ association.
       using assns_t = art::Assns<Main, Aux, Metadata>;
 
-        private:
-      using associated_data_iterator_t
-        = assns_node_iterator<lar::util::assns_iterator_t<assns_t>>;
+    private:
+      using associated_data_iterator_t = assns_node_iterator<lar::util::assns_iterator_t<assns_t>>;
       //  = tuple_element_iterator<1U, lar::util::assns_iterator_t<assns_t>>;
 
-        public:
+    public:
       using tag = Tag; ///< Tag of this association proxy.
 
       using group_ranges_t = BoundaryList<associated_data_iterator_t>;
 
       /// Type of collection of auxiliary data associated with a main item.
-      using auxiliary_data_t
-        = util::add_tag_t<typename group_ranges_t::range_t, tag>;
+      using auxiliary_data_t = util::add_tag_t<typename group_ranges_t::range_t, tag>;
 
       // constructor is not part of the interface
-      AssociatedData(group_ranges_t&& groups)
-        : fGroups(std::move(groups))
-        {}
+      AssociatedData(group_ranges_t&& groups) : fGroups(std::move(groups)) {}
 
       /// Returns an iterator pointing to the first associated data range.
-      auto begin() const -> decltype(auto)
-        { return fGroups.begin(); }
+      auto begin() const -> decltype(auto) { return fGroups.begin(); }
 
       /// Returns an iterator pointing past the last associated data range.
-      auto end() const -> decltype(auto)
-        { return fGroups.end(); }
+      auto end() const -> decltype(auto) { return fGroups.end(); }
 
       /// Returns the range with the specified index (no check performed).
       auto getRange(std::size_t i) const -> decltype(auto)
-        { return util::makeTagged<tag>(fGroups.range(i)); }
+      {
+        return util::makeTagged<tag>(fGroups.range(i));
+      }
 
       /// Returns the range with the specified index (no check performed).
-      auto operator[] (std::size_t index) const -> decltype(auto)
-        {
-          static_assert(
-            std::is_convertible<decltype(getRange(index)), auxiliary_data_t>(),
-            "Inconsistent data types."
-            );
-          return getRange(index);
-        }
+      auto operator[](std::size_t index) const -> decltype(auto)
+      {
+        static_assert(std::is_convertible<decltype(getRange(index)), auxiliary_data_t>(),
+                      "Inconsistent data types.");
+        return getRange(index);
+      }
 
       /// Returns whether this data is labeled with the specified tag.
       template <typename TestTag>
-      static constexpr bool hasTag() { return std::is_same<TestTag, tag>(); }
+      static constexpr bool hasTag()
+      {
+        return std::is_same<TestTag, tag>();
+      }
 
-        private:
+    private:
       group_ranges_t fGroups;
 
     }; // class AssociatedData<>
@@ -838,7 +804,6 @@ namespace proxy {
     //--------------------------------------------------------------------------
 
   } // namespace details
-
 
   //----------------------------------------------------------------------------
   //@{
@@ -878,9 +843,10 @@ namespace proxy {
 
   template <typename Assns>
   auto makeAssociatedData(Assns const& assns, std::size_t minSize = 0)
-    { return makeAssociatedData<typename Assns::right_t>(assns, minSize); }
+  {
+    return makeAssociatedData<typename Assns::right_t>(assns, minSize);
+  }
   //@}
-
 
   //@{
   /**
@@ -900,19 +866,20 @@ namespace proxy {
    */
   template <typename Tag, typename MainColl, typename Assns>
   auto makeAssociatedData(MainColl const& mainColl, Assns const& assns)
-    { return makeAssociatedData<Tag>(assns, mainColl.size()); }
+  {
+    return makeAssociatedData<Tag>(assns, mainColl.size());
+  }
 
   template <typename MainColl, typename Assns>
   auto makeAssociatedData(MainColl const& mainColl, Assns const& assns)
-    { return makeAssociatedData<typename Assns::right_t>(mainColl, assns); }
+  {
+    return makeAssociatedData<typename Assns::right_t>(mainColl, assns);
+  }
   //@}
-
 
   //----------------------------------------------------------------------------
 
-
 } // namespace proxy
-
 
 //------------------------------------------------------------------------------
 //--- template implementation
@@ -925,13 +892,12 @@ namespace proxy {
     //--- associationRangeBoundaries() implementation
     //--------------------------------------------------------------------------
     template <std::size_t GroupKey, typename Iter>
-    typename BoundaryList<Iter>::boundaries_t associationRangesImpl
-      (Iter begin, Iter end, std::size_t expectedSize /* = 0 */)
+    typename BoundaryList<Iter>::boundaries_t
+    associationRangesImpl(Iter begin, Iter end, std::size_t expectedSize /* = 0 */)
     {
       constexpr auto KeyIndex = GroupKey;
 
-      auto extractKey
-        = [](auto const& assn){ return std::get<KeyIndex>(assn).key(); };
+      auto extractKey = [](auto const& assn) { return std::get<KeyIndex>(assn).key(); };
 
       typename BoundaryList<Iter>::boundaries_t boundaries;
       boundaries.reserve(expectedSize + 1);
@@ -942,10 +908,9 @@ namespace proxy {
         if (key == current) continue;
         if (key < current) {
           auto index = std::distance(begin, it);
-          throw std::runtime_error("associationRanges() got input element #"
-            + std::to_string(index - 1) + " with key " + std::to_string(current)
-            + " and the next with key " + std::to_string(key) + "!"
-            );
+          throw std::runtime_error(
+            "associationRanges() got input element #" + std::to_string(index - 1) + " with key " +
+            std::to_string(current) + " and the next with key " + std::to_string(key) + "!");
         }
         boundaries.insert(boundaries.end(), key - current, it);
         current = key;
@@ -954,25 +919,24 @@ namespace proxy {
       return boundaries;
     } // associationRangesImpl()
 
-
     //--------------------------------------------------------------------------
     template <std::size_t GroupKey, typename Iter>
     auto associationRangeBoundaries(Iter begin, Iter end)
-      { return associationRangesImpl<GroupKey, Iter>(begin, end); }
-
+    {
+      return associationRangesImpl<GroupKey, Iter>(begin, end);
+    }
 
     //--------------------------------------------------------------------------
     template <std::size_t GroupKey, typename Iter>
-    auto associationRangeBoundaries(Iter begin, Iter end, std::size_t n) {
+    auto associationRangeBoundaries(Iter begin, Iter end, std::size_t n)
+    {
       auto boundaries = associationRangesImpl<GroupKey, Iter>(begin, end, n);
       if (boundaries.size() <= n) {
-        boundaries.insert
-          (boundaries.end(), n + 1 - boundaries.size(), boundaries.back());
+        boundaries.insert(boundaries.end(), n + 1 - boundaries.size(), boundaries.back());
         assert(boundaries.size() == (n + 1));
       }
       return boundaries;
     } // associationRangeBoundaries(Iter, Iter, std::size_t)
-
 
     //--------------------------------------------------------------------------
     /**
@@ -999,10 +963,9 @@ namespace proxy {
      */
     template <std::size_t GroupKey, typename Iter>
     BoundaryList<Iter> associationRanges(Iter begin, Iter end)
-      {
-        return BoundaryList<Iter>
-          (associationRangeBoundaries<GroupKey>(begin, end));
-      }
+    {
+      return BoundaryList<Iter>(associationRangeBoundaries<GroupKey>(begin, end));
+    }
 
     /**
      * @brief Groups associations by the first key.
@@ -1024,16 +987,13 @@ namespace proxy {
      */
     template <std::size_t GroupKey, typename Iter>
     BoundaryList<Iter> associationRanges(Iter begin, Iter end, std::size_t n)
-      {
-        return BoundaryList<Iter>
-          (associationRangeBoundaries<GroupKey>(begin, end, n));
-      }
-
+    {
+      return BoundaryList<Iter>(associationRangeBoundaries<GroupKey>(begin, end, n));
+    }
 
     //--------------------------------------------------------------------------
 
   } // namespace details
-
 
   //----------------------------------------------------------------------------
   template <typename Tag, typename Assns>
@@ -1042,24 +1002,19 @@ namespace proxy {
     using Main_t = typename Assns::left_t;
     using Aux_t = typename Assns::right_t;
     using Metadata_t = lar::util::assns_metadata_t<Assns>;
-    using AssociatedData_t
-      = details::AssociatedData<Main_t, Aux_t, Metadata_t, Tag>;
+    using AssociatedData_t = details::AssociatedData<Main_t, Aux_t, Metadata_t, Tag>;
 
     // associationRangeBoundaries() produces iterators to association elements,
     // (i.e. tuples)
     using std::begin;
     using std::end;
-    auto ranges = details::associationRangeBoundaries<0U>
-      (begin(assns), end(assns), minSize);
+    auto ranges = details::associationRangeBoundaries<0U>(begin(assns), end(assns), minSize);
     // we convert those iterators into iterators to the right associated item
     // (it takes a few steps)
     using group_ranges_t = typename AssociatedData_t::group_ranges_t;
     return AssociatedData_t(
-      group_ranges_t
-        (typename group_ranges_t::boundaries_t(ranges.begin(), ranges.end()))
-      );
+      group_ranges_t(typename group_ranges_t::boundaries_t(ranges.begin(), ranges.end())));
   } // makeAssociatedDataFrom(assns)
-
 
   //----------------------------------------------------------------------------
 

@@ -65,8 +65,7 @@ namespace trkf {
   /// Correlation between position and slope in the opposite view is
   /// (sqrt(3)/2) u' v' / sqrt((1 + u'^2)(1 + v'^2))
   ///
-  bool
-  InteractPlane::noise(const KTrack& trk, double s, TrackError& noise_matrix) const
+  bool InteractPlane::noise(const KTrack& trk, double s, TrackError& noise_matrix) const
   {
     // Get LAr service.
 

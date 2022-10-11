@@ -14,10 +14,10 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_H
 
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase/withCollectionProxy.h"
+#include "lardata/RecoBaseProxy/ProxyBase/getCollection.h"
 #include "lardata/RecoBaseProxy/ProxyBase/withAssociated.h"
+#include "lardata/RecoBaseProxy/ProxyBase/withCollectionProxy.h"
 #include "lardata/RecoBaseProxy/ProxyBase/withParallelData.h"
 #include "lardata/RecoBaseProxy/ProxyBase/withZeroOrOne.h"
-#include "lardata/RecoBaseProxy/ProxyBase/getCollection.h"
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_H

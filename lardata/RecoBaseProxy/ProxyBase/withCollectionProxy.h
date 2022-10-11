@@ -18,10 +18,9 @@
 #include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard
-#include <tuple> // also std::tuple_element_t<>
-#include <utility> // std::forward(), std::move()
+#include <tuple>       // also std::tuple_element_t<>
 #include <type_traits> // std::is_convertible<>, std::decay_t<>, ...
-
+#include <utility>     // std::forward(), std::move()
 
 namespace proxy {
 
@@ -34,17 +33,14 @@ namespace proxy {
   /// @bug Broken in many ways. Do not use.
   template <typename AuxProxy, typename AuxTag, typename... Args>
   auto withCollectionProxyAs(Args&&... args)
-    {
-      using ArgTuple_t = std::tuple<Args&&...>;
-      static_assert(
-        std::is_convertible
-          <std::decay_t<std::tuple_element_t<0U, ArgTuple_t>>, art::InputTag>(),
-        "The first argument of withCollectionProxyAs() must be art::InputTag."
-        );
-      ArgTuple_t argsTuple(std::forward<Args>(args)...);
-      return details::WithProxyAsAuxStructBase<AuxProxy, ArgTuple_t, AuxTag>
-        (std::move(argsTuple));
-    } // withCollectionProxyAs()
+  {
+    using ArgTuple_t = std::tuple<Args&&...>;
+    static_assert(
+      std::is_convertible<std::decay_t<std::tuple_element_t<0U, ArgTuple_t>>, art::InputTag>(),
+      "The first argument of withCollectionProxyAs() must be art::InputTag.");
+    ArgTuple_t argsTuple(std::forward<Args>(args)...);
+    return details::WithProxyAsAuxStructBase<AuxProxy, ArgTuple_t, AuxTag>(std::move(argsTuple));
+  } // withCollectionProxyAs()
 
   //----------------------------------------------------------------------------
   /**
@@ -75,16 +71,13 @@ namespace proxy {
    */
   template <typename AuxProxy, typename... Args>
   auto withCollectionProxy(Args&&... args)
-    {
-      return
-        withCollectionProxyAs<AuxProxy, AuxProxy>(std::forward<Args>(args)...);
-    }
-
+  {
+    return withCollectionProxyAs<AuxProxy, AuxProxy>(std::forward<Args>(args)...);
+  }
 
   /// @}
   // --- END Collection proxy infrastructure -----------------------------------
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_WITHCOLLECTIONPROXY_H

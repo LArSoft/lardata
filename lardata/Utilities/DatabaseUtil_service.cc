@@ -5,11 +5,10 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // LArSoft includes
-#include "lardata/Utilities/DatabaseUtil.h"
 #include "art/Framework/Services/Registry/ServiceDefinitionMacros.h"
+#include "lardata/Utilities/DatabaseUtil.h"
 
-
-namespace util{
+namespace util {
 
   DEFINE_ART_SERVICE(DatabaseUtil)
 

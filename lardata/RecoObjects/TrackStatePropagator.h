@@ -100,16 +100,16 @@ namespace trkf {
                                 PropDirection dir = FORWARD) const;
 
     /// Rotation of a TrackState to a Plane (zero distance propagation)
-    TrackState
-    rotateToPlane(bool& success, const TrackState& origin, const Plane& target) const
+    TrackState rotateToPlane(bool& success, const TrackState& origin, const Plane& target) const
     {
       double dw2dw1 = 0.;
       return rotateToPlane(success, origin, target, dw2dw1);
     }
 
     /// Quick accesss to the propagated position given a distance
-    Point_t
-    propagatedPosByDistance(const Point_t& origpos, const Vector_t& origdir, double distance) const
+    Point_t propagatedPosByDistance(const Point_t& origpos,
+                                    const Vector_t& origdir,
+                                    double distance) const
     {
       return origpos + distance * origdir;
     }
@@ -120,8 +120,7 @@ namespace trkf {
                            const Point_t& origpos,
                            const Vector_t& origdir,
                            const Plane& target) const;
-    double
-    distanceToPlane(bool& success, const TrackState& origin, const Plane& target) const
+    double distanceToPlane(bool& success, const TrackState& origin, const Plane& target) const
     {
       return distanceToPlane(success, origin.position(), origin.momentum().Unit(), target);
     }
@@ -130,8 +129,7 @@ namespace trkf {
     //@{
     /// Distance of a TrackState (Point) to a Plane along the direction orthogonal to the Plane
     double perpDistanceToPlane(bool& success, const Point_t& origpos, const Plane& target) const;
-    double
-    perpDistanceToPlane(bool& success, const TrackState& origin, const Plane& target) const
+    double perpDistanceToPlane(bool& success, const TrackState& origin, const Plane& target) const
     {
       return perpDistanceToPlane(success, origin.position(), target);
     }
@@ -143,8 +141,9 @@ namespace trkf {
                                                   const Point_t& origpos,
                                                   const Vector_t& origdir,
                                                   const Plane& target) const;
-    std::pair<double, double>
-    distancePairToPlane(bool& success, const TrackState& origin, const Plane& target) const
+    std::pair<double, double> distancePairToPlane(bool& success,
+                                                  const TrackState& origin,
+                                                  const Plane& target) const
     {
       return distancePairToPlane(success, origin.position(), origin.momentum().Unit(), target);
     }
@@ -173,11 +172,7 @@ namespace trkf {
                    SMatrixSym55& noise_matrix) const;
 
     /// get Tcut parameter used in DetectorPropertiesService Eloss method
-    double
-    getTcut() const
-    {
-      return fTcut;
-    }
+    double getTcut() const { return fTcut; }
 
   private:
     /// Rotation of a TrackState to a Plane (zero distance propagation), keeping track of dw2dw1 (needed by mcs)

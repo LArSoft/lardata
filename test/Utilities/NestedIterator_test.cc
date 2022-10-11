@@ -12,9 +12,9 @@
  */
 
 // C/C++ standard libraries
+#include <iostream>
 #include <map>
 #include <random>
-#include <iostream>
 
 // Boost libraries
 /*
@@ -26,16 +26,14 @@
  * This also makes fairly complicate to receive parameters from the command line
  * (for example, a random seed).
  */
-#define BOOST_TEST_MODULE ( NestedIterator_test )
+#define BOOST_TEST_MODULE (NestedIterator_test)
 #include "boost/test/unit_test.hpp"
 
 // LArSoft libraries
 #include "lardata/Utilities/NestedIterator.h"
 
-
 /// The seed for the default random engine
 constexpr unsigned int RandomSeed = 12345;
-
 
 //------------------------------------------------------------------------------
 //--- Test code
@@ -49,7 +47,8 @@ constexpr unsigned int RandomSeed = 12345;
  *
  * The test fails if the extracted sequence is not correct.
  */
-void RunVectorVectorTest() {
+void RunVectorVectorTest()
+{
 
   // fill the double tier structure
   using DoubleVectorI_t = std::vector<std::vector<int>>;
@@ -70,14 +69,14 @@ void RunVectorVectorTest() {
     // add the element i to the last vector
     data.back().push_back(i);
   } // for
-  std::cout << "Working with " << NElements << " elements in " << data.size()
-    << " vectors (" << nEmpty << " empty) in a vector" << std::endl;
+  std::cout << "Working with " << NElements << " elements in " << data.size() << " vectors ("
+            << nEmpty << " empty) in a vector" << std::endl;
 
   unsigned int nMismatches = 0;
 
   int expected = 0;
-  lar::double_fwd_const_iterator<DoubleVectorI_t::const_iterator>
-    iElem(data, lar::double_fwd_const_iterator<DoubleVectorI_t::const_iterator>::begin),
+  lar::double_fwd_const_iterator<DoubleVectorI_t::const_iterator> iElem(
+    data, lar::double_fwd_const_iterator<DoubleVectorI_t::const_iterator>::begin),
     eend(data, lar::double_fwd_const_iterator<DoubleVectorI_t::const_iterator>::end);
   while (iElem != eend) {
     int elem = *iElem;
@@ -86,10 +85,9 @@ void RunVectorVectorTest() {
     ++iElem;
   } // while
 
-  BOOST_TEST((unsigned int) expected == NElements);
+  BOOST_TEST((unsigned int)expected == NElements);
   BOOST_TEST(nMismatches == 0U);
 } // RunVectorVectorTest()
-
 
 /**
  * @brief Tests bulk allocator with a map of vectors
@@ -99,7 +97,8 @@ void RunVectorVectorTest() {
  *
  * The test fails if the extracted sequence is not correct.
  */
-void RunVectorMapTest() {
+void RunVectorMapTest()
+{
 
   // fill the double tier structure
   using VectorMapI_t = std::map<int, std::vector<int>>;
@@ -117,21 +116,20 @@ void RunVectorMapTest() {
     // add a new map (some times)
     if (uniform(random_engine) < SwitchProbability) {
       if (data.rbegin()->second.empty()) ++nEmpty;
-      data.insert({ data.size(), {} });
+      data.insert({data.size(), {}});
     }
     // add the element i to the last vector
     data.rbegin()->second.push_back(i);
   } // for
-  std::cout << "Working with " << NElements << " elements in " << data.size()
-    << " vectors (" << nEmpty << " empty) in a map" << std::endl;
+  std::cout << "Working with " << NElements << " elements in " << data.size() << " vectors ("
+            << nEmpty << " empty) in a map" << std::endl;
 
   unsigned int nMismatches = 0;
 
   int expected = 0;
-  using ConstIterator_t = lar::double_fwd_const_iterator
-    <VectorMapI_t::const_iterator, lar::PairSecond<VectorMapI_t::value_type>>;
-  ConstIterator_t iElem(data, ConstIterator_t::begin),
-    eend(data, ConstIterator_t::end);
+  using ConstIterator_t = lar::double_fwd_const_iterator<VectorMapI_t::const_iterator,
+                                                         lar::PairSecond<VectorMapI_t::value_type>>;
+  ConstIterator_t iElem(data, ConstIterator_t::begin), eend(data, ConstIterator_t::end);
   while (iElem != eend) {
     int elem = *iElem;
     if (elem != expected) ++nMismatches;
@@ -139,10 +137,9 @@ void RunVectorMapTest() {
     ++iElem;
   } // while
 
-  BOOST_TEST((unsigned int) expected == NElements);
+  BOOST_TEST((unsigned int)expected == NElements);
   BOOST_TEST(nMismatches == 0U);
 } // RunVectorMapTest()
-
 
 //------------------------------------------------------------------------------
 //--- registration of tests
@@ -153,10 +150,12 @@ void RunVectorMapTest() {
 // number of checks and it will fail if any of them does.
 //
 
-BOOST_AUTO_TEST_CASE(RunVectorVector) {
+BOOST_AUTO_TEST_CASE(RunVectorVector)
+{
   RunVectorVectorTest();
 }
 
-BOOST_AUTO_TEST_CASE(RunVectorMap) {
+BOOST_AUTO_TEST_CASE(RunVectorMap)
+{
   RunVectorMapTest();
 }
