@@ -194,7 +194,7 @@ namespace proxy {
      *
      * @deprecated C++17 `if constexpr` should be used instead
      *             (see the example below)
-     *             
+     *
      * This method is a `get()` which forgives when the requested type is not
      * available (because this proxy was configured not to hold it).
      *
