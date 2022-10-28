@@ -41,9 +41,9 @@ double lar::util::TrackProjectedLength(recob::Track const& track, geo::View_t vi
 
   auto const* geom = lar::providerFrom<geo::Geometry>();
   double angleToVert = 0.;
-  for (unsigned int i = 0; i < geom->Nplanes(); ++i) {
-    if (geom->Plane(i).View() == view) {
-      angleToVert = geom->Plane(i).Wire(0).ThetaZ(false) - 0.5 * ::util::pi<>();
+  for (auto const& plane : geom->Iterate<geo::PlaneGeo>(geo::CryostatID{0})) {
+    if (plane.View() == view) {
+      angleToVert = plane.Wire(0).ThetaZ(false) - 0.5 * ::util::pi<>();
       break;
     }
   }

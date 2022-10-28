@@ -30,8 +30,10 @@ namespace util {
   {
     fNPlanes = fGeom.Nplanes();
     vertangle.resize(fNPlanes);
-    for (unsigned int ip = 0; ip < fNPlanes; ip++)
-      vertangle[ip] = fGeom.Plane(ip).Wire(0).ThetaZ(false) - TMath::Pi() / 2.; // wire angle
+    for (unsigned int ip = 0; ip < fNPlanes; ip++) {
+      geo::WireID const wid{0, 0, ip, 0};
+      vertangle[ip] = fGeom.Wire(wid).ThetaZ(false) - TMath::Pi() / 2.; // wire angle
+    }
 
     fWirePitch = fGeom.WirePitch();
     fTimeTick = sampling_rate(fClocks) / 1000.;
@@ -84,7 +86,7 @@ namespace util {
     // check if backwards going track
     double alt_backwards = 0;
 
-    if (fabs(omega0) > (TMath::Pi() / 2.0) || fabs(omega1) > (TMath::Pi() / 2.0)) {
+    if (std::fabs(omega0) > (TMath::Pi() / 2.0) || std::fabs(omega1) > (TMath::Pi() / 2.0)) {
       alt_backwards = 1;
     }
 
@@ -122,8 +124,8 @@ namespace util {
       }
     }
 
-    slopeC = tan(omegaC);
-    slopeI = tan(omegaI);
+    slopeC = std::tan(omegaC);
+    slopeI = std::tan(omegaI);
     angleC = vertangle[Cplane];
     angleI = vertangle[Iplane];
 
@@ -137,31 +139,33 @@ namespace util {
       ln = -1;
 
     // calculate x and z using y ( ln )
-    mn = (ln / (2 * sin(angleI))) * ((cos(angleI) / (slopeC * cos(angleC))) - (1 / slopeI) +
-                                     nfact * (cos(angleI) / (cos(angleC) * slopeC) - 1 / slopeI));
+    mn = (ln / (2 * std::sin(angleI))) *
+         ((std::cos(angleI) / (slopeC * std::cos(angleC))) - (1 / slopeI) +
+          nfact * (std::cos(angleI) / (std::cos(angleC) * slopeC) - 1 / slopeI));
 
-    nn = (ln / (2 * cos(angleC))) *
+    nn = (ln / (2 * std::cos(angleC))) *
          ((1 / slopeC) + (1 / slopeI) + nfact * ((1 / slopeC) - (1 / slopeI)));
 
     // Direction angles
-    if (fabs(omegaC) > 0.01) // catch numeric error values
+    if (std::fabs(omegaC) > 0.01) // catch numeric error values
     {
-      // phi=atan(ln/nn);
-      phis = asin(ln / TMath::Sqrt(ln * ln + nn * nn));
+      // phi=std::atan(ln/nn);
+      phis = std::asin(ln / TMath::Sqrt(ln * ln + nn * nn));
 
-      if (fabs(slopeC + slopeI) < 0.001)
+      if (std::fabs(slopeC + slopeI) < 0.001)
         phis = 0;
-      else if (fabs(omegaI) > 0.01 && (omegaI / fabs(omegaI) == -omegaC / fabs(omegaC)) &&
-               (fabs(omegaC) < 1 * TMath::Pi() / 180 ||
-                fabs(omegaC) > 179 * TMath::Pi() / 180))           // angles have
-        phis = (fabs(omegaC) > TMath::Pi() / 2) ? TMath::Pi() : 0; // angles are
+      else if (std::fabs(omegaI) > 0.01 &&
+               (omegaI / std::fabs(omegaI) == -omegaC / std::fabs(omegaC)) &&
+               (std::fabs(omegaC) < 1 * TMath::Pi() / 180 ||
+                std::fabs(omegaC) > 179 * TMath::Pi() / 180))           // angles have
+        phis = (std::fabs(omegaC) > TMath::Pi() / 2) ? TMath::Pi() : 0; // angles are
 
       if (nn < 0 && phis > 0 &&
           !(!alt_backwards &&
-            fabs(phis) <
+            std::fabs(phis) <
               TMath::Pi() / 4)) // do not go back if track looks forward and phi is forward
         phis = (TMath::Pi()) - phis;
-      else if (nn < 0 && phis < 0 && !(!alt_backwards && fabs(phis) < TMath::Pi() / 4))
+      else if (nn < 0 && phis < 0 && !(!alt_backwards && std::fabs(phis) < TMath::Pi() / 4))
         phis = (-TMath::Pi()) - phis;
 
       phi = phis * 180 / TMath::Pi();
@@ -172,7 +176,7 @@ namespace util {
       phi = omegaC;
     }
 
-    thetan = -asin(mn / std::hypot(ln, mn, nn));
+    thetan = -std::asin(mn / std::hypot(ln, mn, nn));
     theta = thetan * 180 / TMath::Pi();
 
     return 0;
@@ -207,12 +211,13 @@ namespace util {
     }
 
     double top = (std::cos(vertangle[splane]) - std::cos(vertangle[lplane]) * sdw / ldw);
-    double bottom = tan(vertangle[lplane] * std::cos(vertangle[splane]));
-    bottom -= tan(vertangle[splane] * std::cos(vertangle[lplane])) * sdw / ldw;
+    double bottom = std::tan(vertangle[lplane] * std::cos(vertangle[splane]));
+    bottom -= std::tan(vertangle[splane] * std::cos(vertangle[lplane])) * sdw / ldw;
 
     double tantheta = top / bottom;
 
-    return atan(tantheta) * vertangle[lplane] / std::abs(vertangle[lplane]) * 180. / TMath::Pi();
+    return std::atan(tantheta) * vertangle[lplane] / std::abs(vertangle[lplane]) * 180. /
+           TMath::Pi();
   }
 
   /////////////////////////////////////////////////////////
@@ -221,33 +226,22 @@ namespace util {
   /////////////////////////////////////////////////////////
   double GeometryUtilities::CalculatePitch(unsigned int iplane, double phi, double theta) const
   {
-
-    double pitch = -1.;
-
-    if (fGeom.Plane(iplane).View() == geo::kUnknown || fGeom.Plane(iplane).View() == geo::k3D) {
-      mf::LogError(Form("Warning :  no Pitch foreseen for view %d", fGeom.Plane(iplane).View()));
-      return pitch;
+    auto const& plane = fGeom.Plane({0, 0, iplane});
+    if (plane.View() == geo::kUnknown || plane.View() == geo::k3D) {
+      mf::LogError(Form("Warning :  no Pitch foreseen for view %d", plane.View()));
+      return -1.;
     }
-    else {
 
-      double pi = TMath::Pi();
-      double fTheta = pi / 2 - theta;
-      double fPhi = -(phi + pi / 2);
+    double const pi = TMath::Pi();
+    double const fTheta = pi / 2 - theta;
+    double const fPhi = -(phi + pi / 2);
 
-      for (unsigned int i = 0; i < fGeom.Nplanes(); ++i) {
-        if (i == iplane) {
-          double wirePitch = fGeom.WirePitch(i);
-          double angleToVert = 0.5 * TMath::Pi() - fGeom.WireAngleToVertical(fGeom.Plane(i).View());
-          double cosgamma =
-            TMath::Abs(TMath::Sin(angleToVert) * TMath::Cos(fTheta) +
-                       TMath::Cos(angleToVert) * TMath::Sin(fTheta) * TMath::Sin(fPhi));
+    double wirePitch = plane.WirePitch();
+    double angleToVert = 0.5 * TMath::Pi() - fGeom.WireAngleToVertical(plane.View(), plane.ID());
+    double cosgamma = std::abs(std::sin(angleToVert) * std::cos(fTheta) +
+                               std::cos(angleToVert) * std::sin(fTheta) * std::sin(fPhi));
 
-          if (cosgamma > 0) pitch = wirePitch / cosgamma;
-        } // end if the correct view
-      }   // end loop over planes
-    }     // end if a reasonable view
-
-    return pitch;
+    return cosgamma > 0 ? wirePitch / cosgamma : -1.;
   }
 
   /////////////////////////////////////////////////////////
@@ -256,32 +250,21 @@ namespace util {
   /////////////////////////////////////////////////////////
   double GeometryUtilities::CalculatePitchPolar(unsigned int iplane, double phi, double theta) const
   {
-
-    double pitch = -1.;
-
-    if (fGeom.Plane(iplane).View() == geo::kUnknown || fGeom.Plane(iplane).View() == geo::k3D) {
-      mf::LogError(Form("Warning :  no Pitch foreseen for view %d", fGeom.Plane(iplane).View()));
-      return pitch;
+    auto const& plane = fGeom.Plane({0, 0, iplane});
+    if (plane.View() == geo::kUnknown || plane.View() == geo::k3D) {
+      mf::LogError(Form("Warning :  no Pitch foreseen for view %d", plane.View()));
+      return -1.;
     }
-    else {
 
-      double fTheta = theta;
-      double fPhi = phi;
+    double const fTheta = theta; // KJK: Are these two variables necessary?
+    double const fPhi = phi;
 
-      for (unsigned int i = 0; i < fGeom.Nplanes(); ++i) {
-        if (i == iplane) {
-          double wirePitch = fGeom.WirePitch(i);
-          double angleToVert = 0.5 * TMath::Pi() - fGeom.WireAngleToVertical(fGeom.Plane(i).View());
-          double cosgamma =
-            TMath::Abs(TMath::Sin(angleToVert) * TMath::Cos(fTheta) +
-                       TMath::Cos(angleToVert) * TMath::Sin(fTheta) * TMath::Sin(fPhi));
+    double wirePitch = plane.WirePitch();
+    double angleToVert = 0.5 * TMath::Pi() - fGeom.WireAngleToVertical(plane.View(), plane.ID());
+    double cosgamma = std::abs(std::sin(angleToVert) * std::cos(fTheta) +
+                               std::cos(angleToVert) * std::sin(fTheta) * std::sin(fPhi));
 
-          if (cosgamma > 0) pitch = wirePitch / cosgamma;
-        } // end if the correct view
-      }   // end loop over planes
-    }     // end if a reasonable view
-
-    return pitch;
+    return cosgamma > 0 ? wirePitch / cosgamma : -1.;
   }
 
   /////////////////////////////////////////////////////////
@@ -314,7 +297,7 @@ namespace util {
   /////////////////////////////////////////////////////////
   double GeometryUtilities::Get2Dslope(double dwire, double dtime) const
   {
-    return tan(Get2Dangle(dwire, dtime)) / fWireTimetoCmCm;
+    return std::tan(Get2Dangle(dwire, dtime)) / fWireTimetoCmCm;
   }
 
   /////////////////////////////////////////////////////////
@@ -371,10 +354,9 @@ namespace util {
 
   double GeometryUtilities::Get2DangleFrom3D(unsigned int plane, double phi, double theta) const
   {
-    TVector3 dummyvector(cos(theta * TMath::Pi() / 180.) * sin(phi * TMath::Pi() / 180.),
-                         sin(theta * TMath::Pi() / 180.),
-                         cos(theta * TMath::Pi() / 180.) * cos(phi * TMath::Pi() / 180.));
-
+    TVector3 dummyvector(std::cos(theta * TMath::Pi() / 180.) * std::sin(phi * TMath::Pi() / 180.),
+                         std::sin(theta * TMath::Pi() / 180.),
+                         std::cos(theta * TMath::Pi() / 180.) * std::cos(phi * TMath::Pi() / 180.));
     return Get2DangleFrom3D(plane, dummyvector);
   }
 
@@ -383,7 +365,9 @@ namespace util {
 
   double GeometryUtilities::Get2DangleFrom3D(unsigned int plane, TVector3 dir_vector) const
   {
-    double alpha = 0.5 * TMath::Pi() - fGeom.WireAngleToVertical(fGeom.Plane(plane).View());
+    geo::PlaneID const planeid{0, 0, plane};
+    double alpha =
+      0.5 * TMath::Pi() - fGeom.WireAngleToVertical(fGeom.Plane(planeid).View(), planeid);
     // create dummy  xyz point in middle of detector and another one in unit
     // length. calculate correspoding points in wire-time space and use the
     // differnces between those to return 2D a angle
@@ -392,15 +376,15 @@ namespace util {
     TVector3 end = start + dir_vector;
 
     // the wire coordinate is already in cm. The time needs to be converted.
-    PxPoint startp(
-      plane,
-      (fGeom.DetHalfHeight() * sin(fabs(alpha)) + start[2] * cos(alpha) - start[1] * sin(alpha)),
-      start[0]);
+    PxPoint startp(plane,
+                   (fGeom.DetHalfHeight() * std::sin(std::fabs(alpha)) +
+                    start[2] * std::cos(alpha) - start[1] * std::sin(alpha)),
+                   start[0]);
 
-    PxPoint endp(
-      plane,
-      (fGeom.DetHalfHeight() * sin(fabs(alpha)) + end[2] * cos(alpha) - end[1] * sin(alpha)),
-      end[0]);
+    PxPoint endp(plane,
+                 (fGeom.DetHalfHeight() * std::sin(std::fabs(alpha)) + end[2] * std::cos(alpha) -
+                  end[1] * std::sin(alpha)),
+                 end[0]);
 
     double angle = Get2Dangle(&endp, &startp);
 
@@ -570,7 +554,6 @@ namespace util {
   //////////////////////////////////////////////////////////
   int GeometryUtilities::GetProjectedPoint(const PxPoint* p0, const PxPoint* p1, PxPoint& pN) const
   {
-
     // determine third plane number
     for (unsigned int i = 0; i < fNPlanes; ++i) {
       if (i == p0->plane || i == p1->plane) continue;
@@ -580,11 +563,11 @@ namespace util {
     // Assuming there is no problem ( and we found the best pair that comes
     // close in time ) we try to get the Y and Z coordinates for the start of
     // the shower.
-    unsigned int chan1 = fGeom.PlaneWireToChannel(p0->plane, p0->w);
-    unsigned int chan2 = fGeom.PlaneWireToChannel(p1->plane, p1->w);
+    unsigned int chan1 = fGeom.PlaneWireToChannel(geo::WireID(0, 0, p0->plane, p0->w));
+    unsigned int chan2 = fGeom.PlaneWireToChannel(geo::WireID(0, 0, p1->plane, p1->w));
     const double origin[3] = {0.};
     double pos[3] = {0.};
-    fGeom.Plane(p0->plane).LocalToWorld(origin, pos);
+    fGeom.Plane(geo::PlaneID(0, 0, p0->plane)).LocalToWorld(origin, pos);
     double x = (p0->t - trigger_offset(fClocks)) * fTimetoCm + pos[0];
 
     double y, z;
@@ -602,6 +585,11 @@ namespace util {
   //////////////////////////////////////////////////////////
   int GeometryUtilities::GetYZ(const PxPoint* p0, const PxPoint* p1, double* yz) const
   {
+    assert(p0 && p1);
+    geo::TPCID const tpcid{0, 0};
+    geo::PlaneID const plane_0{tpcid, p0->plane};
+    geo::PlaneID const plane_1{tpcid, p1->plane};
+
     double y, z;
 
     // Force to the closest wires if not in the range
@@ -617,15 +605,15 @@ namespace util {
                 << "\033[93mWarning ends...\033[00m" << std::endl;
       z0 = 0;
     }
-    else if (z0 >= (int)(fGeom.Nwires(p0->plane))) {
+    else if (z0 >= (int)(fGeom.Nwires(plane_0))) {
       std::cout << "\033[93mWarning\033[00m "
                    "\033[95m<<GeometryUtilities::GetYZ>>\033[00m"
                 << std::endl
                 << " 2D wire position " << p0->w << " [cm] exceeds max wire number "
-                << (fGeom.Nwires(p0->plane) - 1) << std::endl
+                << (fGeom.Nwires(plane_0) - 1) << std::endl
                 << " Forcing it to the max wire number..." << std::endl
                 << "\033[93mWarning ends...\033[00m" << std::endl;
-      z0 = fGeom.Nwires(p0->plane) - 1;
+      z0 = fGeom.Nwires(plane_0) - 1;
     }
     if (z1 < 0) {
       std::cout << "\033[93mWarning\033[00m "
@@ -637,19 +625,19 @@ namespace util {
                 << "\033[93mWarning ends...\033[00m" << std::endl;
       z1 = 0;
     }
-    if (z1 >= (int)(fGeom.Nwires(p1->plane))) {
+    if (z1 >= (int)(fGeom.Nwires(plane_1))) {
       std::cout << "\033[93mWarning\033[00m "
                    "\033[95m<<GeometryUtilities::GetYZ>>\033[00m"
                 << std::endl
                 << " 2D wire position " << p1->w << " [cm] exceeds max wire number "
-                << (fGeom.Nwires(p0->plane) - 1) << std::endl
+                << (fGeom.Nwires(plane_1) - 1) << std::endl
                 << " Forcing it to the max wire number..." << std::endl
                 << "\033[93mWarning ends...\033[00m" << std::endl;
-      z1 = fGeom.Nwires(p1->plane) - 1;
+      z1 = fGeom.Nwires(plane_1) - 1;
     }
 
-    unsigned int chan1 = fGeom.PlaneWireToChannel(p0->plane, z0);
-    unsigned int chan2 = fGeom.PlaneWireToChannel(p1->plane, z1);
+    unsigned int chan1 = fGeom.PlaneWireToChannel(geo::WireID(plane_0, z0));
+    unsigned int chan2 = fGeom.PlaneWireToChannel(geo::WireID(plane_1, z1));
 
     if (!fGeom.ChannelsIntersect(chan1, chan2, y, z)) return -1;
 
@@ -664,7 +652,7 @@ namespace util {
   {
     const double origin[3] = {0.};
     double pos[3] = {0.};
-    fGeom.Plane(p0->plane).LocalToWorld(origin, pos);
+    fGeom.Plane(geo::PlaneID{0, 0, p0->plane}).LocalToWorld(origin, pos);
     double x = (p0->t) - trigger_offset(fClocks) * fTimetoCm + pos[0];
     double yz[2];
 
@@ -681,10 +669,10 @@ namespace util {
 
   PxPoint GeometryUtilities::Get2DPointProjection(double const* xyz, unsigned int plane) const
   {
-
+    geo::PlaneID const planeID{0, 0, plane};
     PxPoint pN(0, 0, 0);
     geo::PlaneGeo::LocalPoint_t const origin{};
-    auto pos = fGeom.Plane(plane).toWorldCoords(origin);
+    auto pos = fGeom.Plane(planeID).toWorldCoords(origin);
     double drifttick = (xyz[0] / fDriftVelocity) * (1. / fTimeTick);
 
     pos.SetY(xyz[1]);
@@ -693,7 +681,7 @@ namespace util {
     ///\todo: this should use the cryostat and tpc as well in the NearestWire
     /// method
 
-    pN.w = fGeom.NearestWireID(pos, geo::PlaneID{0, 0, plane}).Wire;
+    pN.w = fGeom.NearestWireID(pos, planeID).Wire;
     pN.t = drifttick - (pos.X() / fDriftVelocity) * (1. / fTimeTick) + trigger_offset(fClocks);
     pN.plane = plane;
 
@@ -738,12 +726,11 @@ namespace util {
     return Get2DPointProjectionCM(xyznew, plane);
   }
 
-  double GeometryUtilities::GetTimeTicks(double x, int plane) const
+  double GeometryUtilities::GetTimeTicks(double x, unsigned int plane) const
   {
-
     const double origin[3] = {0.};
     double pos[3];
-    fGeom.Plane(plane).LocalToWorld(origin, pos);
+    fGeom.Plane(geo::PlaneID{0, 0, plane}).LocalToWorld(origin, pos);
     double drifttick = (x / fDriftVelocity) * (1. / fTimeTick);
 
     return drifttick - (pos[0] / fDriftVelocity) * (1. / fTimeTick) + trigger_offset(fClocks);
@@ -762,14 +749,14 @@ namespace util {
     double wirePitch = 0.;
     double angleToVert = 0.;
 
-    wirePitch = fGeom.WirePitch(plane);
-    angleToVert = fGeom.WireAngleToVertical(fGeom.Plane(plane).View()) - 0.5 * TMath::Pi();
+    auto const& planegeom = fGeom.Plane({0, 0, plane});
+    wirePitch = planegeom.WirePitch();
+    angleToVert = fGeom.WireAngleToVertical(planegeom.View(), planegeom.ID()) - 0.5 * TMath::Pi();
 
     //(sin(angleToVert),std::cos(angleToVert)) is the direction perpendicular to
     // wire fDir.front() is the direction of the track at the beginning of its
     // trajectory
-    double cosgamma =
-      TMath::Abs(TMath::Sin(angleToVert) * dirs[1] + TMath::Cos(angleToVert) * dirs[2]);
+    double cosgamma = std::abs(std::sin(angleToVert) * dirs[1] + std::cos(angleToVert) * dirs[2]);
 
     if (cosgamma < 1.e-5)
     // throw UtilException("cosgamma is basically 0, that can't be right");
@@ -786,9 +773,9 @@ namespace util {
   {
     theta *= (TMath::Pi() / 180);
     phi *= (TMath::Pi() / 180); // working on copies, it's ok.
-    dirs[0] = TMath::Cos(theta) * TMath::Sin(phi);
-    dirs[1] = TMath::Sin(theta);
-    dirs[2] = TMath::Cos(theta) * TMath::Cos(phi);
+    dirs[0] = std::cos(theta) * std::sin(phi);
+    dirs[1] = std::sin(theta);
+    dirs[2] = std::cos(theta) * std::cos(phi);
   }
 
   void GeometryUtilities::SelectLocalHitlist(const std::vector<PxHit>& hitlist,
@@ -902,7 +889,7 @@ namespace util {
     // Loop over hits and find corner points in the plane view
     // Also fill corner edge points
     std::vector<PxPoint> edges(4, PxPoint(plane, 0, 0));
-    double wire_max = fGeom.Nwires(plane) * fWiretoCm;
+    double wire_max = fGeom.Nwires({0, 0, plane}) * fWiretoCm;
     double time_max = fDetProp.NumberTimeSamples() * fTimetoCm;
 
     for (size_t index = 0; index < ordered_hits.size(); ++index) {

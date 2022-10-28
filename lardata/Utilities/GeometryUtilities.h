@@ -119,7 +119,7 @@ namespace util {
 
     PxPoint Get2DPointProjectionCM(TLorentzVector const* xyz, unsigned int plane) const;
 
-    double GetTimeTicks(double x, int plane) const;
+    double GetTimeTicks(double x, unsigned int plane) const;
 
     int GetProjectedPoint(const PxPoint* p0, const PxPoint* p1, PxPoint& pN) const;
 
