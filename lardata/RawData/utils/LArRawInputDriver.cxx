@@ -198,8 +198,8 @@ namespace {
 
       digitList[i] =
         raw::RawDigit((c1.ch - 1), c1.samples, adclist); //subtract one from ch. number...
-        //hence offline channels will always be one lower
-        //than the DAQ480 definition. - mitch 7/8/2009
+      //hence offline channels will always be one lower
+      //than the DAQ480 definition. - mitch 7/8/2009
       digitList[i].SetPedestal(400.); //carl b assures me this will never change. bjr 4/15/2009
     }
     //read in footer section of file...though it's currently empty.

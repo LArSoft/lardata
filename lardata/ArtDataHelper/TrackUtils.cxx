@@ -97,19 +97,17 @@ double lar::util::TrackPitchInView(recob::Track const& track,
   geo::PlaneGeo const& plane = geom.PositionToTPC(point.position).Plane(view);
 
 #if 0 // this can be enabled after `geo::PlaneGeo::InterWireProjectedDistance()` becomes available in larcorealg
-   double const d = plane.InterWireProjectedDistance(point.direction());
+  double const d = plane.InterWireProjectedDistance(point.direction());
 
-   // do we prefer to just return the value and let the caller check it?
-   if (d > 50.0 * plane.WirePitch()) { // after many pitches track would scatter
-      throw cet::exception("Track")
-        << "track at point #" << trajectory_point
-        << " is almost parallel to the wires in view "
-        << geo::PlaneGeo::ViewName(view) << " (wire direction is "
-        << plane.GetWireDirection<geo::Vector_t>() << "; track direction is "
-        << point.direction()
-        << ").\n";
-   }
-   return d;
+  // do we prefer to just return the value and let the caller check it?
+  if (d > 50.0 * plane.WirePitch()) { // after many pitches track would scatter
+    throw cet::exception("Track") << "track at point #" << trajectory_point
+                                  << " is almost parallel to the wires in view "
+                                  << geo::PlaneGeo::ViewName(view) << " (wire direction is "
+                                  << plane.GetWireDirection() << "; track direction is "
+                                  << point.direction() << ").\n";
+  }
+  return d;
 
 #else  // !0
   //
@@ -125,10 +123,9 @@ double lar::util::TrackPitchInView(recob::Track const& track,
     throw cet::exception("Track") << "track at point #" << trajectory_point
                                   << " is almost parallel to the wires in view "
                                   << geo::PlaneGeo::ViewName(view) << " (wire direction is "
-                                  << plane.GetWireDirection<geo::Vector_t>()
-                                  << "; track direction is " << point.direction()
-                                  << ", its projection on plane " << plane.ID() << " is " << proj
-                                  << ").\n";
+                                  << plane.GetWireDirection() << "; track direction is "
+                                  << point.direction() << ", its projection on plane " << plane.ID()
+                                  << " is " << proj << ").\n";
   }
 
   //

@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "lardata/Utilities/GeometryUtilities.h"
-#include "cetlib/pow.h"
 #include "larcorealg/Geometry/GeometryCore.h"
 #include "larcorealg/Geometry/PlaneGeo.h"
 #include "larcorealg/Geometry/WireGeo.h"
@@ -16,6 +15,8 @@
 #include "lardataalg/DetectorInfo/DetectorClocksData.h"
 #include "lardataalg/DetectorInfo/DetectorPropertiesData.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
+
+#include "cetlib/pow.h"
 
 #include "TLorentzVector.h"
 
@@ -565,17 +566,14 @@ namespace util {
     // the shower.
     unsigned int chan1 = fGeom.PlaneWireToChannel(geo::WireID(0, 0, p0->plane, p0->w));
     unsigned int chan2 = fGeom.PlaneWireToChannel(geo::WireID(0, 0, p1->plane, p1->w));
-    const double origin[3] = {0.};
-    double pos[3] = {0.};
-    fGeom.Plane(geo::PlaneID(0, 0, p0->plane)).LocalToWorld(origin, pos);
-    double x = (p0->t - trigger_offset(fClocks)) * fTimetoCm + pos[0];
+    geo::PlaneGeo::LocalPoint_t const origin{};
+    auto pos = fGeom.Plane(geo::PlaneID(0, 0, p0->plane)).toWorldCoords(origin);
+    double x = (p0->t - trigger_offset(fClocks)) * fTimetoCm + pos.X();
 
     double y, z;
     if (!fGeom.ChannelsIntersect(chan1, chan2, y, z)) return -1;
 
-    pos[0] = x;
-    pos[1] = y;
-    pos[2] = z;
+    pos.SetCoordinates(x, y, z);
 
     pN = Get2DPointProjection(pos, pN.plane);
 
@@ -650,10 +648,9 @@ namespace util {
   //////////////////////////////////////////////////////////
   int GeometryUtilities::GetXYZ(const PxPoint* p0, const PxPoint* p1, double* xyz) const
   {
-    const double origin[3] = {0.};
-    double pos[3] = {0.};
-    fGeom.Plane(geo::PlaneID{0, 0, p0->plane}).LocalToWorld(origin, pos);
-    double x = (p0->t) - trigger_offset(fClocks) * fTimetoCm + pos[0];
+    geo::PlaneGeo::LocalPoint_t const origin{};
+    auto const pos = fGeom.Plane(geo::PlaneID{0, 0, p0->plane}).toWorldCoords(origin);
+    double x = (p0->t) - trigger_offset(fClocks) * fTimetoCm + pos.X();
     double yz[2];
 
     GetYZ(p0, p1, yz);
@@ -667,16 +664,16 @@ namespace util {
 
   //////////////////////////////////////////////////////////////
 
-  PxPoint GeometryUtilities::Get2DPointProjection(double const* xyz, unsigned int plane) const
+  PxPoint GeometryUtilities::Get2DPointProjection(geo::Point_t const& xyz, unsigned int plane) const
   {
     geo::PlaneID const planeID{0, 0, plane};
     PxPoint pN(0, 0, 0);
     geo::PlaneGeo::LocalPoint_t const origin{};
     auto pos = fGeom.Plane(planeID).toWorldCoords(origin);
-    double drifttick = (xyz[0] / fDriftVelocity) * (1. / fTimeTick);
+    double drifttick = (xyz.X() / fDriftVelocity) * (1. / fTimeTick);
 
-    pos.SetY(xyz[1]);
-    pos.SetZ(xyz[2]);
+    pos.SetY(xyz.Y());
+    pos.SetZ(xyz.Z());
 
     ///\todo: this should use the cryostat and tpc as well in the NearestWire
     /// method
@@ -728,12 +725,11 @@ namespace util {
 
   double GeometryUtilities::GetTimeTicks(double x, unsigned int plane) const
   {
-    const double origin[3] = {0.};
-    double pos[3];
-    fGeom.Plane(geo::PlaneID{0, 0, plane}).LocalToWorld(origin, pos);
+    geo::PlaneGeo::LocalPoint_t const origin{};
+    auto const pos = fGeom.Plane(geo::PlaneID{0, 0, plane}).toWorldCoords(origin);
     double drifttick = (x / fDriftVelocity) * (1. / fTimeTick);
 
-    return drifttick - (pos[0] / fDriftVelocity) * (1. / fTimeTick) + trigger_offset(fClocks);
+    return drifttick - (pos.X() / fDriftVelocity) * (1. / fTimeTick) + trigger_offset(fClocks);
   }
 
   //----------------------------------------------------------------------

@@ -40,10 +40,10 @@ namespace trkf {
 
     // Update base class.
 
-    *static_cast<SurfYZPlane*>(this) = SurfYZPlane(0., xyz[1], xyz[2], phi);
+    *static_cast<SurfYZPlane*>(this) = SurfYZPlane(0., xyz.Y(), xyz.Z(), phi);
   }
 
   /// Destructor.
-  SurfWireX::~SurfWireX() {}
+  SurfWireX::~SurfWireX() = default;
 
 } // end namespace trkf

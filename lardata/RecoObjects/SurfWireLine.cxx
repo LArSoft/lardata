@@ -41,7 +41,7 @@ namespace trkf {
 
     // Update base class.
 
-    *static_cast<SurfYZLine*>(this) = SurfYZLine(x, xyz[1], xyz[2], phi);
+    *static_cast<SurfYZLine*>(this) = SurfYZLine(x, xyz.Y(), xyz.Z(), phi);
   }
 
   /// Destructor.

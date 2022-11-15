@@ -9,7 +9,9 @@
 #ifndef UTIL_GEOMETRYUTILITIES_H
 #define UTIL_GEOMETRYUTILITIES_H
 
-#include "RtypesCore.h"
+#include "larcorealg/Geometry/geo_vectors_utils.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_vectors.h"
+
 #include "TVector3.h"
 
 #include "PxUtils.h"
@@ -111,7 +113,11 @@ namespace util {
                               double ort_intercept,
                               PxPoint& pointonline) const;
 
-    PxPoint Get2DPointProjection(double const* xyz, unsigned int plane) const;
+    inline PxPoint Get2DPointProjection(double const* xyz, unsigned int plane) const
+    {
+      return Get2DPointProjection(geo::vect::toPoint(xyz), plane);
+    }
+    PxPoint Get2DPointProjection(geo::Point_t const& xyz, unsigned int plane) const;
 
     PxPoint Get2DPointProjectionCM(std::vector<double> const& xyz, unsigned int plane) const;
 
