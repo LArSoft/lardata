@@ -6,7 +6,6 @@
  */
 
 // LArSoft libraries
-#include "larcorealg/CoreUtils/enumerate.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_vectors.h"
 #include "lardataalg/MCDumpers/MCDumperUtils.h"        // sim::ParticleName()
 #include "lardataalg/Utilities/quantities/energy.h"    // MeV
@@ -25,6 +24,7 @@
 #include "fhiclcpp/types/Comment.h"
 #include "fhiclcpp/types/Name.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
+#include "range/v3/view/enumerate.hpp"
 
 // C//C++ standard libraries
 #include <memory> // std::unique_ptr<>
@@ -142,7 +142,7 @@ void sim::DumpSimEnergyDeposits::analyze(art::Event const& event)
   centimeter TotalLength{0.0};
   unsigned int TotalElectrons = 0U, TotalPhotons = 0U, TotalPhotonsFast = 0U, TotalPhotonsSlow = 0U;
 
-  for (auto const& [iDep, dep] : util::enumerate(Deps)) {
+  for (auto const& [iDep, dep] : Deps | ranges::views::enumerate) {
 
     // print a header for the cluster
     mf::LogVerbatim log(fOutputCategory);
