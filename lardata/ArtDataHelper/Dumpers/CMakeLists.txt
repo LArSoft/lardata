@@ -7,6 +7,7 @@ set(RawDataDumpers
   "DumpOpDetWaveforms")
 set(RecoBaseDumpers
   "DumpWires"
+  "DumpOpHits"
   "DumpHits"
   "DumpClusters"
   "DumpSeeds"
