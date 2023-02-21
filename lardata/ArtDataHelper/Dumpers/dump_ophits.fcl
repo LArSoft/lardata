@@ -1,5 +1,5 @@
 #
-# File:     dumpophits.fcl
+# File:     dump_ophits.fcl
 # Purpose:  Dump on screen optical hit content
 # Author:   Gianluca Petrillo (petrillo@slac.stanford.edu)
 # Date:     February 10, 2023
