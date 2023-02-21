@@ -8,6 +8,7 @@ set(RawDataDumpers
 set(RecoBaseDumpers
   "DumpWires"
   "DumpOpHits"
+  "DumpOpFlashes"
   "DumpHits"
   "DumpClusters"
   "DumpSeeds"

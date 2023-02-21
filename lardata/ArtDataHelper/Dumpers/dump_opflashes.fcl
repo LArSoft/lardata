@@ -1,0 +1,64 @@
+#
+# File:     dump_opflashes.fcl
+# Purpose:  Dump on screen optical flash content
+# Author:   Gianluca Petrillo (petrillo@slac.stanford.edu)
+# Date:     February 20, 2023
+# Version:  1.0
+#
+# Service dependencies:
+# - message facility
+#
+
+process_name: DumpOpFlashes
+
+services: {
+  
+  message: {
+    destinations: {
+      
+      # grab all the "DumpOpFlashes" messages and put them in DumpOpFlashes.log
+      DumpOpFlashes: {
+        append: false
+        categories: {
+          DumpOpFlashes: { limit: -1 }
+          default: { limit: 0 }
+        }
+        filename: "DumpOpFlashes.log"
+        threshold: "INFO"
+        type: "file"
+      } # DumpOpFlashes
+      
+      LogStandardOut: {
+        categories: {
+          DumpOpFlashes: { limit: 0 }
+          default: {}
+        }
+        threshold: "WARNING"
+        type: "cout"
+      } # LogStandardOut
+      
+    } # destinations
+  } # message
+} # services
+
+
+physics: {
+  analyzers: {
+    dumpopflashes: {
+      module_type:  DumpOpFlashes
+      
+      # specify the tag of the recob::OpFlash producer
+      OpFlashModuleLabel:  "opflash"
+      
+      # do print associated optical hit information
+      PrintOpHitAssociations: true
+      
+      # output category ("DumpOpFlashes" by default), useful for filtering (see above)
+      OutputCategory: "DumpOpFlashes"
+      
+    } # dumpopflashes
+  } # analyzers
+  
+  ana: [ dumpopflashes ]
+  
+} # physics
