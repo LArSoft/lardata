@@ -138,7 +138,7 @@ namespace {
 
     // extract all the unique IDs
     for (auto const& ptrs : assns)
-      dir.emplace(std::get<Side>(ptrs).id(), ProductSourceEntry_t{});
+      dir.try_emplace(std::get<Side>(ptrs).id());
 
     // assign the index and pointer to each entry (order is not defined)
     std::size_t index{0};
@@ -149,12 +149,11 @@ namespace {
   } // buildAssnsSourceDirectory()
 
   //----------------------------------------------------------------------------
-  template <typename Stream>
-  void dumpAssociatedOpHits(Stream& out,
-                            std::vector<art::Ptr<recob::OpHit>> const& hits,
-                            ProductSourceDirectory_t const* sourceMap = nullptr,
-                            std::string const& indent = "",
-                            int const itemsPerLine = 18)
+  void printAssociatedOpHits(std::ostream& out,
+                             std::vector<art::Ptr<recob::OpHit>> const& hits,
+                             ProductSourceDirectory_t const* sourceMap,
+                             std::string const& indent,
+                             int const itemsPerLine)
   {
     out << hits.size() << " hits associated:";
     int itemsLeft = 0;
@@ -181,7 +180,19 @@ namespace {
       out << " p.e.=" << hit.PE();
 
     } // for hits
-  }   // dumpAssociatedHits()
+  }   // printAssociatedOpHits()
+
+  //----------------------------------------------------------------------------
+  struct dumpAssociatedOpHits {
+    std::vector<art::Ptr<recob::OpHit>> const& hits;
+    ProductSourceDirectory_t const* sourceMap;
+  };
+
+  std::ostream& operator<<(std::ostream& out, dumpAssociatedOpHits const& hits)
+  {
+    printAssociatedOpHits(out, hits.hits, hits.sourceMap, "", 18);
+    return out;
+  }
 
   //----------------------------------------------------------------------------
 
@@ -226,10 +237,7 @@ void ophit::DumpOpFlashes::analyze(art::Event const& event)
     mf::LogVerbatim out{fOutputCategory};
     out << "OpFlash #" << iFlash << ": " << flash;
 
-    if (flashHits) {
-      out << "\n  ";
-      dumpAssociatedOpHits(out, flashHits->at(iFlash), &sourceMap, "  ");
-    }
+    if (flashHits) out << "\n  " << dumpAssociatedOpHits{flashHits->at(iFlash), &sourceMap};
 
   } // for flashes
 
