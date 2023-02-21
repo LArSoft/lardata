@@ -27,9 +27,6 @@
 #include <vector>
 
 // -----------------------------------------------------------------------------
-namespace recob {
-  std::ostream& operator<<(std::ostream& out, recob::OpHit const& hit);
-}
 namespace ophit {
   class DumpOpHits;
 }
@@ -82,22 +79,6 @@ private:
 
 // -----------------------------------------------------------------------------
 // ---  implementation
-// -----------------------------------------------------------------------------
-std::ostream& recob::operator<<(std::ostream& out, recob::OpHit const& hit)
-{
-  // single line output
-
-  out << "Hit on optical channel " << hit.OpChannel();
-  if (hit.HasStartTime()) out << " starting at " << hit.StartTime();
-  out << " us, peak at " << hit.PeakTime() << " us (absolute: " << hit.PeakTimeAbs() << " us)";
-  if (hit.RiseTime() > 0.0) out << "; rise time: " << hit.RiseTime() << " us";
-  out << "; width " << hit.Width() << " us, amplitude " << hit.Amplitude() << " ADC#, integral "
-      << hit.Area() << " ADC#, " << hit.PE() << " photoelectrons";
-  if (hit.FastToTotal() > 0.0) out << "; fast fraction: " << hit.FastToTotal();
-
-  return out;
-} // recob::operator<< (std::ostream&, recob::OpHit const&)
-
 // -----------------------------------------------------------------------------
 ophit::DumpOpHits::DumpOpHits(Parameters const& config)
   : art::EDAnalyzer(config)
