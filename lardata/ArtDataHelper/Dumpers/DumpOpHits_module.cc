@@ -75,8 +75,8 @@ public:
   void analyze(const art::Event& evt) override;
 
 private:
-  art::InputTag const fOpHitsModuleTag; ///< Optical hit data product tag.
-  std::string const fOutputCategory;    ///< Category for `mf::LogInfo` output.
+  art::InputTag const fOpHitModuleTag; ///< Optical hit data product tag.
+  std::string const fOutputCategory;   ///< Category for `mf::LogInfo` output.
 
 }; // class ophit::DumpOpHits
 
@@ -101,19 +101,21 @@ std::ostream& recob::operator<<(std::ostream& out, recob::OpHit const& hit)
 // -----------------------------------------------------------------------------
 ophit::DumpOpHits::DumpOpHits(Parameters const& config)
   : art::EDAnalyzer(config)
-  , fOpHitsModuleTag(config().OpHitModuleLabel())
+  , fOpHitModuleTag(config().OpHitModuleLabel())
   , fOutputCategory(config().OutputCategory())
-{}
+{
+  consumes<std::vector<recob::OpHit>>(fOpHitModuleTag);
+}
 
 //------------------------------------------------------------------------------
 void ophit::DumpOpHits::analyze(art::Event const& event)
 {
 
   // fetch the data to be dumped on screen
-  auto const& OpHits = event.getProduct<std::vector<recob::OpHit>>(fOpHitsModuleTag);
+  auto const& OpHits = event.getProduct<std::vector<recob::OpHit>>(fOpHitModuleTag);
 
   mf::LogVerbatim(fOutputCategory) << "Event " << event.id() << " contains " << OpHits.size()
-                                   << " '" << fOpHitsModuleTag.encode() << "' optical hits.";
+                                   << " '" << fOpHitModuleTag.encode() << "' optical hits.";
 
   for (auto const& [iHit, hit] : util::enumerate(OpHits))
     mf::LogVerbatim(fOutputCategory) << "OpHit #" << iHit << ": " << hit;
