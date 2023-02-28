@@ -66,39 +66,15 @@ namespace trkf {
                       const art::PtrVector<recob::Hit>& hits,
                       int only_plane) = 0;
 
-    const std::list<KHitGroup>&
-    getSorted() const
-    {
-      return fSorted;
-    }
-    const std::list<KHitGroup>&
-    getUnsorted() const
-    {
-      return fUnsorted;
-    }
-    const std::list<KHitGroup>&
-    getUnused() const
-    {
-      return fUnused;
-    }
+    const std::list<KHitGroup>& getSorted() const { return fSorted; }
+    const std::list<KHitGroup>& getUnsorted() const { return fUnsorted; }
+    const std::list<KHitGroup>& getUnused() const { return fUnused; }
 
     // Non-const Accessors.
 
-    std::list<KHitGroup>&
-    getSorted()
-    {
-      return fSorted;
-    } ///< Sorted list.
-    std::list<KHitGroup>&
-    getUnsorted()
-    {
-      return fUnsorted;
-    } ///< Unsorted list.
-    std::list<KHitGroup>&
-    getUnused()
-    {
-      return fUnused;
-    } ///< Unused list.
+    std::list<KHitGroup>& getSorted() { return fSorted; }     ///< Sorted list.
+    std::list<KHitGroup>& getUnsorted() { return fUnsorted; } ///< Unsorted list.
+    std::list<KHitGroup>& getUnused() { return fUnused; }     ///< Unused list.
 
     /// Clear all lists.
     void clear();

@@ -30,10 +30,9 @@ namespace trkf {
   /// corresponding to the same readout wire are grouped together as
   /// KHitGroup objects.
   ///
-  void
-  KHitContainerWireX::fill(const detinfo::DetectorPropertiesData& detProp,
-                           const art::PtrVector<recob::Hit>& hits,
-                           int only_plane)
+  void KHitContainerWireX::fill(const detinfo::DetectorPropertiesData& detProp,
+                                const art::PtrVector<recob::Hit>& hits,
+                                int only_plane)
   {
     // Get services.
 

@@ -37,60 +37,57 @@ namespace util {
 
   private:
     /// Default ctor is hidden
-    Range(){}
+    Range() {}
 
   public:
     /// Enforced ctor. start must be less than end.
-    Range(const T& start,
-	  const T& end)
-      : _window(start,end)
-    { if(start>end) throw std::runtime_error("Inserted invalid range: end before start."); }
+    Range(const T& start, const T& end) : _window(start, end)
+    {
+      if (start > end) throw std::runtime_error("Inserted invalid range: end before start.");
+    }
 
     /// Default dtor
-    ~Range(){}
+    ~Range() {}
 
     /// "start" accessor
-    const T& Start() const { return _window.first;  }
+    const T& Start() const { return _window.first; }
     /// "end" accessor
-    const T& End()   const { return _window.second; }
+    const T& End() const { return _window.second; }
     /// Setter
     void Set(const T& s, const T& e)
     {
-      if(s>=e) throw std::runtime_error("Inserted invalid range: end before start.");
-      _window.first  = s;
+      if (s >= e) throw std::runtime_error("Inserted invalid range: end before start.");
+      _window.first = s;
       _window.second = e;
     }
 
     //
     // Ordering w/ another Range
     //
-    inline bool operator< (const Range& rhs) const
-    {return ( _window.second < rhs.Start() ); }
-    inline bool operator> (const Range& rhs) const
-    {return ( _window.first > rhs.End() ); }
+    inline bool operator<(const Range& rhs) const { return (_window.second < rhs.Start()); }
+    inline bool operator>(const Range& rhs) const { return (_window.first > rhs.End()); }
     inline bool operator==(const Range& rhs) const
-    {return ( _window.first == rhs.Start() && _window.second == rhs.End() ); }
-    inline bool operator!=(const Range& rhs) const
-    {return !( (*this) == rhs ); }
+    {
+      return (_window.first == rhs.Start() && _window.second == rhs.End());
+    }
+    inline bool operator!=(const Range& rhs) const { return !((*this) == rhs); }
 
     //
     // Ordering w/ T
     //
-    inline bool operator< (const T& rhs) const
-    {return (_window.second < rhs); }
-    inline bool operator> (const T& rhs) const
-    {return (_window.first > rhs); }
+    inline bool operator<(const T& rhs) const { return (_window.second < rhs); }
+    inline bool operator>(const T& rhs) const { return (_window.first > rhs); }
 
     /// Merge two util::Range into 1
-    void Merge(const Range& a) {
-      _window.first  = std::min( _window.first,  a.Start() );
-      _window.second = std::max( _window.second, a.End()   );
+    void Merge(const Range& a)
+    {
+      _window.first = std::min(_window.first, a.Start());
+      _window.second = std::max(_window.second, a.End());
     }
 
   protected:
     /// Protected to avoid user's illegal modification on first/second (sorry users!)
-    std::pair<T,T> _window;
-
+    std::pair<T, T> _window;
   };
 }
 
@@ -101,11 +98,12 @@ namespace std {
      \class less
      Implementation of std::less for util::Range pointers
    */
-  class less<util::Range<T>*>
-  {
+  class less<util::Range<T>*> {
   public:
-    bool operator()( const util::Range<T>* lhs, const util::Range<T>* rhs )
-    { return (*lhs) < (*rhs); }
+    bool operator()(const util::Range<T>* lhs, const util::Range<T>* rhs)
+    {
+      return (*lhs) < (*rhs);
+    }
   };
 }
 

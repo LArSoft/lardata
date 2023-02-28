@@ -25,17 +25,15 @@
  * This also makes fairly complicate to receive parameters from the command line
  * (for example, a random seed).
  */
-#define BOOST_TEST_MODULE ( BulkAllocator_test )
+#define BOOST_TEST_MODULE (BulkAllocator_test)
+#include <boost/test/test_tools.hpp>  // BOOST_CHECK()
 #include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
-#include <boost/test/test_tools.hpp> // BOOST_CHECK()
 
 // LArSoft libraries
 #include "lardata/Utilities/BulkAllocator.h"
 
-
 /// The seed for the default random engine
 constexpr unsigned int RandomSeed = 12345;
-
 
 //------------------------------------------------------------------------------
 //--- Test code
@@ -50,23 +48,22 @@ constexpr unsigned int RandomSeed = 12345;
  * with the BulkAllocator.
  * The test fails if the two images do not match.
  */
-void RunHoughTransformTreeTest() {
+void RunHoughTransformTreeTest()
+{
 
   // the structure we are testing is a 2D "image" of integers;
   // image is mostly empty (zero), but each abscissa has roughly the same
   // number of non-empty pixels (NPoints), and at least one of them.
 
-  constexpr unsigned int NPoints =  1000;
+  constexpr unsigned int NPoints = 1000;
   constexpr unsigned int NAngles = 10800;
-  constexpr unsigned int NDist   =  2500; // half distance
+  constexpr unsigned int NDist = 2500; // half distance
 
   typedef std::map<int, int> BaseMap_t;
 
   // STL allocator
-  std::vector<std::map<
-    int, int, BaseMap_t::key_compare,
-    std::allocator<BaseMap_t::value_type>
-    >> stl_image(NAngles);
+  std::vector<std::map<int, int, BaseMap_t::key_compare, std::allocator<BaseMap_t::value_type>>>
+    stl_image(NAngles);
 
   // BulkAllocator
   // Normally, I would declare an allocator like
@@ -80,16 +77,13 @@ void RunHoughTransformTreeTest() {
   // of a different type, and does not refer to
   // lar::BulkAllocator<BaseMap_t::value_type> any more.
   // Therefore I let map do its tricks...
-  std::vector<std::map<
-    int, int, BaseMap_t::key_compare,
-    lar::BulkAllocator<BaseMap_t::value_type>
-    >> bulk_image(NAngles);
+  std::vector<std::map<int, int, BaseMap_t::key_compare, lar::BulkAllocator<BaseMap_t::value_type>>>
+    bulk_image(NAngles);
   // ... and then I change the underlying allocator directly;
   // Unfortunately this trick is implementation-dependent, in that there is no
   // requirement for map to expose the allocator it really uses.
   // Here the non-standard part is the name of the node type, std::_Rb_tree_node
-  lar::BulkAllocator<std::_Rb_tree_node<BaseMap_t::value_type>>
-    ::SetChunkSize(500000);
+  lar::BulkAllocator<std::_Rb_tree_node<BaseMap_t::value_type>>::SetChunkSize(500000);
 
   static std::default_random_engine random_engine(RandomSeed);
   std::uniform_real_distribution<float> uniform(-1., 1.);
@@ -106,19 +100,20 @@ void RunHoughTransformTreeTest() {
       ++(bulk_image[iAngle][int(d)]);
       // prepare for the next point; wrap in the [-NDist, NDist[ range
       d += slope;
-      while (d >= (float) NDist) d -= 2*NDist;
-      while (d < 0) d += 2*NDist;
+      while (d >= (float)NDist)
+        d -= 2 * NDist;
+      while (d < 0)
+        d += 2 * NDist;
     } // for iAngle
-  } // for iPoint
+  }   // for iPoint
 
   // we have to provide a comparison between two "different" structures
   // (having different allocators is enough to make them unrelated)
   bool bSame = true;
   auto stl_begin = stl_image.cbegin();
-  for (const auto& bulk_map: bulk_image) {
+  for (const auto& bulk_map : bulk_image) {
     // the std::equal() call compares pairs (int, int) of each map
-    if (std::equal(bulk_map.begin(), bulk_map.end(), (stl_begin++)->begin()))
-      continue;
+    if (std::equal(bulk_map.begin(), bulk_map.end(), (stl_begin++)->begin())) continue;
     bSame = false;
     break;
   } // for
@@ -126,7 +121,6 @@ void RunHoughTransformTreeTest() {
   BOOST_CHECK(bSame);
 
 } // RunHoughTransformTreeTest()
-
 
 //------------------------------------------------------------------------------
 //--- registration of tests
@@ -137,7 +131,8 @@ void RunHoughTransformTreeTest() {
 // number of checks and it will fail if any of them does.
 //
 
-BOOST_AUTO_TEST_CASE(RunHoughTransformTree) {
+BOOST_AUTO_TEST_CASE(RunHoughTransformTree)
+{
   RunHoughTransformTreeTest();
   std::cout << "Done." << std::endl;
 }

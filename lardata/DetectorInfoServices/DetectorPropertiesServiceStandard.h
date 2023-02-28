@@ -59,14 +59,13 @@ namespace detinfo {
     DetectorPropertiesServiceStandard(fhicl::ParameterSet const& pset, art::ActivityRegistry& reg);
 
   private:
-    DetectorPropertiesData
-    getDataForJob(DetectorClocksData const& clockData) const override
+    DetectorPropertiesData getDataForJob(DetectorClocksData const& clockData) const override
     {
       return fProp.DataFor(clockData);
     }
 
-    DetectorPropertiesData
-    getDataFor(art::Event const&, DetectorClocksData const& clockData) const override
+    DetectorPropertiesData getDataFor(art::Event const&,
+                                      DetectorClocksData const& clockData) const override
     {
       return fProp.DataFor(clockData);
     }

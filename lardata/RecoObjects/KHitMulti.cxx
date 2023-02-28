@@ -38,8 +38,7 @@ namespace trkf {
   /// This method tries to dynamic cast the measurement to a supported
   /// type.  If the dynamic cast fails, throw an exception.
   ///
-  void
-  KHitMulti::addMeas(const std::shared_ptr<const KHitBase>& pmeas)
+  void KHitMulti::addMeas(const std::shared_ptr<const KHitBase>& pmeas)
   {
     // It is an error to pass in a null pointer.
 
@@ -64,8 +63,7 @@ namespace trkf {
   ///
   /// pmeas - Measurement.
   ///
-  void
-  KHitMulti::addMeas(const std::shared_ptr<const KHit<1>>& pmeas)
+  void KHitMulti::addMeas(const std::shared_ptr<const KHit<1>>& pmeas)
   {
     // It is an error to pass in a null pointer.
 
@@ -91,8 +89,7 @@ namespace trkf {
   /// This class calls the predict method of each underlying
   /// measurement and updates the combined prediction attributes.
   ///
-  bool
-  KHitMulti::predict(const KETrack& tre, const Propagator& prop, const KTrack* ref) const
+  bool KHitMulti::predict(const KETrack& tre, const Propagator& prop, const KTrack* ref) const
   {
     // Resize and clear all linear algebra objects.
 
@@ -198,8 +195,7 @@ namespace trkf {
   ///
   /// This method is almost an exact copy of the update method in KHit<N>.
   ///
-  void
-  KHitMulti::update(KETrack& tre) const
+  void KHitMulti::update(KETrack& tre) const
   {
     // Make sure that the track surface and the prediction surface are the same.
     // Throw an exception if they are not.
@@ -241,8 +237,7 @@ namespace trkf {
   }
 
   /// Printout
-  std::ostream&
-  KHitMulti::Print(std::ostream& out, bool doTitle) const
+  std::ostream& KHitMulti::Print(std::ostream& out, bool doTitle) const
   {
     if (doTitle) out << "KHitMulti:\n";
     return out;

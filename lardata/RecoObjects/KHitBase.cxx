@@ -28,8 +28,7 @@ namespace trkf {
   {}
 
   /// Printout
-  std::ostream&
-  KHitBase::Print(std::ostream& out, bool doTitle) const
+  std::ostream& KHitBase::Print(std::ostream& out, bool doTitle) const
   {
     if (doTitle) out << "KHitBase:\n";
     out << "  Measurement Surface: " << *fMeasSurf << "\n";
@@ -42,10 +41,6 @@ namespace trkf {
   }
 
   /// Output operator.
-  std::ostream&
-  operator<<(std::ostream& out, const KHitBase& trk)
-  {
-    return trk.Print(out);
-  }
+  std::ostream& operator<<(std::ostream& out, const KHitBase& trk) { return trk.Print(out); }
 
 } // end namespace trkf

@@ -16,14 +16,13 @@
 // #define FASTMATRIXMATH_TEST_DEBUG
 
 // C/C++ standard libraries
-#include <cmath>
-#include <limits> // std::numeric_limits<>
-#include <array>
 #include <algorithm> // std::generate()
+#include <array>
+#include <cmath>
+#include <iostream>
+#include <limits> // std::numeric_limits<>
 #include <random>
 #include <string>
-#include <iostream>
-
 
 // Boost libraries
 /*
@@ -35,33 +34,29 @@
  * This also makes fairly complicate to receive parameters from the command line
  * (for example, a random seed).
  */
-#define BOOST_TEST_MODULE ( FastMatrixMath_test )
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
-#include <boost/test/test_tools.hpp> // BOOST_CHECK(), BOOST_CHECK_EQUAL()
+#define BOOST_TEST_MODULE (FastMatrixMath_test)
+#include <boost/test/test_tools.hpp>                      // BOOST_CHECK(), BOOST_CHECK_EQUAL()
 #include <boost/test/tools/floating_point_comparison.hpp> // BOOST_CHECK_CLOSE()
+#include <cetlib/quiet_unit_test.hpp>                     // BOOST_AUTO_TEST_CASE()
 
 // LArSoft libraries
 #include "lardata/Utilities/FastMatrixMathHelper.h"
-
 
 //==============================================================================
 //=== Test code
 //===
 
-constexpr unsigned int static_sqrt(unsigned int n) {
+constexpr unsigned int static_sqrt(unsigned int n)
+{
   // too lazy to copy sqrt from Stroustrup
-  return
-    ((n ==  1)? 1:
-    ((n ==  4)? 2:
-    ((n ==  9)? 3:
-    ((n == 16)? 4:
-    std::numeric_limits<unsigned int>::max()))));
+  return (
+    (n == 1) ?
+      1 :
+      ((n == 4) ? 2 : ((n == 9) ? 3 : ((n == 16) ? 4 : std::numeric_limits<unsigned int>::max()))));
 } // static_sqrt()
 
-
 template <typename Array>
-void PrintMatrix
-  (std::ostream& out, Array const& m, std::string name = "Matrix")
+void PrintMatrix(std::ostream& out, Array const& m, std::string name = "Matrix")
 {
 #ifdef FASTMATRIXMATH_TEST_DEBUG
   const size_t Dim = size_t(std::sqrt(m.size()));
@@ -77,9 +72,9 @@ void PrintMatrix
 #endif // FASTMATRIXMATH_TEST_DEBUG
 } // PrintMatrix()
 
-
 template <typename Array>
-void CheckSymmetric(Array const& m) {
+void CheckSymmetric(Array const& m)
+{
   const size_t Dim = size_t(std::sqrt(m.size()));
 
   for (size_t r = 1; r < Dim; ++r)
@@ -88,9 +83,9 @@ void CheckSymmetric(Array const& m) {
 
 } // CheckSymmetric()
 
-
 template <typename Array>
-void CheckInverse(Array const& a, Array const& a_inv) {
+void CheckInverse(Array const& a, Array const& a_inv)
+{
 
   const size_t Dim = size_t(std::sqrt(a.size()));
   using Data_t = typename Array::value_type;
@@ -103,24 +98,25 @@ void CheckInverse(Array const& a, Array const& a_inv) {
       for (size_t k = 0; k < Dim; ++k) {
         v += a[r * Dim + k] * a_inv[k * Dim + c];
       } // for
-      if (r == c) BOOST_CHECK_CLOSE(v, Data_t(1), 0.01); // 0.01%
-      else        BOOST_CHECK_SMALL(v, 1e-5);
+      if (r == c)
+        BOOST_CHECK_CLOSE(v, Data_t(1), 0.01); // 0.01%
+      else
+        BOOST_CHECK_SMALL(v, 1e-5);
     } // for column
-  } // for row
+  }   // for row
 
 } // CheckInverse()
 
-
 template <typename Array>
-void MatrixTest(Array const& mat) {
+void MatrixTest(Array const& mat)
+{
 
   using Data_t = typename Array::value_type;
 
   constexpr unsigned int Dim = static_sqrt(std::tuple_size<Array>::value);
   static_assert((Dim >= 1) && (Dim <= 4), "Dimension not supported");
 
-  using FastMatrixOperations
-    = lar::util::details::FastMatrixOperations<Data_t, Dim>;
+  using FastMatrixOperations = lar::util::details::FastMatrixOperations<Data_t, Dim>;
 
   Array mat_inv = FastMatrixOperations::InvertMatrix(mat);
   PrintMatrix(std::cout, mat_inv, "Alleged inverse matrix");
@@ -128,17 +124,16 @@ void MatrixTest(Array const& mat) {
 
 } // MatrixTest()
 
-
 template <typename Array>
-void MatrixTest(Array const& mat, typename Array::value_type det) {
+void MatrixTest(Array const& mat, typename Array::value_type det)
+{
 
   using Data_t = typename Array::value_type;
 
   constexpr unsigned int Dim = static_sqrt(std::tuple_size<Array>::value);
   static_assert((Dim >= 1) && (Dim <= 4), "Dimension not supported");
 
-  using FastMatrixOperations
-    = lar::util::details::FastMatrixOperations<Data_t, Dim>;
+  using FastMatrixOperations = lar::util::details::FastMatrixOperations<Data_t, Dim>;
 
   const Data_t my_det = FastMatrixOperations::Determinant(mat);
   BOOST_CHECK_CLOSE(my_det, det, 1e-4); // 0.0001%
@@ -150,17 +145,16 @@ void MatrixTest(Array const& mat, typename Array::value_type det) {
   }
 } // MatrixTest()
 
-
 template <typename Array>
-void SymmetricMatrixTest(Array const& mat) {
+void SymmetricMatrixTest(Array const& mat)
+{
 
   using Data_t = typename Array::value_type;
 
   constexpr unsigned int Dim = static_sqrt(std::tuple_size<Array>::value);
   static_assert((Dim >= 1) && (Dim <= 4), "Dimension not supported");
 
-  using FastMatrixOperations
-    = lar::util::details::FastMatrixOperations<Data_t, Dim>;
+  using FastMatrixOperations = lar::util::details::FastMatrixOperations<Data_t, Dim>;
 
   CheckSymmetric(mat);
 
@@ -170,17 +164,16 @@ void SymmetricMatrixTest(Array const& mat) {
   CheckSymmetric(mat_inv);
 } // SymmetricMatrixTest()
 
-
 template <typename Array>
-void SymmetricMatrixTest(Array const& mat, typename Array::value_type det) {
+void SymmetricMatrixTest(Array const& mat, typename Array::value_type det)
+{
 
   using Data_t = typename Array::value_type;
 
   constexpr unsigned int Dim = static_sqrt(std::tuple_size<Array>::value);
   static_assert((Dim >= 1) && (Dim <= 4), "Dimension not supported");
 
-  using FastMatrixOperations
-    = lar::util::details::FastMatrixOperations<Data_t, Dim>;
+  using FastMatrixOperations = lar::util::details::FastMatrixOperations<Data_t, Dim>;
 
   const Data_t my_det = FastMatrixOperations::Determinant(mat);
   BOOST_CHECK_CLOSE(my_det, det, 1e-4); // 0.0001%
@@ -193,37 +186,30 @@ void SymmetricMatrixTest(Array const& mat, typename Array::value_type det) {
   }
 } // SymmetricMatrixTest()
 
-
-
 template <typename T>
-void TestMatrix2x2() {
+void TestMatrix2x2()
+{
   using Data_t = T;
   constexpr unsigned int Dim = 2; // we are testing 2x2 matrices
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  std::array<Data_t, Dim*Dim> matrix = {{
-    Data_t(2), Data_t(3),
-    Data_t(4), Data_t(1)
-  }}; // matrix
+  std::array<Data_t, Dim* Dim> matrix = {{Data_t(2), Data_t(3), Data_t(4), Data_t(1)}}; // matrix
   const Data_t true_det = Data_t(-10);
 
   PrintMatrix(std::cout, matrix, "Matrix");
   MatrixTest(matrix, true_det);
 } // TestMatrix2x2()
 
-
 template <typename T>
-void TestSymmetricMatrix2x2() {
+void TestSymmetricMatrix2x2()
+{
   using Data_t = T;
   constexpr unsigned int Dim = 2; // we are testing 2x2 matrices
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  std::array<Data_t, Dim*Dim> matrix = {{
-    Data_t(2), Data_t(3),
-    Data_t(3), Data_t(1)
-  }}; // matrix
+  std::array<Data_t, Dim* Dim> matrix = {{Data_t(2), Data_t(3), Data_t(3), Data_t(1)}}; // matrix
   const Data_t true_det = Data_t(-7);
 
   PrintMatrix(std::cout, matrix, "Symmetric matrix");
@@ -231,19 +217,25 @@ void TestSymmetricMatrix2x2() {
 
 } // TestSymmetricMatrix2x2()
 
-
 template <typename T>
-void TestMatrix3x3_1() {
+void TestMatrix3x3_1()
+{
 
   using Data_t = T;
   constexpr unsigned int Dim = 3; // we are testing 3x3 matrices
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  std::array<Data_t, Dim*Dim> matrix = {{
-    Data_t(2), Data_t(0), Data_t(3),
-    Data_t(0), Data_t(3), Data_t(0),
-    Data_t(4), Data_t(0), Data_t(1),
+  std::array<Data_t, Dim* Dim> matrix = {{
+    Data_t(2),
+    Data_t(0),
+    Data_t(3),
+    Data_t(0),
+    Data_t(3),
+    Data_t(0),
+    Data_t(4),
+    Data_t(0),
+    Data_t(1),
   }}; // matrix
   const Data_t true_det = Data_t(-30);
 
@@ -252,19 +244,25 @@ void TestMatrix3x3_1() {
 
 } // TestMatrix3x3_1()
 
-
 template <typename T>
-void TestMatrix3x3_2() {
+void TestMatrix3x3_2()
+{
 
   using Data_t = T;
   constexpr unsigned int Dim = 3; // we are testing 3x3 matrices
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  std::array<Data_t, Dim*Dim> matrix = {{
-    Data_t(2), Data_t(4), Data_t(3),
-    Data_t(0), Data_t(3), Data_t(0),
-    Data_t(4), Data_t(0), Data_t(1),
+  std::array<Data_t, Dim* Dim> matrix = {{
+    Data_t(2),
+    Data_t(4),
+    Data_t(3),
+    Data_t(0),
+    Data_t(3),
+    Data_t(0),
+    Data_t(4),
+    Data_t(0),
+    Data_t(1),
   }}; // matrix
   const Data_t true_det = Data_t(-30);
 
@@ -273,20 +271,25 @@ void TestMatrix3x3_2() {
 
 } // TestMatrix3x3_2()
 
-
-
 template <typename T>
-void TestSymmetricMatrix3x3() {
+void TestSymmetricMatrix3x3()
+{
 
   using Data_t = T;
   constexpr unsigned int Dim = 3; // we are testing 3x3 matrices
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  std::array<Data_t, Dim*Dim> matrix = {{
-    Data_t(2), Data_t(0), Data_t(3),
-    Data_t(0), Data_t(3), Data_t(0),
-    Data_t(3), Data_t(0), Data_t(1),
+  std::array<Data_t, Dim* Dim> matrix = {{
+    Data_t(2),
+    Data_t(0),
+    Data_t(3),
+    Data_t(0),
+    Data_t(3),
+    Data_t(0),
+    Data_t(3),
+    Data_t(0),
+    Data_t(1),
   }}; // matrix
   const Data_t true_det = Data_t(-21);
 
@@ -295,21 +298,31 @@ void TestSymmetricMatrix3x3() {
 
 } // TestSymmetricMatrix3x3()
 
-
 template <typename T>
-void TestMatrix4x4_1() {
+void TestMatrix4x4_1()
+{
 
   using Data_t = T;
   constexpr unsigned int Dim = 4; // we are testing 4x4 matrices
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  std::array<Data_t, Dim*Dim> matrix = {{
-    Data_t(2), Data_t(0), Data_t(3), Data_t(0),
-    Data_t(0), Data_t(3), Data_t(0), Data_t(6),
-    Data_t(4), Data_t(0), Data_t(1), Data_t(0),
-    Data_t(0), Data_t(2), Data_t(0), Data_t(7)
-  }}; // matrix
+  std::array<Data_t, Dim* Dim> matrix = {{Data_t(2),
+                                          Data_t(0),
+                                          Data_t(3),
+                                          Data_t(0),
+                                          Data_t(0),
+                                          Data_t(3),
+                                          Data_t(0),
+                                          Data_t(6),
+                                          Data_t(4),
+                                          Data_t(0),
+                                          Data_t(1),
+                                          Data_t(0),
+                                          Data_t(0),
+                                          Data_t(2),
+                                          Data_t(0),
+                                          Data_t(7)}}; // matrix
   const Data_t true_det = Data_t(-90);
 
   PrintMatrix(std::cout, matrix, "Matrix");
@@ -317,21 +330,31 @@ void TestMatrix4x4_1() {
 
 } // TestMatrix4x4_1()
 
-
 template <typename T>
-void TestMatrix4x4_2() {
+void TestMatrix4x4_2()
+{
 
   using Data_t = T;
   constexpr unsigned int Dim = 4; // we are testing 4x4 matrices
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  std::array<Data_t, Dim*Dim> matrix = {{
-    Data_t(2), Data_t(0), Data_t(3), Data_t(0),
-    Data_t(5), Data_t(3), Data_t(0), Data_t(6),
-    Data_t(4), Data_t(0), Data_t(1), Data_t(0),
-    Data_t(3), Data_t(2), Data_t(0), Data_t(7)
-  }}; // matrix
+  std::array<Data_t, Dim* Dim> matrix = {{Data_t(2),
+                                          Data_t(0),
+                                          Data_t(3),
+                                          Data_t(0),
+                                          Data_t(5),
+                                          Data_t(3),
+                                          Data_t(0),
+                                          Data_t(6),
+                                          Data_t(4),
+                                          Data_t(0),
+                                          Data_t(1),
+                                          Data_t(0),
+                                          Data_t(3),
+                                          Data_t(2),
+                                          Data_t(0),
+                                          Data_t(7)}}; // matrix
   const Data_t true_det = Data_t(-90);
 
   PrintMatrix(std::cout, matrix, "Matrix");
@@ -339,21 +362,19 @@ void TestMatrix4x4_2() {
 
 } // TestMatrix4x4_2()
 
-
 template <typename T, unsigned int Dim>
-void TestMatrix_N(unsigned int N = 100) {
+void TestMatrix_N(unsigned int N = 100)
+{
 
   using Data_t = T;
 
   std::default_random_engine engine;
   std::uniform_real_distribution<Data_t> uniform(Data_t(-10.), Data_t(10.));
 
-  std::array<Data_t, Dim*Dim> matrix;
+  std::array<Data_t, Dim * Dim> matrix;
   for (unsigned int i = 0; i < N; ++i) {
 
-    std::generate(matrix.begin(), matrix.end(),
-      [&engine, &uniform] { return uniform(engine); }
-      );
+    std::generate(matrix.begin(), matrix.end(), [&engine, &uniform] { return uniform(engine); });
 
     PrintMatrix(std::cout, matrix, "Matrix");
     MatrixTest(matrix);
@@ -361,13 +382,13 @@ void TestMatrix_N(unsigned int N = 100) {
 
 } // TestMatrix_N()
 
-
 template <typename T, unsigned int Dim>
-void TestNullMatrix() {
+void TestNullMatrix()
+{
 
   using Data_t = T;
 
-  std::array<Data_t, Dim*Dim> matrix;
+  std::array<Data_t, Dim * Dim> matrix;
   matrix.fill(Data_t(0));
 
   PrintMatrix(std::cout, matrix, "Empty matrix");
@@ -377,29 +398,37 @@ void TestNullMatrix() {
 
 } // TestNullMatrix()
 
-
-
 template <typename T>
-void TestSymmetricMatrix4x4() {
+void TestSymmetricMatrix4x4()
+{
 
   using Data_t = T;
   constexpr unsigned int Dim = 4; // we are testing 4x4 matrices
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  std::array<Data_t, Dim*Dim> matrix = {{
-    Data_t(2), Data_t(0), Data_t(3), Data_t(0),
-    Data_t(0), Data_t(3), Data_t(0), Data_t(2),
-    Data_t(3), Data_t(0), Data_t(1), Data_t(0),
-    Data_t(0), Data_t(2), Data_t(0), Data_t(7)
-  }}; // matrix
+  std::array<Data_t, Dim* Dim> matrix = {{Data_t(2),
+                                          Data_t(0),
+                                          Data_t(3),
+                                          Data_t(0),
+                                          Data_t(0),
+                                          Data_t(3),
+                                          Data_t(0),
+                                          Data_t(2),
+                                          Data_t(3),
+                                          Data_t(0),
+                                          Data_t(1),
+                                          Data_t(0),
+                                          Data_t(0),
+                                          Data_t(2),
+                                          Data_t(0),
+                                          Data_t(7)}}; // matrix
   const Data_t true_det = Data_t(-119);
 
   PrintMatrix(std::cout, matrix, "Symmetric matrix");
   SymmetricMatrixTest(matrix, true_det);
 
 } // TestSymmetricMatrix4x4()
-
 
 //------------------------------------------------------------------------------
 //--- registration of tests
@@ -413,7 +442,8 @@ void TestSymmetricMatrix4x4() {
 //
 // Matrix tests
 //
-BOOST_AUTO_TEST_CASE(Matrix2x2RealTest) {
+BOOST_AUTO_TEST_CASE(Matrix2x2RealTest)
+{
   TestMatrix2x2<double>();
   TestSymmetricMatrix2x2<double>();
 
@@ -421,7 +451,8 @@ BOOST_AUTO_TEST_CASE(Matrix2x2RealTest) {
   TestNullMatrix<double, 2>();
 }
 
-BOOST_AUTO_TEST_CASE(Matrix3x3RealTest) {
+BOOST_AUTO_TEST_CASE(Matrix3x3RealTest)
+{
   TestMatrix3x3_1<double>();
   TestMatrix3x3_2<double>();
   TestSymmetricMatrix3x3<double>();
@@ -430,7 +461,8 @@ BOOST_AUTO_TEST_CASE(Matrix3x3RealTest) {
   TestNullMatrix<double, 3>();
 }
 
-BOOST_AUTO_TEST_CASE(Matrix4x4RealTest) {
+BOOST_AUTO_TEST_CASE(Matrix4x4RealTest)
+{
   TestMatrix4x4_1<double>();
   TestMatrix4x4_2<double>();
   TestSymmetricMatrix4x4<double>();

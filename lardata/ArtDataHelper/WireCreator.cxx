@@ -21,18 +21,14 @@
 #include "lardataobj/RawData/RawDigit.h"
 #include "lardataobj/RecoBase/Wire.h"
 
-
 /// Reconstruction base classes
 namespace recob {
 
   //----------------------------------------------------------------------
-  WireCreator::WireCreator
-    (const RegionsOfInterest_t& sigROIlist, const raw::RawDigit& rawdigit):
-    wire(
-      sigROIlist,
-      rawdigit.Channel(),
-      art::ServiceHandle<geo::Geometry const>()->View(rawdigit.Channel())
-    )
+  WireCreator::WireCreator(const RegionsOfInterest_t& sigROIlist, const raw::RawDigit& rawdigit)
+    : wire(sigROIlist,
+           rawdigit.Channel(),
+           art::ServiceHandle<geo::Geometry const>()->View(rawdigit.Channel()))
   {
     // resize fSignalROI again:
     // just in case the user hasn't cared to set sigROIlist size right
@@ -40,13 +36,10 @@ namespace recob {
   } // Wire::Wire(RegionsOfInterest_t&)
 
   //----------------------------------------------------------------------
-  WireCreator::WireCreator
-    (RegionsOfInterest_t&& sigROIlist, const raw::RawDigit& rawdigit):
-    wire(
-      std::move(sigROIlist),
-      rawdigit.Channel(),
-      art::ServiceHandle<geo::Geometry const>()->View(rawdigit.Channel())
-    )
+  WireCreator::WireCreator(RegionsOfInterest_t&& sigROIlist, const raw::RawDigit& rawdigit)
+    : wire(std::move(sigROIlist),
+           rawdigit.Channel(),
+           art::ServiceHandle<geo::Geometry const>()->View(rawdigit.Channel()))
   {
     // resize fSignalROI again:
     // just in case the user hasn't cared to set sigROIlist size right
@@ -54,21 +47,17 @@ namespace recob {
   } // Wire::Wire(RegionsOfInterest_t&)
 
   //----------------------------------------------------------------------
-  WireCreator::WireCreator(
-    RegionsOfInterest_t const& sigROIlist,
-    raw::ChannelID_t channel,
-    geo::View_t view
-    ):
-    wire(sigROIlist, channel, view)
-    {}
+  WireCreator::WireCreator(RegionsOfInterest_t const& sigROIlist,
+                           raw::ChannelID_t channel,
+                           geo::View_t view)
+    : wire(sigROIlist, channel, view)
+  {}
 
   //----------------------------------------------------------------------
-  WireCreator::WireCreator(
-    RegionsOfInterest_t&& sigROIlist,
-    raw::ChannelID_t channel,
-    geo::View_t view
-    ):
-    wire(std::move(sigROIlist), channel, view)
-    {}
+  WireCreator::WireCreator(RegionsOfInterest_t&& sigROIlist,
+                           raw::ChannelID_t channel,
+                           geo::View_t view)
+    : wire(std::move(sigROIlist), channel, view)
+  {}
 
 } // namespace recob

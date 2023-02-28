@@ -15,7 +15,7 @@
 
 #include "TRandom3.h"
 
-namespace SeedCreator{
+namespace SeedCreator {
 
   inline unsigned int CreateRandomNumberSeed()
   {
@@ -31,4 +31,4 @@ namespace SeedCreator{
 
 }
 
-#endif// SEEDCREATOR_H
+#endif // SEEDCREATOR_H

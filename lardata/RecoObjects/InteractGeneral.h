@@ -25,11 +25,7 @@ namespace trkf {
   public:
     explicit InteractGeneral(detinfo::DetectorPropertiesData const& detProp, double tcut);
 
-    Interactor*
-    clone() const override
-    {
-      return new InteractGeneral(*this);
-    }
+    Interactor* clone() const override { return new InteractGeneral(*this); }
     bool noise(const KTrack& trk, double s, TrackError& noise_matrix) const override;
 
   private:

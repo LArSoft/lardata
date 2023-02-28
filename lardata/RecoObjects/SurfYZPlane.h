@@ -43,10 +43,8 @@
 
 namespace trkf {
 
-  class SurfYZPlane : public SurfPlane
-  {
+  class SurfYZPlane : public SurfPlane {
   public:
-
     /// Default constructor.
     SurfYZPlane();
 
@@ -57,10 +55,10 @@ namespace trkf {
     virtual ~SurfYZPlane();
 
     // Accessors.
-    double x0() const {return fX0;}     ///< X origin.
-    double y0() const {return fY0;}     ///< Y origin.
-    double z0() const {return fZ0;}     ///< Z origin.
-    double phi() const {return fPhi;}   ///< Rotation angle about x-axis.
+    double x0() const { return fX0; }   ///< X origin.
+    double y0() const { return fY0; }   ///< Y origin.
+    double z0() const { return fZ0; }   ///< Z origin.
+    double phi() const { return fPhi; } ///< Rotation angle about x-axis.
 
     /// Clone method.
     virtual Surface* clone() const;
@@ -78,8 +76,9 @@ namespace trkf {
     virtual void getPosition(const TrackVector& vec, double xyz[3]) const;
 
     /// Get momentum vector of track.
-    virtual void getMomentum(const TrackVector& vec, double mom[3],
-			     TrackDirection dir=UNKNOWN) const;
+    virtual void getMomentum(const TrackVector& vec,
+                             double mom[3],
+                             TrackDirection dir = UNKNOWN) const;
 
     /// Test whether two surfaces are parallel, within tolerance.
     virtual bool isParallel(const Surface& surf) const;
@@ -94,18 +93,17 @@ namespace trkf {
     virtual std::ostream& Print(std::ostream& out) const;
 
   private:
-
     // Static attributes.
 
-    static double fPhiTolerance;   ///< Phi tolerance for parallel.
-    static double fSepTolerance;   ///< Separation tolerance for equal.
+    static double fPhiTolerance; ///< Phi tolerance for parallel.
+    static double fSepTolerance; ///< Separation tolerance for equal.
 
     // Attributes.
 
-    double fX0;     ///< X origin.
-    double fY0;     ///< Y origin.
-    double fZ0;     ///< Z origin.
-    double fPhi;    ///< Rotation angle about x-axis.
+    double fX0;  ///< X origin.
+    double fY0;  ///< Y origin.
+    double fZ0;  ///< Z origin.
+    double fPhi; ///< Rotation angle about x-axis.
   };
 }
 

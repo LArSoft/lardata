@@ -16,7 +16,8 @@
 namespace lar {
   struct to_element_t {
     template <typename T>
-    T const& operator()(art::Ptr<T> const& ptr) const {
+    T const& operator()(art::Ptr<T> const& ptr) const
+    {
       return *ptr;
     }
   };

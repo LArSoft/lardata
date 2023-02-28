@@ -24,22 +24,22 @@
 // C/C++ standard libraries
 #include <array>
 #include <chrono>
-#include <sstream>
 #include <iostream>
-
+#include <sstream>
 
 //------------------------------------------------------------------------------
 //--- Test code
 //---
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
   // debug being much slower, by default we ask for less cycles
 #ifdef NDEBUG
   unsigned int dimSize = 80; // default value
-#else // !NDEBUG
+#else                        // !NDEBUG
   unsigned int dimSize = 32; // default value
-#endif // ?NDEBUG
+#endif                       // ?NDEBUG
 
   //
   // command line argument parsing
@@ -53,20 +53,14 @@ int main(int argc, char** argv) {
     }
   }
 
-
   //
   // set up
   //
-  auto indices
-    = util::makeTensorIndices(dimSize, dimSize, dimSize, dimSize, dimSize);
+  auto indices = util::makeTensorIndices(dimSize, dimSize, dimSize, dimSize, dimSize);
 
-  std::cout << "Running through " << indices.dim<0>()
-    << "x" << indices.dim<1>()
-    << "x" << indices.dim<2>()
-    << "x" << indices.dim<3>()
-    << "x" << indices.dim<4>()
-    << " = " << indices.size() << " tensor elements"
-    << std::endl;
+  std::cout << "Running through " << indices.dim<0>() << "x" << indices.dim<1>() << "x"
+            << indices.dim<2>() << "x" << indices.dim<3>() << "x" << indices.dim<4>() << " = "
+            << indices.size() << " tensor elements" << std::endl;
 
   //
   // run
@@ -75,32 +69,30 @@ int main(int argc, char** argv) {
   using index_t = decltype(indices)::Index_t;
   std::array<index_t, indices.rank()> i;
   decltype(indices)::DimSize_t count = 0;
-  for (i[0] = 0; i[0] < (index_t) indices.dim<0>(); ++(i[0])) {
-    for (i[1] = 0; i[1] < (index_t) indices.dim<1>(); ++(i[1])) {
-      for (i[2] = 0; i[2] < (index_t) indices.dim<2>(); ++(i[2])) {
-        for (i[3] = 0; i[3] < (index_t) indices.dim<3>(); ++(i[3])) {
-          for (i[4] = 0; i[4] < (index_t) indices.dim<4>(); ++(i[4])) {
+  for (i[0] = 0; i[0] < (index_t)indices.dim<0>(); ++(i[0])) {
+    for (i[1] = 0; i[1] < (index_t)indices.dim<1>(); ++(i[1])) {
+      for (i[2] = 0; i[2] < (index_t)indices.dim<2>(); ++(i[2])) {
+        for (i[3] = 0; i[3] < (index_t)indices.dim<3>(); ++(i[3])) {
+          for (i[4] = 0; i[4] < (index_t)indices.dim<4>(); ++(i[4])) {
 
             auto linIndex = indices(i[0], i[1], i[2], i[3], i[4]);
             if (count != linIndex) {
-              std::cerr << "Error: ["
-                << i[0] << "][" << i[1] << "][" << i[2] << "]["
-                << i[3] << "][" << i[4]
-                << "] => " << linIndex << " (expected: " << count << ")"
-                << std::endl;
+              std::cerr << "Error: [" << i[0] << "][" << i[1] << "][" << i[2] << "][" << i[3]
+                        << "][" << i[4] << "] => " << linIndex << " (expected: " << count << ")"
+                        << std::endl;
               return 1;
             }
             ++count;
           } // loop 4
-        } // loop 3
-      } // loop 2
-    } // loop 1
-  } // loop 0
+        }   // loop 3
+      }     // loop 2
+    }       // loop 1
+  }         // loop 0
   auto stopTime = std::chrono::high_resolution_clock::now();
 
   std::chrono::duration<double> elapsed = stopTime - startTime;
-  std::cout << "Iterating through all " << count << " indices took "
-    << (elapsed.count() * 1000.) << " milliseconds." << std::endl;
+  std::cout << "Iterating through all " << count << " indices took " << (elapsed.count() * 1000.)
+            << " milliseconds." << std::endl;
 
   return 0;
 } // main()

@@ -30,15 +30,13 @@ namespace fhicl {
 namespace { // local
 
   template <typename T>
-  inline std::string
-  to_string(T const& v)
+  inline std::string to_string(T const& v)
   {
     return std::to_string(v);
   }
 
   template <typename T>
-  std::string
-  to_string(T const* ptr)
+  std::string to_string(T const* ptr)
   {
     std::ostringstream sstr;
     sstr << '<' << ((void*)ptr) << '>';
@@ -81,9 +79,7 @@ namespace lar {
     void beginJob() override;
 
     /// Run event-dependent tests (none so far)
-    void
-    analyze(const art::Event& /* evt */) override
-    {}
+    void analyze(const art::Event& /* evt */) override {}
 
     /// Throws if errors have been accumulated
     void endJob() override;
@@ -122,15 +118,10 @@ namespace lar {
   ServicePackTest::ServicePackTest(const fhicl::ParameterSet& pset) : EDAnalyzer(pset) {}
 
   //----------------------------------------------------------------------------
-  void
-  ServicePackTest::beginJob()
-  {
-    extractProviders_tests();
-  } // ServicePackTest::beginJob()
+  void ServicePackTest::beginJob() { extractProviders_tests(); } // ServicePackTest::beginJob()
 
   //----------------------------------------------------------------------------
-  void
-  ServicePackTest::endJob()
+  void ServicePackTest::endJob()
   {
     if (errors.empty()) {
       mf::LogInfo("ServicePackTest") << "All tests were successful.";
@@ -147,8 +138,7 @@ namespace lar {
   }
 
   //----------------------------------------------------------------------------
-  void
-  ServicePackTest::extractProviders_tests()
+  void ServicePackTest::extractProviders_tests()
   {
     extractProviders_test_plain();
     extractProviders_test_permuted();
@@ -156,8 +146,7 @@ namespace lar {
   }
 
   //----------------------------------------------------------------------------
-  void
-  ServicePackTest::extractProviders_test_plain()
+  void ServicePackTest::extractProviders_test_plain()
   {
     /*
      * The test creates a ProviderPack and checks that its element as as
@@ -187,8 +176,7 @@ namespace lar {
   } // ServicePackTest::extractProviders_test_plain()
 
   //----------------------------------------------------------------------------
-  void
-  ServicePackTest::extractProviders_test_permuted()
+  void ServicePackTest::extractProviders_test_permuted()
   {
     /*
      * The test creates a ProviderPack and checks that its element as as
@@ -222,8 +210,7 @@ namespace lar {
   }
 
   //----------------------------------------------------------------------------
-  void
-  ServicePackTest::extractProviders_test_reduced()
+  void ServicePackTest::extractProviders_test_reduced()
   {
     /*
      * The test creates a ProviderPack and checks that its element as as

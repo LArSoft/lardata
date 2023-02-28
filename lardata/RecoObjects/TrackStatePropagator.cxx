@@ -26,14 +26,13 @@ namespace trkf {
 
   using PropDirection = TrackStatePropagator::PropDirection;
 
-  TrackState
-  TrackStatePropagator::propagateToPlane(bool& success,
-                                         const detinfo::DetectorPropertiesData& detProp,
-                                         const TrackState& origin,
-                                         const Plane& target,
-                                         bool dodedx,
-                                         bool domcs,
-                                         PropDirection dir) const
+  TrackState TrackStatePropagator::propagateToPlane(bool& success,
+                                                    const detinfo::DetectorPropertiesData& detProp,
+                                                    const TrackState& origin,
+                                                    const Plane& target,
+                                                    bool dodedx,
+                                                    bool domcs,
+                                                    PropDirection dir) const
   {
     //
     // 1- find distance to target plane
@@ -129,11 +128,10 @@ namespace trkf {
     return trackState;
   }
 
-  TrackState
-  TrackStatePropagator::rotateToPlane(bool& success,
-                                      const TrackState& origin,
-                                      const Plane& target,
-                                      double& dw2dw1) const
+  TrackState TrackStatePropagator::rotateToPlane(bool& success,
+                                                 const TrackState& origin,
+                                                 const Plane& target,
+                                                 double& dw2dw1) const
   {
     const bool isTrackAlongPlaneDir = origin.momentum().Dot(target.direction()) > 0;
     //
@@ -212,11 +210,10 @@ namespace trkf {
                       origin.pID());
   }
 
-  double
-  TrackStatePropagator::distanceToPlane(bool& success,
-                                        const Point_t& origpos,
-                                        const Vector_t& origmom,
-                                        const Plane& target) const
+  double TrackStatePropagator::distanceToPlane(bool& success,
+                                               const Point_t& origpos,
+                                               const Vector_t& origmom,
+                                               const Plane& target) const
   {
     const Point_t& targpos = target.position();
     const Vector_t& targdir = target.direction();
@@ -231,10 +228,9 @@ namespace trkf {
     return s;
   }
 
-  double
-  TrackStatePropagator::perpDistanceToPlane(bool& success,
-                                            const Point_t& origpos,
-                                            const Plane& target) const
+  double TrackStatePropagator::perpDistanceToPlane(bool& success,
+                                                   const Point_t& origpos,
+                                                   const Plane& target) const
   {
     const Point_t& targpos = target.position();
     const Vector_t& targdir = target.direction();
@@ -244,11 +240,10 @@ namespace trkf {
     return sperp;
   }
 
-  std::pair<double, double>
-  TrackStatePropagator::distancePairToPlane(bool& success,
-                                            const Point_t& origpos,
-                                            const Vector_t& origmom,
-                                            const Plane& target) const
+  std::pair<double, double> TrackStatePropagator::distancePairToPlane(bool& success,
+                                                                      const Point_t& origpos,
+                                                                      const Vector_t& origmom,
+                                                                      const Plane& target) const
   {
     const Point_t& targpos = target.position();
     const Vector_t& targdir = target.direction();
@@ -265,14 +260,13 @@ namespace trkf {
     return std::pair<double, double>(s, sperp);
   }
 
-  void
-  TrackStatePropagator::apply_dedx(double& pinv,
-                                   detinfo::DetectorPropertiesData const& detProp,
-                                   double dedx,
-                                   double e1,
-                                   double mass,
-                                   double s,
-                                   double& deriv) const
+  void TrackStatePropagator::apply_dedx(double& pinv,
+                                        detinfo::DetectorPropertiesData const& detProp,
+                                        double dedx,
+                                        double e1,
+                                        double mass,
+                                        double s,
+                                        double& deriv) const
   {
     // For infinite initial momentum, return with infinite momentum.
     if (pinv == 0.) return;
@@ -294,18 +288,17 @@ namespace trkf {
     return;
   }
 
-  bool
-  TrackStatePropagator::apply_mcs(detinfo::DetectorPropertiesData const& detProp,
-                                  double dudw,
-                                  double dvdw,
-                                  double pinv,
-                                  double mass,
-                                  double s,
-                                  double range,
-                                  double p,
-                                  double e2,
-                                  bool flipSign,
-                                  SMatrixSym55& noise_matrix) const
+  bool TrackStatePropagator::apply_mcs(detinfo::DetectorPropertiesData const& detProp,
+                                       double dudw,
+                                       double dvdw,
+                                       double pinv,
+                                       double mass,
+                                       double s,
+                                       double range,
+                                       double p,
+                                       double e2,
+                                       bool flipSign,
+                                       SMatrixSym55& noise_matrix) const
   {
     // If distance is zero, or momentum is infinite, return zero noise.
 

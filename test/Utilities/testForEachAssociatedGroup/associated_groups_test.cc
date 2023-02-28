@@ -10,32 +10,32 @@
 #include "lardata/Utilities/ForEachAssociatedGroup.h"
 
 // framework libraries
-#include "canvas/Persistency/Provenance/ProductID.h"
-#include "canvas/Persistency/Common/Ptr.h"
 #include "canvas/Persistency/Common/Assns.h"
+#include "canvas/Persistency/Common/Ptr.h"
+#include "canvas/Persistency/Provenance/ProductID.h"
 
 // Boost libraries
-#define BOOST_TEST_MODULE ( PointIsolationAlg_test )
+#define BOOST_TEST_MODULE (PointIsolationAlg_test)
+#include <boost/test/test_tools.hpp>  // BOOST_CHECK(), BOOST_CHECK_EQUAL()
 #include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
-#include <boost/test/test_tools.hpp> // BOOST_CHECK(), BOOST_CHECK_EQUAL()
 
 // C/C++ standard libraries
 #include <array>
 #include <iostream>
 
-
 //------------------------------------------------------------------------------
 // ROOT libraries
-#include "TROOT.h" // gROOT
-#include "TInterpreter.h"
 #include "TClassEdit.h"
+#include "TInterpreter.h"
+#include "TROOT.h" // gROOT
 
 // C/C++ standard libraries
 #include <string>
 #include <typeinfo>
 
 template <typename T>
-TClass* QuickGenerateTClass() {
+TClass* QuickGenerateTClass()
+{
 
   // magic! this interpreter call is needed before GetNormalizedName() is called
   TInterpreter* interpreter = gROOT->GetInterpreter();
@@ -56,9 +56,9 @@ TClass* QuickGenerateTClass() {
 
 } // QuickGenerateTClass()
 
-
 //------------------------------------------------------------------------------
-void AssociatedGroupsTest() {
+void AssociatedGroupsTest()
+{
 
   // types used in the association (they actually do not matter)
   struct TypeA {};
@@ -75,26 +75,26 @@ void AssociatedGroupsTest() {
 
   // association description: B's for each A
   std::array<std::pair<Index_t, std::vector<Index_t>>, 3U> expected;
-  expected[0] = { 0, { 0, 3, 6 } };
-  expected[1] = { 1, { 2, 4, 6 } };
-  expected[2] = { 3, { 8, 10, 12, 13 } };
-  art::ProductID aPID{ 5 }, bPID{ 12 };
+  expected[0] = {0, {0, 3, 6}};
+  expected[1] = {1, {2, 4, 6}};
+  expected[2] = {3, {8, 10, 12, 13}};
+  art::ProductID aPID{5}, bPID{12};
 
   // fill the association
   MyAssns_t assns;
-  for (auto const& pair: expected) {
+  for (auto const& pair : expected) {
     auto const& aIndex = pair.first;
-    for (auto const& bIndex: pair.second) {
-      assns.addSingle({ aPID, aIndex, nullptr }, { bPID, bIndex, nullptr });
+    for (auto const& bIndex : pair.second) {
+      assns.addSingle({aPID, aIndex, nullptr}, {bPID, bIndex, nullptr});
     } // for bIndex
-  } // for pair
+  }   // for pair
 
   std::vector<std::vector<Index_t>> results;
-  for (auto Bs: util::associated_groups(assns)) {
+  for (auto Bs : util::associated_groups(assns)) {
     std::cout << "Association group #" << results.size() << ":" << std::endl;
     results.emplace_back();
     std::vector<Index_t>& myBs = results.back();
-    for(art::Ptr<TypeB> const& B: Bs) {
+    for (art::Ptr<TypeB> const& B : Bs) {
       std::cout << "  " << B << std::endl;
       myBs.push_back(B.key());
     }
@@ -112,14 +112,14 @@ void AssociatedGroupsTest() {
       BOOST_TEST_MESSAGE("    assn #" << j);
       BOOST_CHECK_EQUAL(Bs[j], expectedBs[j]);
     } // for j
-  } // for results
+  }   // for results
 
 } // associated_groups_test()
-
 
 //------------------------------------------------------------------------------
 //--- tests
 //
-BOOST_AUTO_TEST_CASE(AssociatedGroupsTestCase) {
+BOOST_AUTO_TEST_CASE(AssociatedGroupsTestCase)
+{
   AssociatedGroupsTest();
 } // AssociatedGroupsTestCase

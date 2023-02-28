@@ -2,37 +2,36 @@
 #define LARFFTWPLAN_H
 
 // C/C++ standard libraries
-#include <string>
 #include <algorithm>
 #include <mutex>
+#include <string>
 
 #include "fftw3.h"
 
 namespace util {
 
-class LArFFTWPlan {
+  class LArFFTWPlan {
 
   public:
-    LArFFTWPlan(int transformSize, const std::string &option);
+    LArFFTWPlan(int transformSize, const std::string& option);
     ~LArFFTWPlan();
-    void *fPlan;
-    void *rPlan;
-    void *fIn;
-    void *fOut;
-    void *rIn;
-    void *rOut;
+    void* fPlan;
+    void* rPlan;
+    void* fIn;
+    void* fOut;
+    void* rIn;
+    void* rOut;
 
   private:
     static std::mutex mutex_;
-    int fSize;		// size of transform
-    int fFreqSize;	// size of frequency space
-    int *fN;
-    std::string fOption;	// FFTW setting
+    int fSize;     // size of transform
+    int fFreqSize; // size of frequency space
+    int* fN;
+    std::string fOption; // FFTW setting
 
     unsigned int MapFFTWOption();
+  };
 
-};
-
-}  // end namespace util
+} // end namespace util
 
 #endif

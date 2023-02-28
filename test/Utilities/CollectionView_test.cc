@@ -11,25 +11,25 @@
 #include "lardata/Utilities/CollectionView.h"
 
 // Boost libraries
-#define BOOST_TEST_MODULE ( CollectionView_test )
-#include <boost/test/unit_test.hpp> // BOOST_AUTO_TEST_CASE()
+#define BOOST_TEST_MODULE (CollectionView_test)
 #include <boost/test/test_tools.hpp> // BOOST_CHECK()
+#include <boost/test/unit_test.hpp>  // BOOST_AUTO_TEST_CASE()
 
 // C/C++ standard libraries
 #include <deque>
-#include <list>
 #include <forward_list>
+#include <iostream>
+#include <list>
 #include <numeric> // std::iota()
 #include <sstream>
-#include <iostream>
-
 
 //------------------------------------------------------------------------------
-BOOST_AUTO_TEST_CASE(VectorTestCase) {
+BOOST_AUTO_TEST_CASE(VectorTestCase)
+{
   //
   // test on contiguous access collection
   //
-  std::vector<int> c{ 3, 4, 5 };
+  std::vector<int> c{3, 4, 5};
   auto const cbegin = c.cbegin();
   auto const cend = c.cend();
 
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(VectorTestCase) {
   //
   auto ic = cbegin;
   size_t i = 0;
-  for (auto const& d: cv) {
+  for (auto const& d : cv) {
     BOOST_CHECK_EQUAL(d, *ic);
     BOOST_CHECK_EQUAL(cv[i], d);
     BOOST_CHECK_EQUAL(&(cv[i]), &(c[i]));
@@ -78,13 +78,13 @@ BOOST_AUTO_TEST_CASE(VectorTestCase) {
 
 } // BOOST_AUTO_TEST_CASE(VectorTestCase)
 
-
 //------------------------------------------------------------------------------
-BOOST_AUTO_TEST_CASE(DequeTestCase) {
+BOOST_AUTO_TEST_CASE(DequeTestCase)
+{
   //
   // test on random access collection
   //
-  std::deque<int> c{ 3, 4, 5 };
+  std::deque<int> c{3, 4, 5};
   auto const cbegin = c.cbegin();
   auto const cend = c.cend();
 
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(DequeTestCase) {
   //
   auto ic = cbegin;
   size_t i = 0;
-  for (auto const& d: cv) {
+  for (auto const& d : cv) {
     BOOST_CHECK_EQUAL(d, *ic);
     BOOST_CHECK_EQUAL(cv[i], d);
     BOOST_CHECK_EQUAL(&(cv[i]), &(c[i]));
@@ -128,13 +128,13 @@ BOOST_AUTO_TEST_CASE(DequeTestCase) {
 
 } // BOOST_AUTO_TEST_CASE(DequeTestCase)
 
-
 //------------------------------------------------------------------------------
-BOOST_AUTO_TEST_CASE(ListTestCase) {
+BOOST_AUTO_TEST_CASE(ListTestCase)
+{
   //
   // test on bidirectional access collection
   //
-  std::list<int> c{ 3, 4, 5 };
+  std::list<int> c{3, 4, 5};
   auto const cbegin = c.cbegin();
   auto const cend = c.cend();
 
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(ListTestCase) {
   // range-for iteration
   //
   auto ic = cbegin;
-  for (auto const& d: cv) {
+  for (auto const& d : cv) {
     BOOST_CHECK_EQUAL(d, *ic);
 
     ++ic;
@@ -172,13 +172,13 @@ BOOST_AUTO_TEST_CASE(ListTestCase) {
 
 } // BOOST_AUTO_TEST_CASE(ListTestCase)
 
-
 //------------------------------------------------------------------------------
-BOOST_AUTO_TEST_CASE(ForwardListTestCase) {
+BOOST_AUTO_TEST_CASE(ForwardListTestCase)
+{
   //
   // test on forward access collection
   //
-  std::forward_list<int> c{ 3, 4, 5 };
+  std::forward_list<int> c{3, 4, 5};
   auto const cbegin = c.cbegin();
   auto const cend = c.cend();
 
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(ForwardListTestCase) {
   // range-for iteration
   //
   auto ic = cbegin;
-  for (auto const& d: cv) {
+  for (auto const& d : cv) {
     BOOST_CHECK_EQUAL(d, *ic);
 
     ++ic;
@@ -211,9 +211,9 @@ BOOST_AUTO_TEST_CASE(ForwardListTestCase) {
 
 } // BOOST_AUTO_TEST_CASE(ForwardListTestCase)
 
-
 //------------------------------------------------------------------------------
-BOOST_AUTO_TEST_CASE(DocumentationTestCase) {
+BOOST_AUTO_TEST_CASE(DocumentationTestCase)
+{
 
   std::ostringstream out;
 
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase) {
   std::vector<int> range(5);
   std::iota(range.begin(), range.end(), 1); // { 1, 2, 3, 4, 5 }
 
-  for (int d: lar::wrapCollectionIntoView(range)) {
+  for (int d : lar::wrapCollectionIntoView(range)) {
     out << d << " ";
   }
   std::cout << out.str() << std::endl;
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase) {
     out.str("");
     decltype(auto) view = lar::wrapCollectionIntoView(range);
 
-    for (int d: view) {
+    for (int d : view) {
       out << d << " ";
     }
 
@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase) {
     out.str("");
     auto const& view = lar::wrapCollectionIntoView(range);
 
-    for (int d: view) {
+    for (int d : view) {
       out << d << " ";
     }
 
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase) {
   std::vector<int> v(10);
   std::iota(v.begin(), v.end(), 0); // { 0, 1, ..., 9 }
 
-  for (int d: lar::makeCollectionView(v.begin() + 4, v.begin() + 7)) {
+  for (int d : lar::makeCollectionView(v.begin() + 4, v.begin() + 7)) {
     out << d << " ";
   }
   std::cout << out.str() << std::endl;
@@ -325,33 +325,32 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase) {
     std::iota(v_data.begin(), v_data.end(), 0); // { 0, 1, ..., 9 }
 
     class IntVector {
-       using vector_t = std::vector<int>;
+      using vector_t = std::vector<int>;
 
-       vector_t data;
+      vector_t data;
 
-         public:
-       IntVector(vector_t&& data): data(std::move(data)) {}
+    public:
+      IntVector(vector_t&& data) : data(std::move(data)) {}
 
-       auto begin() const -> decltype(auto) { return data.cbegin(); }
-       auto end() const -> decltype(auto) { return data.cend(); }
+      auto begin() const -> decltype(auto) { return data.cbegin(); }
+      auto end() const -> decltype(auto) { return data.cend(); }
 
     }; // struct IntVector
 
     using IntViewBase_t = lar::CollectionView<IntVector>;
 
-    struct MyCollection: public IntViewBase_t {
+    struct MyCollection : public IntViewBase_t {
       MyCollection(std::vector<int>&& data) : IntViewBase_t(std::move(data)) {}
     }; // class MyCollection
 
     MyCollection v(std::move(v_data));
 
-    for (int d: v) {
+    for (int d : v) {
       out << d << " ";
     }
     std::cout << out.str() << std::endl;
 
     BOOST_CHECK_EQUAL(out.str(), "0 1 2 3 4 5 6 7 8 9 ");
   }
-
 
 } // BOOST_AUTO_TEST_CASE(DocumentationTestCase)

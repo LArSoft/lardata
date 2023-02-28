@@ -8,10 +8,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////
 
-#include <cmath>
 #include "lardata/RecoObjects/SurfYZPlane.h"
-#include "cetlib_except/exception.h"
 #include "TVector2.h"
+#include "cetlib_except/exception.h"
+#include <cmath>
 
 namespace trkf {
 
@@ -21,12 +21,7 @@ namespace trkf {
   double SurfYZPlane::fSepTolerance = 1.e-6;
 
   /// Default constructor.
-  SurfYZPlane::SurfYZPlane() :
-    fX0(0.),
-    fY0(0.),
-    fZ0(0.),
-    fPhi(0.)
-  {}
+  SurfYZPlane::SurfYZPlane() : fX0(0.), fY0(0.), fZ0(0.), fPhi(0.) {}
 
   /// Initializing constructor.
   ///
@@ -35,28 +30,18 @@ namespace trkf {
   /// x0, y0, z0 - Global coordinates of local origin.
   /// phi - Rotation angle about x-axis.
   ///
-  SurfYZPlane::SurfYZPlane(double x0, double y0, double z0, double phi) :
-    fX0(x0),
-    fY0(y0),
-    fZ0(z0),
-    fPhi(phi)
+  SurfYZPlane::SurfYZPlane(double x0, double y0, double z0, double phi)
+    : fX0(x0), fY0(y0), fZ0(z0), fPhi(phi)
   {}
 
   /// Destructor.
-  SurfYZPlane::~SurfYZPlane()
-  {}
+  SurfYZPlane::~SurfYZPlane() {}
 
   /// Clone method.
-  Surface* SurfYZPlane::clone() const
-  {
-    return new SurfYZPlane(*this);
-  }
+  Surface* SurfYZPlane::clone() const { return new SurfYZPlane(*this); }
 
   /// Surface-specific tests of validity of track parameters.
-  bool SurfYZPlane::isTrackValid(const TrackVector& vec) const
-  {
-    return true;
-  }
+  bool SurfYZPlane::isTrackValid(const TrackVector& vec) const { return true; }
 
   /// Transform global to local coordinates.
   ///
@@ -132,14 +117,13 @@ namespace trkf {
   /// mom - Momentum vector in global coordinate system.
   /// dir - Track direction.
   ///
-  void SurfYZPlane::getMomentum(const TrackVector& vec, double mom[3],
-				TrackDirection dir) const
+  void SurfYZPlane::getMomentum(const TrackVector& vec, double mom[3], TrackDirection dir) const
   {
 
     // Get momentum.
 
     double invp = std::abs(vec(4));
-    double p = 1. / std::max(invp, 1.e-3);   // Capped at 1000. GeV/c.
+    double p = 1. / std::max(invp, 1.e-3); // Capped at 1000. GeV/c.
 
     // Get track slope parameters.
 
@@ -148,11 +132,11 @@ namespace trkf {
 
     // Calculate dw/ds.
 
-    double dwds = 1. / std::sqrt(1. + dudw*dudw + dvdw*dvdw);
-    TrackDirection realdir = getDirection(vec, dir);   // Should be same as original direction.
-    if(realdir == BACKWARD)
+    double dwds = 1. / std::sqrt(1. + dudw * dudw + dvdw * dvdw);
+    TrackDirection realdir = getDirection(vec, dir); // Should be same as original direction.
+    if (realdir == BACKWARD)
       dwds = -dwds;
-    else if(realdir != FORWARD)
+    else if (realdir != FORWARD)
       throw cet::exception("SurfYZPlane") << "Track direction not specified.\n";
 
     // Calculate momentum vector in local coordinate system.
@@ -190,14 +174,13 @@ namespace trkf {
     // Test if the other surface is a SurfYZPlane.
 
     const SurfYZPlane* psurf = dynamic_cast<const SurfYZPlane*>(&surf);
-    if(psurf != 0) {
+    if (psurf != 0) {
 
       // Test whether surface angle parameters are the same
       // within tolerance.
 
       double delta_phi = TVector2::Phi_mpi_pi(fPhi - psurf->phi());
-      if(std::abs(delta_phi) <= fPhiTolerance)
-	result = true;
+      if (std::abs(delta_phi) <= fPhiTolerance) result = true;
     }
     return result;
   }
@@ -220,7 +203,7 @@ namespace trkf {
     // Check if the other surface is parallel to this one.
 
     bool parallel = isParallel(surf);
-    if(!parallel)
+    if (!parallel)
       throw cet::exception("SurfYZPlane") << "Attempt to find distance to non-parallel surface.\n";
 
     // Find the origin of the other surface in global coordinates,
@@ -255,7 +238,7 @@ namespace trkf {
     // Test if the other surface is a SurfYZPlane.
 
     const SurfYZPlane* psurf = dynamic_cast<const SurfYZPlane*>(&surf);
-    if(psurf != 0) {
+    if (psurf != 0) {
 
       // Test whether surface parameters are the same within tolerance.
 
@@ -263,11 +246,9 @@ namespace trkf {
       double dx = fX0 - psurf->x0();
       double dy = fY0 - psurf->y0();
       double dz = fZ0 - psurf->z0();
-      if(std::abs(delta_phi) <= fPhiTolerance &&
-	 std::abs(dx) <= fSepTolerance &&
-	 std::abs(dy) <= fSepTolerance &&
-	 std::abs(dz) <= fSepTolerance)
-	result = true;
+      if (std::abs(delta_phi) <= fPhiTolerance && std::abs(dx) <= fSepTolerance &&
+          std::abs(dy) <= fSepTolerance && std::abs(dz) <= fSepTolerance)
+        result = true;
     }
     return result;
   }

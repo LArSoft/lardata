@@ -43,17 +43,15 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include <iosfwd>
 #include "lardata/RecoObjects/KalmanLinearAlgebra.h"
+#include <iosfwd>
 
 namespace trkf {
 
-  class Surface
-  {
+  class Surface {
   public:
-
     /// Track direction enum.
-    enum TrackDirection {FORWARD, BACKWARD, UNKNOWN};
+    enum TrackDirection { FORWARD, BACKWARD, UNKNOWN };
 
     /// Default constructor.
     Surface();
@@ -83,11 +81,15 @@ namespace trkf {
 
     /// Get direction of track (default UNKNOWN).
     virtual TrackDirection getDirection(const TrackVector& /* vec */,
-					TrackDirection dir=UNKNOWN) const {return dir;}
+                                        TrackDirection dir = UNKNOWN) const
+    {
+      return dir;
+    }
 
     /// Get momentum vector of track.
-    virtual void getMomentum(const TrackVector& vec, double mom[3],
-			     TrackDirection dir=UNKNOWN) const = 0;
+    virtual void getMomentum(const TrackVector& vec,
+                             double mom[3],
+                             TrackDirection dir = UNKNOWN) const = 0;
 
     /// Get pointing error of track.
     virtual double PointingError(const TrackVector& vec, const TrackError& err) const = 0;

@@ -42,11 +42,7 @@ namespace trkf {
     KHitWireLine(const geo::WireID& wireid, double x, double xerr);
 
     /// Get original hit.
-    const art::Ptr<recob::Hit>&
-    getHit() const
-    {
-      return fHit;
-    }
+    const art::Ptr<recob::Hit>& getHit() const { return fHit; }
 
     // Prediction method.
     bool subpredict(const KETrack& tre,

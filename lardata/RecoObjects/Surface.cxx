@@ -13,18 +13,13 @@
 namespace trkf {
 
   /// Default constructor.
-  Surface::Surface()
-  {}
+  Surface::Surface() {}
 
   /// Destructor.
-  Surface::~Surface()
-  {}
+  Surface::~Surface() {}
 
   /// Output operator.
-  std::ostream& operator<<(std::ostream& out, const Surface& surf)
-  {
-    return surf.Print(out);
-  }
+  std::ostream& operator<<(std::ostream& out, const Surface& surf) { return surf.Print(out); }
 
   /// Calculate difference of two track parameter vectors.
   /// This method has a default implementation which is just the numeric difference.

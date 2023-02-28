@@ -14,20 +14,23 @@
 #define LARDATA_ARTDATAHELPER_CHARGEDSPACEPOINTCREATOR_H
 
 // LArSoft libraries
-#include "lardataobj/RecoBase/SpacePoint.h"
 #include "lardataobj/RecoBase/PointCharge.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
 
 // framework libraries
 #include "art/Persistency/Common/PtrMaker.h"
 #include "canvas/Persistency/Common/Ptr.h"
 
 // C/C++ standard libraries
-#include <vector>
-#include <memory> // std::unique_ptr<>
+#include <cstdlib>     // std::size_t
+#include <memory>      // std::unique_ptr<>
 #include <type_traits> // std::enable_if_t, ...
-#include <cstdlib> // std::size_t
+#include <vector>
 
-namespace art { class Event; class ProducesCollector; }
+namespace art {
+  class Event;
+  class ProducesCollector;
+}
 
 namespace recob {
 
@@ -225,7 +228,6 @@ namespace recob {
   class ChargedSpacePointCollectionCreator {
 
   public:
-
     //--- BEGIN Constructors ---------------------------------------------------
     /// @{
     /// @name Constructors
@@ -240,8 +242,7 @@ namespace recob {
      * _art_ pointers will not be enabled (`canMakePointers()` will return
      * `false`).
      */
-    ChargedSpacePointCollectionCreator
-      (art::Event& event, std::string const& instanceName = {});
+    ChargedSpacePointCollectionCreator(art::Event& event, std::string const& instanceName = {});
 
     /**
      * @brief Static function binding a new object to a specific _art_ event.
@@ -257,7 +258,6 @@ namespace recob {
 
     /// @}
     //--- END Constructors ---------------------------------------------------
-
 
     //--- BEGIN Insertion and finish operations --------------------------------
     /// @{
@@ -275,8 +275,7 @@ namespace recob {
      * Data is copied or moved depending on which variant of this method is
      * used.
      */
-    void add
-      (recob::SpacePoint const& spacePoint, recob::PointCharge const& charge);
+    void add(recob::SpacePoint const& spacePoint, recob::PointCharge const& charge);
     void add(recob::SpacePoint&& spacePoint, recob::PointCharge&& charge);
     //@}
 
@@ -296,14 +295,10 @@ namespace recob {
      *
      * No exception safety is offered here.
      */
-    void addAll(
-      std::vector<recob::SpacePoint>&& spacePoints,
-      std::vector<recob::PointCharge>&& charges
-      );
-    void addAll(
-      std::vector<recob::SpacePoint> const& spacePoints,
-      std::vector<recob::PointCharge> const& charges
-      );
+    void addAll(std::vector<recob::SpacePoint>&& spacePoints,
+                std::vector<recob::PointCharge>&& charges);
+    void addAll(std::vector<recob::SpacePoint> const& spacePoints,
+                std::vector<recob::PointCharge> const& charges);
     //@}
 
     /**
@@ -318,10 +313,8 @@ namespace recob {
      */
     void put();
 
-
     /// @}
     //--- END Insertion and finish operations --------------------------------
-
 
     //--- BEGIN Queries and operations -----------------------------------------
     /// @{
@@ -331,7 +324,7 @@ namespace recob {
     bool empty() const { return spent() || fSpacePoints->empty(); }
 
     /// Returns the number of space points currently in the collection.
-    std::size_t size() const { return spent()? 0U: fSpacePoints->size(); }
+    std::size_t size() const { return spent() ? 0U : fSpacePoints->size(); }
 
     /// Removes all data from the collection, making it `empty()`.
     void clear();
@@ -345,45 +338,36 @@ namespace recob {
     ///@}
     //--- END Queries and operations -------------------------------------------
 
-
     //--- BEGIN Complimentary unchecked element access -------------------------
     ///@{
     ///@name Complimentary unchecked element access
 
     /// Returns the specified space point; undefined behaviour if not there.
-    recob::SpacePoint const& spacePoint(std::size_t i) const
-      { return fSpacePoints->operator[](i); }
+    recob::SpacePoint const& spacePoint(std::size_t i) const { return fSpacePoints->operator[](i); }
 
     /// Returns the last inserted space point; undefined behaviour if `empty()`.
-    recob::SpacePoint const& lastSpacePoint() const
-      { return spacePoint(lastIndex()); }
+    recob::SpacePoint const& lastSpacePoint() const { return spacePoint(lastIndex()); }
 
     /// Returns an _art_ pointer to the specified space point (no check done!).
     art::Ptr<recob::SpacePoint> spacePointPtr(std::size_t i) const;
 
     /// Returns an _art_ pointer to the last inserted space point (no check!).
-    art::Ptr<recob::SpacePoint> lastSpacePointPtr() const
-      { return spacePointPtr(lastIndex()); }
-
+    art::Ptr<recob::SpacePoint> lastSpacePointPtr() const { return spacePointPtr(lastIndex()); }
 
     /// Returns the last inserted charge; undefined behaviour if `empty()`.
-    recob::PointCharge const& charge(std::size_t i) const
-      { return fCharges->operator[](i); }
+    recob::PointCharge const& charge(std::size_t i) const { return fCharges->operator[](i); }
 
     /// Returns the last inserted charge; undefined behaviour if `empty()`.
-    recob::PointCharge const& lastCharge() const
-      { return charge(lastIndex()); }
+    recob::PointCharge const& lastCharge() const { return charge(lastIndex()); }
 
     /// Returns an _art_ pointer to the specified charge (no check done!).
     art::Ptr<recob::PointCharge> chargePtr(std::size_t i) const;
 
     /// Returns an _art_ pointer to the inserted charge (no check!).
-    art::Ptr<recob::PointCharge> lastChargePtr() const
-      { return chargePtr(lastIndex()); }
+    art::Ptr<recob::PointCharge> lastChargePtr() const { return chargePtr(lastIndex()); }
 
     /// @}
     //--- END Complimentary unchecked element access ---------------------------
-
 
     //--- BEGIN Static constructor interface -----------------------------------
     /// @{
@@ -409,12 +393,11 @@ namespace recob {
      * } // MyProducer::MyProducer()
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      */
-    static void produces
-      (art::ProducesCollector& producesCollector, std::string const& instanceName = {});
+    static void produces(art::ProducesCollector& producesCollector,
+                         std::string const& instanceName = {});
 
     /// @}
     //--- END Static constructor interface -------------------------------------
-
 
   private:
     art::Event& fEvent; ///< The event this object is bound to.
@@ -436,7 +419,6 @@ namespace recob {
   }; // class ChargedSpacePointCollectionCreator
 
 } // namespace recob
-
 
 //------------------------------------------------------------------------------
 

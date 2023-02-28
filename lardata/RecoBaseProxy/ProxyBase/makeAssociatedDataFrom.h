@@ -12,20 +12,18 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_MAKEASSOCIATEDDATAFROM_H
 
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase/AssociatedData.h"
 #include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
+#include "lardata/RecoBaseProxy/ProxyBase/AssociatedData.h"
 
 // framework libraries
 #include "canvas/Persistency/Common/Assns.h"
 #include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard
-#include <utility> // std::forward()
 #include <cstdlib> // std::size_t
-
+#include <utility> // std::forward()
 
 namespace proxy {
-
 
   // --- BEGIN Associated data infrastructure ----------------------------------
   /// @addtogroup LArSoftProxiesAssociatedData
@@ -33,11 +31,15 @@ namespace proxy {
 
   template <typename Tag, typename Assns>
   auto makeAssociatedDataFrom(Assns const& assns, std::size_t minSize = 0)
-    { return proxy::makeAssociatedData<Tag>(assns, minSize); }
+  {
+    return proxy::makeAssociatedData<Tag>(assns, minSize);
+  }
 
   template <typename Assns>
   auto makeAssociatedDataFrom(Assns const& assns, std::size_t minSize = 0)
-    { return makeAssociatedDataFrom<typename Assns::right_t>(assns, minSize); }
+  {
+    return makeAssociatedDataFrom<typename Assns::right_t>(assns, minSize);
+  }
 
   /**
    * @brief Creates and returns an associated data object.
@@ -64,28 +66,22 @@ namespace proxy {
    * auto assData = makeAssociatedDataFrom<recob::Track, recob::Hit>(event, tag);
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    */
-  template <
-    typename Main, typename Aux, typename Metadata, typename Tag,
-    typename Event
-    >
-  auto makeAssociatedDataFrom
-    (Event const& event, art::InputTag const& tag, std::size_t minSize = 0);
+  template <typename Main, typename Aux, typename Metadata, typename Tag, typename Event>
+  auto makeAssociatedDataFrom(Event const& event,
+                              art::InputTag const& tag,
+                              std::size_t minSize = 0);
 
   template <typename Main, typename Aux, typename Metadata, typename Event>
-  auto makeAssociatedDataFrom
-    (Event const& event, art::InputTag const& tag, std::size_t minSize = 0)
-    {
-      return makeAssociatedDataFrom<Main, Aux, Metadata, Aux, Event>
-        (event, tag, minSize);
-    }
+  auto makeAssociatedDataFrom(Event const& event, art::InputTag const& tag, std::size_t minSize = 0)
+  {
+    return makeAssociatedDataFrom<Main, Aux, Metadata, Aux, Event>(event, tag, minSize);
+  }
 
   template <typename Main, typename Aux, typename Event>
-  auto makeAssociatedDataFrom
-    (Event const& event, art::InputTag const& tag, std::size_t minSize = 0)
-    {
-      return makeAssociatedDataFrom<Main, Aux, void, Aux, Event>
-        (event, tag, minSize);
-    }
+  auto makeAssociatedDataFrom(Event const& event, art::InputTag const& tag, std::size_t minSize = 0)
+  {
+    return makeAssociatedDataFrom<Main, Aux, void, Aux, Event>(event, tag, minSize);
+  }
 
   /**
    * @brief Creates and returns an associated data object.
@@ -112,29 +108,22 @@ namespace proxy {
    * auto assData = makeAssociatedDataFrom<recob::Hit>(handle, event, tag);
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    */
-  template <
-    typename Aux, typename Metadata, typename Tag,
-    typename Handle, typename Event
-    >
-  auto makeAssociatedDataFrom
-    (Handle&& handle, Event const& event, art::InputTag const& tag);
+  template <typename Aux, typename Metadata, typename Tag, typename Handle, typename Event>
+  auto makeAssociatedDataFrom(Handle&& handle, Event const& event, art::InputTag const& tag);
 
   template <typename Aux, typename Metadata, typename Handle, typename Event>
-  auto makeAssociatedDataFrom
-    (Handle&& handle, Event const& event, art::InputTag const& tag)
-    {
-      return makeAssociatedDataFrom<Aux, Metadata, Aux, Handle, Event>
-        (std::forward<Handle>(handle), event, tag);
-    }
+  auto makeAssociatedDataFrom(Handle&& handle, Event const& event, art::InputTag const& tag)
+  {
+    return makeAssociatedDataFrom<Aux, Metadata, Aux, Handle, Event>(
+      std::forward<Handle>(handle), event, tag);
+  }
 
   template <typename Aux, typename Handle, typename Event>
-  auto makeAssociatedDataFrom
-    (Handle&& handle, Event const& event, art::InputTag const& tag)
-    {
-      return makeAssociatedDataFrom<Aux, void, Aux, Handle, Event>
-        (std::forward<Handle>(handle), event, tag);
-    }
-
+  auto makeAssociatedDataFrom(Handle&& handle, Event const& event, art::InputTag const& tag)
+  {
+    return makeAssociatedDataFrom<Aux, void, Aux, Handle, Event>(
+      std::forward<Handle>(handle), event, tag);
+  }
 
   /**
    * @brief Creates and returns an associated data object.
@@ -152,70 +141,58 @@ namespace proxy {
    */
   template <typename Tag, typename MainColl, typename Assns>
   auto makeAssociatedDataFrom(MainColl const& mainColl, Assns const& assns)
-    { return proxy::makeAssociatedData<Tag>(assns, mainColl.size()); }
+  {
+    return proxy::makeAssociatedData<Tag>(assns, mainColl.size());
+  }
 
   template <typename MainColl, typename Assns>
   auto makeAssociatedDataFrom(MainColl const& mainColl, Assns const& assns)
-    { return makeAssociatedDataFrom<typename Assns::right_t>(mainColl, assns); }
-
+  {
+    return makeAssociatedDataFrom<typename Assns::right_t>(mainColl, assns);
+  }
 
   //----------------------------------------------------------------------------
 
   /// @}
   // --- END Associated data infrastructure ------------------------------------
 
-
 } // namespace proxy
-
 
 //------------------------------------------------------------------------------
 //--- template implementation
 //------------------------------------------------------------------------------
 namespace proxy {
 
-
   //----------------------------------------------------------------------------
   //--- makeAssociatedDataFrom() implementations
   //----------------------------------------------------------------------------
-  template <
-    typename Main, typename Aux, typename Metadata, typename Tag,
-    typename Event
-    >
-  auto makeAssociatedDataFrom(
-    Event const& event, art::InputTag const& tag, std::size_t minSize /* = 0 */
-    )
+  template <typename Main, typename Aux, typename Metadata, typename Tag, typename Event>
+  auto makeAssociatedDataFrom(Event const& event,
+                              art::InputTag const& tag,
+                              std::size_t minSize /* = 0 */
+  )
   {
     using Main_t = Main;
     using Aux_t = Aux;
     using Metadata_t = Metadata;
-    using AssociatedData_t
-      = details::AssociatedData<Main_t, Aux_t, Metadata_t, Tag>;
+    using AssociatedData_t = details::AssociatedData<Main_t, Aux_t, Metadata_t, Tag>;
     using Assns_t = typename AssociatedData_t::assns_t;
 
-    return
-      makeAssociatedDataFrom<Tag>(*(event.template getValidHandle<Assns_t>(tag)));
+    return makeAssociatedDataFrom<Tag>(*(event.template getValidHandle<Assns_t>(tag)));
 
   } // makeAssociatedDataFrom(tag)
 
-
   //----------------------------------------------------------------------------
-  template <
-    typename Aux, typename Metadata, typename Tag,
-    typename Handle, typename Event
-    >
-  auto makeAssociatedDataFrom
-    (Handle&& handle, Event const& event, art::InputTag const& tag)
+  template <typename Aux, typename Metadata, typename Tag, typename Handle, typename Event>
+  auto makeAssociatedDataFrom(Handle&& handle, Event const& event, art::InputTag const& tag)
   {
     // Handle::value_type is the main data product type (a collection)
     using Main_t = util::collection_value_t<typename Handle::value_type>;
     using Aux_t = Aux;
     using Metadata_t = Metadata;
-    return makeAssociatedDataFrom<Main_t, Aux_t, Metadata_t, Tag>
-      (event, tag, handle->size());
+    return makeAssociatedDataFrom<Main_t, Aux_t, Metadata_t, Tag>(event, tag, handle->size());
   } // makeAssociatedDataFrom(handle)
 
-
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_MAKEASSOCIATEDDATAFROM_H

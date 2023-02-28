@@ -17,7 +17,6 @@
 // C/C++ standard
 #include <utility> // std::forward()
 
-
 namespace proxy {
 
   // ---------------------------------------------------------------------------
@@ -80,16 +79,13 @@ namespace proxy {
    */
   template <typename CollProxy, typename Event, typename... OptionalArgs>
   auto getCollection(Event const& event, OptionalArgs&&... optionalArgs)
-    {
-      return CollectionProxyMaker<CollProxy>::make
-        (event, std::forward<OptionalArgs>(optionalArgs)...);
-    }
-
+  {
+    return CollectionProxyMaker<CollProxy>::make(event,
+                                                 std::forward<OptionalArgs>(optionalArgs)...);
+  }
 
   // ---------------------------------------------------------------------------
 
-
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_GETCOLLECTION_H

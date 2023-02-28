@@ -26,11 +26,7 @@ namespace trkf {
     PropYZPlane(detinfo::DetectorPropertiesData const& detProp, double tcut, bool doDedx);
 
     /// Clone method.
-    Propagator*
-    clone() const override
-    {
-      return new PropYZPlane(*this);
-    }
+    Propagator* clone() const override { return new PropYZPlane(*this); }
 
     /// Propagate without error.
     std::optional<double> short_vec_prop(KTrack& trk,

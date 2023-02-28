@@ -20,13 +20,12 @@
 #include "canvas/Persistency/Common/Ptr.h"
 
 // C/C++ standard
-#include <vector>
-#include <tuple> // std::tuple_element_t<>, std::get()
-#include <iterator> // std::cbegin(), std::cend()
-#include <utility> // std::move()
+#include <cstdlib>     // std::size_t
+#include <iterator>    // std::cbegin(), std::cend()
+#include <tuple>       // std::tuple_element_t<>, std::get()
 #include <type_traits> // std::is_convertible<>
-#include <cstdlib> // std::size_t
-
+#include <utility>     // std::move()
+#include <vector>
 
 namespace proxy {
 
@@ -64,14 +63,12 @@ namespace proxy {
      *
      * @todo Metadata for `proxy::details::OneTo01Data` is not supported yet.
      */
-    template <
-      typename Main, typename Aux, typename Metadata /* = void */,
-      typename Tag /* = Aux */
-      >
+    template <typename Main, typename Aux, typename Metadata /* = void */, typename Tag /* = Aux */
+              >
     class OneTo01Data {
       using This_t = OneTo01Data<Main, Aux, Metadata, Tag>; ///< This type.
 
-        public:
+    public:
       /// Type of associated datum.
       using aux_t = Aux;
 
@@ -96,35 +93,28 @@ namespace proxy {
       /// Type of the source association.
       using assns_t = art::Assns<main_t, aux_t>;
 
-
-      OneTo01Data(aux_coll_t&& data): auxData(std::move(data)) {}
+      OneTo01Data(aux_coll_t&& data) : auxData(std::move(data)) {}
 
       /// Returns whether the element `i` is associated with auxiliary datum.
-      bool has(std::size_t i) const
-        { return get(i) == aux_ptr_t(); }
+      bool has(std::size_t i) const { return get(i) == aux_ptr_t(); }
 
       /// Returns a copy of the pointer to data associated with element `i`.
-      auxiliary_data_t get(std::size_t i) const
-        { return auxiliary_data_t(auxData[i]); }
-
+      auxiliary_data_t get(std::size_t i) const { return auxiliary_data_t(auxData[i]); }
 
       /// Returns the range with the specified index (no check performed).
-      auto operator[] (std::size_t index) const -> decltype(auto)
-        {
-          static_assert(
-            std::is_convertible<decltype(get(index)), auxiliary_data_t>(),
-            "Inconsistent data types."
-            );
-          return get(index);
-        }
+      auto operator[](std::size_t index) const -> decltype(auto)
+      {
+        static_assert(std::is_convertible<decltype(get(index)), auxiliary_data_t>(),
+                      "Inconsistent data types.");
+        return get(index);
+      }
 
-        private:
+    private:
       aux_coll_t auxData; ///< Data associated to the main collection.
 
     }; // class OneTo01Data<>
 
   } // namespace details
-
 
   //@{
   /**
@@ -166,7 +156,9 @@ namespace proxy {
 
   template <typename Assns>
   auto makeOneTo01data(Assns const& assns, std::size_t minSize = 0)
-    { return makeOneTo01data<typename Assns::right_t>(assns, minSize); }
+  {
+    return makeOneTo01data<typename Assns::right_t>(assns, minSize);
+  }
   //@}
 
   //@{
@@ -190,15 +182,18 @@ namespace proxy {
    */
   template <typename Tag, typename MainColl, typename Assns>
   auto makeOneTo01data(MainColl const& mainColl, Assns const& assns)
-    { return makeOneTo01data<Tag>(assns, mainColl.size()); }
+  {
+    return makeOneTo01data<Tag>(assns, mainColl.size());
+  }
 
   template <typename MainColl, typename Assns>
   auto makeOneTo01data(MainColl const& mainColl, Assns const& assns)
-    { return makeOneTo01data<typename Assns::right_t>(mainColl, assns); }
+  {
+    return makeOneTo01data<typename Assns::right_t>(mainColl, assns);
+  }
   //@}
 
 } // namespace proxy
-
 
 //------------------------------------------------------------------------------
 //--- template implementation
@@ -211,39 +206,39 @@ namespace proxy {
     // Extends vector v with default-constructed data
     // and executes v[index]=value
     template <typename T>
-    void extendAndAssign(
-      std::vector<T>& v,
-      typename std::vector<T>::size_type index,
-      typename std::vector<T>::value_type const& value
-    ) {
+    void extendAndAssign(std::vector<T>& v,
+                         typename std::vector<T>::size_type index,
+                         typename std::vector<T>::value_type const& value)
+    {
       if (index >= v.size()) {
         v.reserve(index + 1);
         v.resize(index);
         v.push_back(value);
       }
-      else v[index] = value;
+      else
+        v[index] = value;
     } // extendAndAssign()
 
     // Extends vector v with default-constructed data
     // and executes v[index]=move(value)
     template <typename T>
-    void extendAndAssign(
-      std::vector<T>& v,
-      typename std::vector<T>::size_type index,
-      typename std::vector<T>::value_type&& value
-    ) {
+    void extendAndAssign(std::vector<T>& v,
+                         typename std::vector<T>::size_type index,
+                         typename std::vector<T>::value_type&& value)
+    {
       if (index >= v.size()) {
         v.reserve(index + 1);
         v.resize(index);
         v.push_back(std::move(value));
       }
-      else v[index] = std::move(value);
+      else
+        v[index] = std::move(value);
     } // extendAndAssign()
-
 
     //--------------------------------------------------------------------------
     template <std::size_t Key, std::size_t Data, typename Iter>
-    auto associationOneToOneFullSequence(Iter begin, Iter end, std::size_t n) {
+    auto associationOneToOneFullSequence(Iter begin, Iter end, std::size_t n)
+    {
       //
       // Here we are actually not using the assumption that the keys are in
       // increasing order; which is just as good as long as we use a fast random
@@ -262,7 +257,6 @@ namespace proxy {
 
   } // namespace details
 
-
   //----------------------------------------------------------------------------
   //--- makeOneTo01data() implementation
   //----------------------------------------------------------------------------
@@ -272,20 +266,16 @@ namespace proxy {
     using Main_t = typename Assns::left_t;
     using Aux_t = typename Assns::right_t;
     using Metadata_t = lar::util::assns_metadata_t<Assns>;
-    using AssociatedData_t
-      = details::OneTo01Data<Main_t, Aux_t, Metadata_t, Tag>;
+    using AssociatedData_t = details::OneTo01Data<Main_t, Aux_t, Metadata_t, Tag>;
 
     using std::cbegin;
     using std::cend;
     return AssociatedData_t(
-      details::associationOneToOneFullSequence<0U, 1U>
-        (cbegin(assns), cend(assns), minSize)
-      );
+      details::associationOneToOneFullSequence<0U, 1U>(cbegin(assns), cend(assns), minSize));
   } // makeOneTo01data(assns)
 
   //----------------------------------------------------------------------------
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_ONETO01DATA_H

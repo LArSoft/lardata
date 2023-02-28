@@ -58,37 +58,37 @@
 #ifndef SIGNALSHAPING_H
 #define SIGNALSHAPING_H
 
-#include <vector>
 #include "TComplex.h"
+#include <vector>
 
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "lardata/Utilities/LArFFT.h"
 
 namespace util {
 
-class SignalShaping {
-public:
-
+  class SignalShaping {
+  public:
     // Constructor, destructor.
     SignalShaping();
     virtual ~SignalShaping();
 
     // Accessors.
-    const std::vector<double>& Response() const {return fResponse;}
-    const std::vector<double>& Response_save() const {return fResponse_save;}
-    const std::vector<TComplex>& ConvKernel() const {return fConvKernel;}
-    const std::vector<TComplex>& Filter() const {return fFilter;}
-    const std::vector<TComplex>& DeconvKernel() const {return fDeconvKernel;}
+    const std::vector<double>& Response() const { return fResponse; }
+    const std::vector<double>& Response_save() const { return fResponse_save; }
+    const std::vector<TComplex>& ConvKernel() const { return fConvKernel; }
+    const std::vector<TComplex>& Filter() const { return fFilter; }
+    const std::vector<TComplex>& DeconvKernel() const { return fDeconvKernel; }
     /* const int GetTimeOffset() const {return fTimeOffset;} */
 
     // Signal shaping methods.
 
     // Convolute a time series with convolution kernel.
-    template <class T> void Convolute(std::vector<T>& func) const;
+    template <class T>
+    void Convolute(std::vector<T>& func) const;
 
     // Convolute a time series with deconvolution kernel.
-    template <class T> void Deconvolute(std::vector<T>& func) const;
-
+    template <class T>
+    void Deconvolute(std::vector<T>& func) const;
 
     // Configuration methods.
 
@@ -97,12 +97,16 @@ public:
     // Reset this class to default-constructed state.
     void Reset();
 
-    void save_response(){ fResponse_save.clear(); fResponse_save=fResponse;}
-    void set_normflag(bool flag){fNorm = flag;}
+    void save_response()
+    {
+      fResponse_save.clear();
+      fResponse_save = fResponse;
+    }
+    void set_normflag(bool flag) { fNorm = flag; }
 
     // Add a time domain response function.
     // Updates overall response function and convolution kernel.
-    void AddResponseFunction(const std::vector<double>& resp, bool ResetResponse = false );
+    void AddResponseFunction(const std::vector<double>& resp, bool ResetResponse = false);
 
     /* //X. Qian, set time offset */
     /* void SetTimeOffset(const int time){fTimeOffset = time;} */
@@ -130,7 +134,6 @@ public:
     void CalculateDeconvKernel() const;
 
   private:
-
     // Attributes.
     // unused double fMinConvKernelFrac;  ///< minimum value of convKernel/peak for deconvolution
 
@@ -158,22 +161,22 @@ public:
 
     // Xin added */
     bool fNorm;
-};
+  };
 
 }
 
 //----------------------------------------------------------------------
 // Convolute a time series with current response.
-template <class T> inline void util::SignalShaping::Convolute(std::vector<T>& func) const
+template <class T>
+inline void util::SignalShaping::Convolute(std::vector<T>& func) const
 {
   // Make sure response configuration is locked.
-  if(!fResponseLocked)
-    LockResponse();
+  if (!fResponseLocked) LockResponse();
 
   art::ServiceHandle<util::LArFFT> fft;
 
   // Make sure that time series has the correct size.
-  if(int const n = func.size(); n != fft->FFTSize())
+  if (int const n = func.size(); n != fft->FFTSize())
     throw cet::exception("SignalShaping") << "Bad time series size = " << n << "\n";
 
   fft->Convolute(func, const_cast<std::vector<TComplex>&>(fConvKernel));
@@ -181,16 +184,16 @@ template <class T> inline void util::SignalShaping::Convolute(std::vector<T>& fu
 
 //----------------------------------------------------------------------
 // Convolute a time series with deconvolution kernel.
-template <class T> inline void util::SignalShaping::Deconvolute(std::vector<T>& func) const
+template <class T>
+inline void util::SignalShaping::Deconvolute(std::vector<T>& func) const
 {
   // Make sure deconvolution kernel is configured.
-  if(!fFilterLocked)
-    CalculateDeconvKernel();
+  if (!fFilterLocked) CalculateDeconvKernel();
 
   art::ServiceHandle<util::LArFFT> fft;
 
   // Make sure that time series has the correct size.
-  if(int const n = func.size(); n != fft->FFTSize())
+  if (int const n = func.size(); n != fft->FFTSize())
     throw cet::exception("SignalShaping") << "Bad time series size = " << n << "\n";
 
   fft->Convolute(func, fDeconvKernel);

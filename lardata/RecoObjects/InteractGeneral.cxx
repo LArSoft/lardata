@@ -43,8 +43,7 @@ namespace trkf {
   /// Then calculate the noise matrix on that surface and
   /// transform back to the original surface.
   ///
-  bool
-  InteractGeneral::noise(const KTrack& trk, double s, TrackError& noise_matrix) const
+  bool InteractGeneral::noise(const KTrack& trk, double s, TrackError& noise_matrix) const
   {
     // Get track position and direction.
 

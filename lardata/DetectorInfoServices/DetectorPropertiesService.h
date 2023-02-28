@@ -23,27 +23,23 @@ namespace detinfo {
     using provider_type = detinfo::DetectorProperties;
 
     virtual ~DetectorPropertiesService() = default;
-    DetectorPropertiesData
-    DataForJob() const
+    DetectorPropertiesData DataForJob() const
     {
       auto const clockData =
         art::ServiceHandle<detinfo::DetectorClocksService const>()->DataForJob();
       return DataForJob(clockData);
     }
-    DetectorPropertiesData
-    DataForJob(detinfo::DetectorClocksData const& clockData) const
+    DetectorPropertiesData DataForJob(detinfo::DetectorClocksData const& clockData) const
     {
       return getDataForJob(clockData);
     }
-    DetectorPropertiesData
-    DataFor(art::Event const& e) const
+    DetectorPropertiesData DataFor(art::Event const& e) const
     {
-      auto const clockData =
-        art::ServiceHandle<detinfo::DetectorClocksService const>()->DataFor(e);
+      auto const clockData = art::ServiceHandle<detinfo::DetectorClocksService const>()->DataFor(e);
       return DataFor(e, clockData);
     }
-    DetectorPropertiesData
-    DataFor(art::Event const& e, detinfo::DetectorClocksData const& clockData) const
+    DetectorPropertiesData DataFor(art::Event const& e,
+                                   detinfo::DetectorClocksData const& clockData) const
     {
       return getDataFor(e, clockData);
     }

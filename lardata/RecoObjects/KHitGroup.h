@@ -29,15 +29,13 @@
 #ifndef KHITGROUP_H
 #define KHITGROUP_H
 
-#include <vector>
 #include "lardata/RecoObjects/KHitBase.h"
+#include <vector>
 
 namespace trkf {
 
-  class KHitGroup
-  {
+  class KHitGroup {
   public:
-
     /// Default constructor.
     KHitGroup(bool has_path = false, double path = 0.);
 
@@ -47,45 +45,48 @@ namespace trkf {
     // Accessors.
 
     /// Surface accessor.
-    const std::shared_ptr<const Surface>& getSurface() const {return fSurf;}
+    const std::shared_ptr<const Surface>& getSurface() const { return fSurf; }
 
     /// Plane index.
-    int getPlane() const {return fPlane;}
+    int getPlane() const { return fPlane; }
 
     /// Measurement collection accessor.
-    const std::vector<std::shared_ptr<const KHitBase> >& getHits() const {return fHits;}
+    const std::vector<std::shared_ptr<const KHitBase>>& getHits() const { return fHits; }
 
     /// Path flag.
-    bool getHasPath() const {return fHasPath;}
+    bool getHasPath() const { return fHasPath; }
 
     /// Estimated path distance.
-    double getPath() const {return fPath;}
+    double getPath() const { return fPath; }
 
     // Modifiers.
 
     /// Clear the collection.
-    void clear() {fHits.clear();}
+    void clear() { fHits.clear(); }
 
     /// Add a mesaurement into the colleciton.
     void addHit(const std::shared_ptr<const KHitBase>& hit);
 
     /// Set path flag and estimated path distance.
-    void setPath(bool has_path, double path) {fHasPath = has_path; fPath = path;}
+    void setPath(bool has_path, double path)
+    {
+      fHasPath = has_path;
+      fPath = path;
+    }
 
     // Relational operators, sort by estimated path distance.
 
-    bool operator==(const KHitGroup& obj) const;  ///< Equivalance operator.
-    bool operator<(const KHitGroup& obj) const;   ///< Less than operator.
+    bool operator==(const KHitGroup& obj) const; ///< Equivalance operator.
+    bool operator<(const KHitGroup& obj) const;  ///< Less than operator.
 
   private:
-
     // Attributes.
 
-    std::shared_ptr<const Surface> fSurf;                  ///< Common surface.
-    int fPlane;                                            ///< Plane index of measurements.
-    std::vector<std::shared_ptr<const KHitBase> > fHits;   ///< Measuement collection.
-    bool fHasPath;                                         ///< Path flag.
-    double fPath;                                          ///< Estimated path distance.
+    std::shared_ptr<const Surface> fSurf;               ///< Common surface.
+    int fPlane;                                         ///< Plane index of measurements.
+    std::vector<std::shared_ptr<const KHitBase>> fHits; ///< Measuement collection.
+    bool fHasPath;                                      ///< Path flag.
+    double fPath;                                       ///< Estimated path distance.
   };
 }
 

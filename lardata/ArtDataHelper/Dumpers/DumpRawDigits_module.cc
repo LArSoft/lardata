@@ -6,10 +6,10 @@
  */
 
 // LArSoft includes
-#include "lardataalg/Utilities/StatCollector.h" // lar::util::MinMaxCollector<>
+#include "larcoreobj/SimpleTypesAndConstants/RawTypes.h" // raw::ChannelID_t
+#include "lardataalg/Utilities/StatCollector.h"          // lar::util::MinMaxCollector<>
 #include "lardataobj/RawData/RawDigit.h"
 #include "lardataobj/RawData/raw.h" // raw::Uncompress()
-#include "larcoreobj/SimpleTypesAndConstants/RawTypes.h" // raw::ChannelID_t
 
 // art libraries
 #include "art/Framework/Core/EDAnalyzer.h"
@@ -20,15 +20,14 @@
 
 // support libraries
 #include "fhiclcpp/types/Atom.h"
-#include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/Comment.h"
+#include "fhiclcpp/types/Name.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // C//C++ standard libraries
-#include <string>
 #include <algorithm> // std::min(), std::copy_n()
-#include <iomanip> // std::setprecision(), std::setw()
-
+#include <iomanip>   // std::setprecision(), std::setw()
+#include <string>
 
 namespace detsim {
 
@@ -51,7 +50,7 @@ namespace detsim {
    *   to this number
    *
    */
-  class DumpRawDigits: public art::EDAnalyzer {
+  class DumpRawDigits : public art::EDAnalyzer {
 
     /// Type to represent a digit.
     using Digit_t = raw::RawDigit::ADCvector_t::value_type;
@@ -59,8 +58,7 @@ namespace detsim {
     /// Type to represent a pedestal.
     using Pedestal_t = Digit_t;
 
-      public:
-
+  public:
     struct Config {
       using Name = fhicl::Name;
       using Comment = fhicl::Comment;
@@ -69,30 +67,29 @@ namespace detsim {
         Name("DetSimModuleLabel"),
         Comment("tag of producer used to create the raw::RawDigit collection"),
         "daq" /* default */
-        };
+      };
 
       fhicl::Atom<std::string> OutputCategory{
         Name("OutputCategory"),
         Comment("the messagefacility category used for the output"),
         "DumpDigits" /* default */
-        };
+      };
 
       fhicl::Atom<unsigned int> DigitsPerLine{
         Name("DigitsPerLine"),
         Comment("number of digits printed per line (0: don't print digits)"),
         20 /* default */
-        };
+      };
 
       fhicl::Atom<Pedestal_t> Pedestal{
         Name("Pedestal"),
         Comment("digit values are written relative to this number"),
         0 /* default */
-        };
+      };
 
     }; // Config
 
     using Parameters = art::EDAnalyzer::Table<Config>;
-
 
     /// Constructor.
     explicit DumpRawDigits(Parameters const& config);
@@ -101,60 +98,56 @@ namespace detsim {
     virtual void beginJob() override;
 
     /// Does the printing.
-    virtual void analyze (art::Event const& evt) override;
+    virtual void analyze(art::Event const& evt) override;
 
-      private:
-
+  private:
     art::InputTag fDetSimModuleLabel; ///< Tag for digits data product.
-    std::string fOutputCategory; ///< Category for `LogVerbatim` output.
-    unsigned int fDigitsPerLine; ///< Ticks/digits per line in the output.
-    Pedestal_t fPedestal; ///< ADC pedestal, will be subtracted from digits.
+    std::string fOutputCategory;      ///< Category for `LogVerbatim` output.
+    unsigned int fDigitsPerLine;      ///< Ticks/digits per line in the output.
+    Pedestal_t fPedestal;             ///< ADC pedestal, will be subtracted from digits.
 
     /// Dumps a single `recob:Wire` to the specified output stream.
     template <typename Stream>
-    void PrintRawDigit(
-      Stream&& out, raw::RawDigit const& digits,
-      std::string indent = "  ", std::string firstIndent = "  "
-      ) const;
+    void PrintRawDigit(Stream&& out,
+                       raw::RawDigit const& digits,
+                       std::string indent = "  ",
+                       std::string firstIndent = "  ") const;
 
   }; // class DumpRawDigits
 
 } // namespace detsim
 
-
 //------------------------------------------------------------------------------
 //---  Implementation
 //------------------------------------------------------------------------------
 detsim::DumpRawDigits::DumpRawDigits(Parameters const& config)
-  : EDAnalyzer         (config)
+  : EDAnalyzer(config)
   , fDetSimModuleLabel(config().DetSimModuleLabel())
-  , fOutputCategory   (config().OutputCategory())
-  , fDigitsPerLine    (config().DigitsPerLine())
-  , fPedestal         (config().Pedestal())
-  {}
-
+  , fOutputCategory(config().OutputCategory())
+  , fDigitsPerLine(config().DigitsPerLine())
+  , fPedestal(config().Pedestal())
+{}
 
 //------------------------------------------------------------------------------
-void detsim::DumpRawDigits::beginJob() {
+void detsim::DumpRawDigits::beginJob()
+{
 
   if (fPedestal != 0) {
-    mf::LogVerbatim(fOutputCategory) << "A pedestal of " << fPedestal
-      << " will be subtracted from all raw digits";
+    mf::LogVerbatim(fOutputCategory)
+      << "A pedestal of " << fPedestal << " will be subtracted from all raw digits";
   } // if pedestal
 
 } // detsim::DumpRawDigits::beginJob()
 
-
 //------------------------------------------------------------------------------
-void detsim::DumpRawDigits::analyze(art::Event const& evt) {
+void detsim::DumpRawDigits::analyze(art::Event const& evt)
+{
 
-  auto const& RawDigits
-    = *(evt.getValidHandle<std::vector<raw::RawDigit>>(fDetSimModuleLabel));
+  auto const& RawDigits = *(evt.getValidHandle<std::vector<raw::RawDigit>>(fDetSimModuleLabel));
 
-  mf::LogVerbatim(fOutputCategory) << "Event " << evt.id()
-    << " contains " << RawDigits.size() << " '" << fDetSimModuleLabel.encode()
-    << "' waveforms";
-  for (raw::RawDigit const& digits: RawDigits) {
+  mf::LogVerbatim(fOutputCategory) << "Event " << evt.id() << " contains " << RawDigits.size()
+                                   << " '" << fDetSimModuleLabel.encode() << "' waveforms";
+  for (raw::RawDigit const& digits : RawDigits) {
 
     PrintRawDigit(mf::LogVerbatim(fOutputCategory), digits);
 
@@ -162,13 +155,14 @@ void detsim::DumpRawDigits::analyze(art::Event const& evt) {
 
 } // caldata::DumpWires::analyze()
 
-
 //------------------------------------------------------------------------------
 template <typename Stream>
-void detsim::DumpRawDigits::PrintRawDigit(
-  Stream&& out, raw::RawDigit const& digits,
-  std::string indent /* = "  " */, std::string firstIndent /* = "  " */
-) const {
+void detsim::DumpRawDigits::PrintRawDigit(Stream&& out,
+                                          raw::RawDigit const& digits,
+                                          std::string indent /* = "  " */,
+                                          std::string firstIndent /* = "  " */
+                                          ) const
+{
 
   //
   // uncompress the digits
@@ -179,21 +173,16 @@ void detsim::DumpRawDigits::PrintRawDigit(
   //
   // print a header for the raw digits
   //
-  out << firstIndent
-    << "  #" << digits.Channel() << ": " << ADCs.size() << " time ticks";
-  if (digits.Samples() != ADCs.size())
-    out << " [!!! EXPECTED " << digits.Samples() << "] ";
-  out
-    << " (" << digits.NADC() << " after compression); compression type: ";
+  out << firstIndent << "  #" << digits.Channel() << ": " << ADCs.size() << " time ticks";
+  if (digits.Samples() != ADCs.size()) out << " [!!! EXPECTED " << digits.Samples() << "] ";
+  out << " (" << digits.NADC() << " after compression); compression type: ";
   switch (digits.Compression()) {
-    case raw::kNone:            out << "no compression"; break;
-    case raw::kHuffman:         out << "Huffman encoding" ; break;
-    case raw::kZeroSuppression: out << "zero suppression"; break;
-    case raw::kZeroHuffman:     out << "zero suppression + Huffman encoding";
-                                break;
-    case raw::kDynamicDec:      out << "dynamic decimation"; break;
-    default:
-      out << "unknown (#" << ((int) digits.Compression()) << ")"; break;
+  case raw::kNone: out << "no compression"; break;
+  case raw::kHuffman: out << "Huffman encoding"; break;
+  case raw::kZeroSuppression: out << "zero suppression"; break;
+  case raw::kZeroHuffman: out << "zero suppression + Huffman encoding"; break;
+  case raw::kDynamicDec: out << "dynamic decimation"; break;
+  default: out << "unknown (#" << ((int)digits.Compression()) << ")"; break;
   } // switch
 
   // print the content of the channel
@@ -203,13 +192,11 @@ void detsim::DumpRawDigits::PrintRawDigit(
     unsigned int repeat_count = 0; // additional lines like the last one
     unsigned int index = 0;
     lar::util::MinMaxCollector<Digit_t> Extrema;
-    out << "\n" << indent
-      << "content of the channel (" << fDigitsPerLine << " ticks per line):";
+    out << "\n" << indent << "content of the channel (" << fDigitsPerLine << " ticks per line):";
     auto iTick = ADCs.cbegin(), tend = ADCs.cend(); // const iterators
     while (iTick != tend) {
       // the next line will show at most fDigitsPerLine ticks
-      unsigned int line_size
-        = std::min(fDigitsPerLine, (unsigned int) ADCs.size() - index);
+      unsigned int line_size = std::min(fDigitsPerLine, (unsigned int)ADCs.size() - index);
       if (line_size == 0) break; // no more ticks
 
       // fill the new buffer (iTick will move forward)
@@ -228,15 +215,15 @@ void detsim::DumpRawDigits::PrintRawDigit(
       // if there are previous repeats, write that on screen
       // before the new, different line
       if (repeat_count > 0) {
-        out << "\n" << indent
-          << "  [ ... repeated " << repeat_count << " more times, "
-          << (repeat_count * LastBuffer.size()) << " ticks ]";
+        out << "\n"
+            << indent << "  [ ... repeated " << repeat_count << " more times, "
+            << (repeat_count * LastBuffer.size()) << " ticks ]";
         repeat_count = 0;
       }
 
       // dump the new line of ticks
       out << "\n" << indent << " ";
-      for (auto digit: DigitBuffer)
+      for (auto digit : DigitBuffer)
         out << " " << std::setw(4) << digit;
 
       // quick way to assign DigitBuffer to LastBuffer
@@ -245,18 +232,16 @@ void detsim::DumpRawDigits::PrintRawDigit(
 
     } // while
     if (repeat_count > 0) {
-      out << "\n" << indent
-        << "  [ ... repeated " << repeat_count << " more times to the end ]";
+      out << "\n" << indent << "  [ ... repeated " << repeat_count << " more times to the end ]";
     }
     if (Extrema.min() < Extrema.max()) {
-      out << "\n" << indent
-        << "  range of " << index
-        << " samples: [" << Extrema.min() << ";" << Extrema.max() << "]";
+      out << "\n"
+          << indent << "  range of " << index << " samples: [" << Extrema.min() << ";"
+          << Extrema.max() << "]";
     }
   } // if dumping the ticks
 
 } // detsim::DumpRawDigits::analyze()
-
 
 //------------------------------------------------------------------------------
 DEFINE_ART_MODULE(detsim::DumpRawDigits)

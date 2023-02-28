@@ -40,7 +40,8 @@ namespace util {
    *
    */
   template <typename Coll, typename KeyOf>
-  std::vector<size_t> MakeIndex(Coll const& data, KeyOf key_of = KeyOf()) {
+  std::vector<size_t> MakeIndex(Coll const& data, KeyOf key_of = KeyOf())
+  {
 
     // we start the index with the best guess that all the items will have
     // a unique key and they are contiguous:
@@ -50,15 +51,12 @@ namespace util {
     size_t min_size = 0; // minimum size needed to hold all keys
 
     size_t iDatum = 0;
-    for (auto const& datum: data) {
+    for (auto const& datum : data) {
       size_t key = size_t(key_of(datum));
       if (key >= min_size) min_size = key + 1;
       if (Index.size() <= key) {
         // make room for the entry: double the size
-        Index.resize(
-          std::max(key + 1, Index.size() * 2),
-          std::numeric_limits<size_t>::max()
-          );
+        Index.resize(std::max(key + 1, Index.size() * 2), std::numeric_limits<size_t>::max());
       } // if expand index
       Index[key] = iDatum;
       ++iDatum;
@@ -66,7 +64,6 @@ namespace util {
     Index.resize(min_size);
     return Index;
   } // MakeIndex()
-
 
   /**
    * @brief Creates a map of objects from an existing collection
@@ -110,7 +107,7 @@ namespace util {
 
     size_t min_size = 0; // minimum size needed to hold all keys
 
-    for (auto const& datum: data) {
+    for (auto const& datum : data) {
       size_t key = size_t(key_of(datum));
       if (key >= min_size) min_size = key + 1;
       if (Index.size() <= key) {
@@ -124,6 +121,5 @@ namespace util {
   } // MakeMap()
 
 } // namespace util
-
 
 #endif // LARDATA_UTILITIES_MAKEINDEX_H

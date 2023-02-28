@@ -3,21 +3,18 @@
 using std::string;
 
 util::LArFFTW::LArFFTW(int transformSize, const void* fplan, const void* rplan, int fitbins)
-  : fSize    (transformSize)
-  , fPlan    (fplan)
-  , rPlan    (rplan)
-  , fFitBins (fitbins)
+  : fSize(transformSize), fPlan(fplan), rPlan(rplan), fFitBins(fitbins)
 {
 
-  fFreqSize = fSize/2+1;
+  fFreqSize = fSize / 2 + 1;
 
   // ... Real-Complex
-  fIn = fftw_malloc(sizeof(double)*fSize);
-  fOut= fftw_malloc(sizeof(fftw_complex)*fFreqSize);
+  fIn = fftw_malloc(sizeof(double) * fSize);
+  fOut = fftw_malloc(sizeof(fftw_complex) * fFreqSize);
 
   // ... Complex-Real
-  rIn = fftw_malloc(sizeof(fftw_complex)*fFreqSize);
-  rOut= fftw_malloc(sizeof(double)*fSize);
+  rIn = fftw_malloc(sizeof(fftw_complex) * fFreqSize);
+  rOut = fftw_malloc(sizeof(double) * fSize);
 
   // ... allocate other data vectors
   fCompTemp.resize(fFreqSize);
@@ -43,12 +40,12 @@ util::LArFFTW::~LArFFTW()
 // According to the Fourier transform identity
 // f(x-a) = Inverse Transform(exp(-2*Pi*i*a*w)F(w))
 // -----------------------------------------------------------------------------
-void util::LArFFTW::ShiftData(ComplexVector & input, double shift)
+void util::LArFFTW::ShiftData(ComplexVector& input, double shift)
 {
-  double factor = -2.0*std::acos(-1)*shift/(double)fSize;
+  double factor = -2.0 * std::acos(-1) * shift / (double)fSize;
 
-  for(int i = 0; i < fFreqSize; i++){
-    input[i] *= std::exp(std::complex<double>(0,factor*(double)i));
+  for (int i = 0; i < fFreqSize; i++) {
+    input[i] *= std::exp(std::complex<double>(0, factor * (double)i));
   }
 
   return;

@@ -18,14 +18,12 @@
 #ifndef LARDATA_UTILITIES_GRIDCONTAINERINDICES_H
 #define LARDATA_UTILITIES_GRIDCONTAINERINDICES_H
 
-
 // LArSoft libraries
 #include "lardata/Utilities/TensorIndices.h"
 
 // C/C++ standard libraries
-#include <cstddef> // std::ptrdiff_t
 #include <array>
-
+#include <cstddef> // std::ptrdiff_t
 
 namespace util {
 
@@ -35,8 +33,8 @@ namespace util {
     template <unsigned int DIMS>
     class GridContainerIndicesBase {
       using IndexManager_t = util::TensorIndices<DIMS>;
-        public:
 
+    public:
       /// Returns the number of dimensions in this object
       static constexpr unsigned int dims() { return DIMS; }
 
@@ -55,14 +53,13 @@ namespace util {
       /// Constructor: specifies the size of the container and allocates it
       GridContainerIndicesBase(std::array<size_t, dims()> const& new_dims)
         : indices(new_dims.begin())
-        {}
+      {}
 
       /// @{
       /// @name Grid structure
 
       /// Returns whether the specified index is valid
-      bool has(CellIndexOffset_t index) const
-        { return indices.hasLinIndex(index); }
+      bool has(CellIndexOffset_t index) const { return indices.hasLinIndex(index); }
 
       /// Returns the number of cells in the grid
       size_t size() const { return indices.size(); }
@@ -73,39 +70,33 @@ namespace util {
       /// @name Indexing
 
       /// Returns the index of the element from its cell coordinates (no check!)
-      CellIndex_t operator[] (CellID_t id) const { return index(id); }
+      CellIndex_t operator[](CellID_t id) const { return index(id); }
 
       /// Returns the difference in index of cellID respect to origin
-      CellIndexOffset_t offset
-        (CellID_t const& origin, CellID_t const& cellID) const
-        { return index(cellID) - index(origin); }
+      CellIndexOffset_t offset(CellID_t const& origin, CellID_t const& cellID) const
+      {
+        return index(cellID) - index(origin);
+      }
 
       /// @}
 
-        protected:
+    protected:
       IndexManager_t indices; ///< the actual worker
 
       /// Returns the index of the element from its cell coordinates (no check!)
-      CellIndex_t index(CellID_t id) const
-        { return indices(id.begin()); }
+      CellIndex_t index(CellID_t id) const { return indices(id.begin()); }
 
     }; // GridContainerIndicesBase
 
   } // namespace details
 
-
-
   /// Index manager for a container of data arranged on a >=1-dim grid
   template <unsigned int DIMS = 1U>
-  class GridContainerIndicesBase1D:
-    public details::GridContainerIndicesBase<DIMS>
-  {
-    static_assert(DIMS >= 1U,
-      "Dimensions for GridContainerIndicesBase1D must be at least 1");
+  class GridContainerIndicesBase1D : public details::GridContainerIndicesBase<DIMS> {
+    static_assert(DIMS >= 1U, "Dimensions for GridContainerIndicesBase1D must be at least 1");
     using Base_t = details::GridContainerIndicesBase<DIMS>;
 
-      public:
-
+  public:
     using Base_t::GridContainerIndicesBase;
 
     /// @{
@@ -113,7 +104,9 @@ namespace util {
 
     /// Returns whether the specified x index is valid
     bool hasX(typename Base_t::CellDimIndex_t index) const
-      { return Base_t::indices.template hasIndex<0>(index); }
+    {
+      return Base_t::indices.template hasIndex<0>(index);
+    }
 
     /// Returns the number of cells on the x axis of the grid
     size_t sizeX() const { return Base_t::indices.template dim<0>(); }
@@ -122,17 +115,14 @@ namespace util {
 
   }; // GridContainerIndicesBase1D
 
-
   /// Index manager for a container of data arranged on a >=2-dim grid
   template <unsigned int DIMS = 2U>
-  class GridContainerIndicesBase2D: public GridContainerIndicesBase1D<DIMS> {
-    static_assert(DIMS >= 2U,
-      "Dimensions for GridContainerIndicesBase2D must be at least 2");
+  class GridContainerIndicesBase2D : public GridContainerIndicesBase1D<DIMS> {
+    static_assert(DIMS >= 2U, "Dimensions for GridContainerIndicesBase2D must be at least 2");
 
     using Base_t = GridContainerIndicesBase1D<DIMS>;
 
-      public:
-
+  public:
     using Base_t::GridContainerIndicesBase1D;
 
     /// @{
@@ -140,7 +130,9 @@ namespace util {
 
     /// Returns whether the specified y index is valid
     bool hasY(typename Base_t::CellDimIndex_t index) const
-      { return Base_t::indices.template hasIndex<1>(index); }
+    {
+      return Base_t::indices.template hasIndex<1>(index);
+    }
 
     /// Returns the number of cells on the y axis of the grid
     size_t sizeY() const { return Base_t::indices.template dim<1>(); }
@@ -149,16 +141,13 @@ namespace util {
 
   }; // GridContainerIndicesBase2D
 
-
   /// Index manager for a container of data arranged on a >=3-dim grid
   template <unsigned int DIMS = 3U>
-  class GridContainerIndicesBase3D: public GridContainerIndicesBase2D<DIMS> {
-    static_assert(DIMS >= 3U,
-      "Dimensions for GridContainerIndicesBase3D must be at least 3");
+  class GridContainerIndicesBase3D : public GridContainerIndicesBase2D<DIMS> {
+    static_assert(DIMS >= 3U, "Dimensions for GridContainerIndicesBase3D must be at least 3");
     using Base_t = GridContainerIndicesBase2D<DIMS>;
 
-      public:
-
+  public:
     using Base_t::GridContainerIndicesBase2D;
 
     /// @{
@@ -166,7 +155,9 @@ namespace util {
 
     /// Returns whether the specified z index is valid
     bool hasZ(typename Base_t::CellDimIndex_t index) const
-      { return Base_t::indices.template hasIndex<2>(index); }
+    {
+      return Base_t::indices.template hasIndex<2>(index);
+    }
 
     /// Returns the number of cells on the z axis of the grid
     size_t sizeZ() const { return Base_t::indices.template dim<2>(); }
@@ -175,18 +166,12 @@ namespace util {
 
   }; // GridContainerIndicesBase3D
 
-
-
   /// Index manager for a container of data arranged on a 2D grid
   using GridContainer2DIndices = GridContainerIndicesBase2D<>;
 
   /// Index manager for a container of data arranged on a 3D grid
   using GridContainer3DIndices = GridContainerIndicesBase3D<>;
 
-
 } // namespace util
 
-
-
 #endif // LARDATA_UTILITIES_GRIDCONTAINERINDICES_H
-

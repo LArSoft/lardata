@@ -10,10 +10,8 @@
 #ifndef LARDATA_UTILITIES_CHISQUAREACCUMULATOR_H
 #define LARDATA_UTILITIES_CHISQUAREACCUMULATOR_H
 
-
 // C/C++ standard libraries
 #include <utility> // std::move(), std::forward()
-
 
 namespace lar {
   namespace util {
@@ -53,9 +51,9 @@ namespace lar {
      */
     template <typename F, typename T = double>
     class ChiSquareAccumulator {
-        public:
+    public:
       using Function_t = F; ///< Type of function for the expectation.
-      using Data_t = T; ///< Type of parameter and observed values.
+      using Data_t = T;     ///< Type of parameter and observed values.
 
       //@{
       /**
@@ -65,10 +63,8 @@ namespace lar {
        * The expectation function domain must be a single dimension of type
        * `Data_t`.
        */
-      ChiSquareAccumulator(Function_t const& expected)
-        : fExpected(expected) {}
+      ChiSquareAccumulator(Function_t const& expected) : fExpected(expected) {}
       // @}
-
 
       // --- BEGIN -- Access to results ----------------------------------------
       /// @name Access to results
@@ -77,7 +73,7 @@ namespace lar {
       // @{
       /// Returns the value of &chi;&sup2; currently accumulated.
       Data_t chiSquare() const { return fChiSq; }
-      Data_t operator() () const { return chiSquare(); }
+      Data_t operator()() const { return chiSquare(); }
       operator Data_t() const { return chiSquare(); }
       //@}
 
@@ -89,8 +85,6 @@ namespace lar {
 
       /// @}
       // --- END -- Access to results ------------------------------------------
-
-
 
       // --- BEGIN -- Data manipulation ----------------------------------------
       /// @name Data manipulation
@@ -106,7 +100,10 @@ namespace lar {
        * The observed values are considered to have nominal uncertainty `1`.
        */
       void add(Data_t x, Data_t y)
-        { fChiSq += sqr(y - expected(x)); ++fN; }
+      {
+        fChiSq += sqr(y - expected(x));
+        ++fN;
+      }
 
       /**
        * @brief Adds a data point to the &chi;&sup2;.
@@ -118,29 +115,34 @@ namespace lar {
        * where _e_ is the expectation function (`expected()`).
        */
       void add(Data_t x, Data_t y, Data_t s)
-        { fChiSq += sqr(z(y, expected(x), s)); ++fN; }
+      {
+        fChiSq += sqr(z(y, expected(x), s));
+        ++fN;
+      }
 
       /// Resets all the counts, starting from no data.
-      void clear() { fChiSq = Data_t{0}; fN = 0U; }
+      void clear()
+      {
+        fChiSq = Data_t{0};
+        fN = 0U;
+      }
 
       /// @}
       // --- END -- Data manipulation ------------------------------------------
 
-        private:
+    private:
       unsigned int fN = 0U; ///< Number of data entries.
       Data_t fChiSq = 0.0;  ///< Accumulated &chi;&sup2; value.
 
       Function_t fExpected; ///< Function for the expectation.
 
       /// Normal variable.
-      static Data_t z(Data_t x, Data_t mu, Data_t sigma)
-        { return (x - mu) / sigma; }
+      static Data_t z(Data_t x, Data_t mu, Data_t sigma) { return (x - mu) / sigma; }
 
       /// The usual square function.
-      static Data_t sqr(Data_t v) { return v*v; }
+      static Data_t sqr(Data_t v) { return v * v; }
 
     }; // ChiSquareAccumulator<>
-
 
     //--------------------------------------------------------------------------
     /**
@@ -159,7 +161,9 @@ namespace lar {
      */
     template <typename F>
     auto makeChiSquareAccumulator(F&& e)
-      { return lar::util::ChiSquareAccumulator<F>(std::forward<F>(e)); }
+    {
+      return lar::util::ChiSquareAccumulator<F>(std::forward<F>(e));
+    }
 
     /**
      * @brief Creates a `ChiSquareAccumulator` object with the specified function.
@@ -178,15 +182,13 @@ namespace lar {
      */
     template <typename T, typename F>
     auto makeChiSquareAccumulator(F&& e)
-      { return lar::util::ChiSquareAccumulator<F, T>(std::forward<F>(e)); }
-
+    {
+      return lar::util::ChiSquareAccumulator<F, T>(std::forward<F>(e));
+    }
 
     //--------------------------------------------------------------------------
 
   } // namespace util
 } // namespace lar
 
-
-
 #endif // LARDATA_UTILITIES_CHISQUAREACCUMULATOR_H
-

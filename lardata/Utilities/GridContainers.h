@@ -20,9 +20,8 @@
 #include "lardata/Utilities/GridContainerIndices.h"
 
 // C/C++ standard libraries
-#include <vector>
 #include <array>
-
+#include <vector>
 
 namespace util {
 
@@ -41,12 +40,11 @@ namespace util {
     template <typename DATUM, typename IXMAN>
     class GridContainerBase {
 
-        public:
-      using Datum_t = DATUM; ///< type of contained datum
+    public:
+      using Datum_t = DATUM;   ///< type of contained datum
       using Indexer_t = IXMAN; /// type of index manager
 
       using Grid_t = GridContainerBase<Datum_t, Indexer_t>; ///< this type
-
 
       static constexpr unsigned int dims() { return IXMAN::dims(); }
 
@@ -73,9 +71,8 @@ namespace util {
 
       /// Constructor: specifies the size of the container and allocates it
       GridContainerBase(std::array<size_t, dims()> const& dims)
-        : indices(dims)
-        , data(indices.size())
-        {}
+        : indices(dims), data(indices.size())
+      {}
 
       /// @{
       /// @name Data structure
@@ -95,21 +92,22 @@ namespace util {
       CellIndex_t index(CellID_t const& id) const { return indices[id]; }
 
       /// Returns the difference in index from two cells
-      CellIndexOffset_t indexOffset
-        (CellID_t const& origin, CellID_t const& cellID) const
-        { return indices.offset(origin, cellID); }
+      CellIndexOffset_t indexOffset(CellID_t const& origin, CellID_t const& cellID) const
+      {
+        return indices.offset(origin, cellID);
+      }
 
       /// Returns a reference to the specified cell
-      Cell_t& operator[] (CellID_t const& id) { return cell(id); }
+      Cell_t& operator[](CellID_t const& id) { return cell(id); }
 
       /// Returns a constant reference to the specified cell
-      Cell_t const& operator[] (CellID_t const& id) const { return cell(id); }
+      Cell_t const& operator[](CellID_t const& id) const { return cell(id); }
 
       /// Returns a reference to to the cell with specified index
-      Cell_t& operator[] (CellIndex_t index) { return data[index]; }
+      Cell_t& operator[](CellIndex_t index) { return data[index]; }
 
       /// Returns a constant reference to the cell with specified index
-      Cell_t const& operator[] (CellIndex_t index) const { return data[index]; }
+      Cell_t const& operator[](CellIndex_t index) const { return data[index]; }
 
       ///@}
 
@@ -117,44 +115,39 @@ namespace util {
       /// @name Data insertion
 
       /// Copies an element into the specified cell
-      void insert(CellID_t const& cellID, Datum_t const& elem)
-        { cell(cellID).push_back(elem); }
+      void insert(CellID_t const& cellID, Datum_t const& elem) { cell(cellID).push_back(elem); }
 
       /// Moves an element into the specified cell
       void insert(CellID_t const& cellID, Datum_t&& elem)
-        { cell(cellID).push_back(std::move(elem)); }
+      {
+        cell(cellID).push_back(std::move(elem));
+      }
 
       /// Copies an element into the cell with the specified index
-      void insert(CellIndex_t index, Datum_t const& elem)
-        { data[index].push_back(elem); }
+      void insert(CellIndex_t index, Datum_t const& elem) { data[index].push_back(elem); }
 
       /// Moves an element into the cell with the specified index
-      void insert(CellIndex_t index, Datum_t&& elem)
-        { data[index].push_back(std::move(elem)); }
+      void insert(CellIndex_t index, Datum_t&& elem) { data[index].push_back(std::move(elem)); }
 
       /// @}
 
       /// Returns the index manager of the grid
       Indexer_t const& indexManager() const { return indices; }
 
-
-        protected:
+    protected:
       Indexer_t indices; ///< manager of the indices of the container
 
       Cells_t data; ///< organised collection of points
 
       /// Returns a reference to the specified cell
-      Cell_t& cell(CellID_t const& cellID)
-        { return data[index(cellID)]; }
+      Cell_t& cell(CellID_t const& cellID) { return data[index(cellID)]; }
 
       /// Returns a constant reference to the specified cell
-      Cell_t const& cell(CellID_t const& cellID) const
-        { return data[index(cellID)]; }
+      Cell_t const& cell(CellID_t const& cellID) const { return data[index(cellID)]; }
 
     }; // GridContainerBase<>
 
   } // namespace details
-
 
   /**
    * @brief Base class for a container of data arranged on a 1D-grid
@@ -164,30 +157,26 @@ namespace util {
    *
    */
   template <typename DATUM, typename IXMAN>
-  class GridContainerBase1D: public details::GridContainerBase<DATUM, IXMAN> {
+  class GridContainerBase1D : public details::GridContainerBase<DATUM, IXMAN> {
     using Base_t = details::GridContainerBase<DATUM, IXMAN>;
-    static_assert(Base_t::dims() >= 1,
-      "GridContainerBase1D must have dimensions 1 or larger.");
+    static_assert(Base_t::dims() >= 1, "GridContainerBase1D must have dimensions 1 or larger.");
 
-      public:
-
+  public:
     using Base_t::GridContainerBase;
 
     /// @{
     /// @name Data structure
 
     /// Returns whether the specified x index is valid
-    bool hasX(typename Base_t::CellDimIndex_t index) const
-      { return Base_t::indices.hasX(index); }
+    bool hasX(typename Base_t::CellDimIndex_t index) const { return Base_t::indices.hasX(index); }
 
     /// Returns the size of the container in the first dimension (x)
     size_t sizeX() const { return Base_t::indices.sizeX(); }
 
     /// @}
 
-      protected:
+  protected:
   }; // GridContainerBase1D<>
-
 
   /**
    * @brief Base class for a container of data arranged on a 2D-grid
@@ -197,13 +186,11 @@ namespace util {
    *
    */
   template <typename DATUM, typename IXMAN>
-  class GridContainerBase2D: public GridContainerBase1D<DATUM, IXMAN> {
+  class GridContainerBase2D : public GridContainerBase1D<DATUM, IXMAN> {
     using Base_t = GridContainerBase1D<DATUM, IXMAN>;
-    static_assert(Base_t::dims() >= 2,
-      "GridContainerBase2D must have dimensions 2 or larger.");
+    static_assert(Base_t::dims() >= 2, "GridContainerBase2D must have dimensions 2 or larger.");
 
-      public:
-
+  public:
     using Base_t::GridContainerBase1D;
 
     /// @{
@@ -213,14 +200,12 @@ namespace util {
     size_t sizeY() const { return Base_t::indices.sizeY(); }
 
     /// Returns whether the specified x index is valid
-    bool hasY(typename Base_t::CellDimIndex_t index) const
-      { return Base_t::indices.hasY(index); }
+    bool hasY(typename Base_t::CellDimIndex_t index) const { return Base_t::indices.hasY(index); }
 
     /// @}
 
-      protected:
+  protected:
   }; // GridContainerBase2D<>
-
 
   /**
    * @brief Base class for a container of data arranged on a 3D-grid
@@ -230,13 +215,11 @@ namespace util {
    *
    */
   template <typename DATUM, typename IXMAN>
-  class GridContainerBase3D: public GridContainerBase2D<DATUM, IXMAN> {
+  class GridContainerBase3D : public GridContainerBase2D<DATUM, IXMAN> {
     using Base_t = GridContainerBase2D<DATUM, IXMAN>;
-    static_assert(Base_t::dims() >= 3,
-      "GridContainerBase3D must have dimensions 3 or larger.");
+    static_assert(Base_t::dims() >= 3, "GridContainerBase3D must have dimensions 3 or larger.");
 
-      public:
-
+  public:
     using Base_t::GridContainerBase2D;
 
     /// @{
@@ -246,14 +229,12 @@ namespace util {
     size_t sizeZ() const { return Base_t::indices.sizeZ(); }
 
     /// Returns whether the specified x index is valid
-    bool hasZ(typename Base_t::CellDimIndex_t index) const
-      { return Base_t::indices.hasZ(index); }
+    bool hasZ(typename Base_t::CellDimIndex_t index) const { return Base_t::indices.hasZ(index); }
 
     /// @}
 
-      protected:
+  protected:
   }; // GridContainerBase3D<>
-
 
   /**
    * @brief Container allowing 2D indexing
@@ -265,7 +246,6 @@ namespace util {
    */
   template <typename DATUM>
   using GridContainer2D = GridContainerBase2D<DATUM, GridContainer2DIndices>;
-
 
   /**
    * @brief Container allowing 3D indexing
@@ -279,6 +259,5 @@ namespace util {
   using GridContainer3D = GridContainerBase3D<DATUM, GridContainer3DIndices>;
 
 } // namespace util
-
 
 #endif // LARDATA_UTILITIES_GRIDCONTAINERS_H

@@ -12,16 +12,15 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_MAKEONETO01DATAFROM_H
 
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase/OneTo01Data.h"
 #include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t
+#include "lardata/RecoBaseProxy/ProxyBase/OneTo01Data.h"
 
 // framework libraries
 #include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard libraries
-#include <utility> // std::forward()
 #include <cstdlib> // std::size_t
-
+#include <utility> // std::forward()
 
 namespace proxy {
 
@@ -65,11 +64,15 @@ namespace proxy {
    */
   template <typename Tag, typename Assns>
   auto makeOneTo01dataFrom(Assns const& assns, std::size_t minSize = 0)
-    { return proxy::makeOneTo01data<Tag>(assns, minSize); }
+  {
+    return proxy::makeOneTo01data<Tag>(assns, minSize);
+  }
 
   template <typename Assns>
   auto makeOneTo01dataFrom(Assns const& assns, std::size_t minSize = 0)
-    { return proxy::makeOneTo01data(assns, minSize); }
+  {
+    return proxy::makeOneTo01data(assns, minSize);
+  }
 
   /**
    * @brief Creates and returns an one-to-(zero/one) associated data object.
@@ -92,19 +95,14 @@ namespace proxy {
    * auto assData = makeOneTo01dataFrom<recob::Track, recob::Vertex>(event, tag);
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    */
-  template <
-    typename Main, typename Aux, typename Metadata, typename Tag, typename Event
-    >
-  auto makeOneTo01dataFrom
-    (Event const& event, art::InputTag const& tag, std::size_t minSize = 0);
+  template <typename Main, typename Aux, typename Metadata, typename Tag, typename Event>
+  auto makeOneTo01dataFrom(Event const& event, art::InputTag const& tag, std::size_t minSize = 0);
 
   template <typename Main, typename Aux, typename Metadata, typename Event>
-  auto makeOneTo01dataFrom
-    (Event const& event, art::InputTag const& tag, std::size_t minSize = 0)
-    {
-      return makeOneTo01dataFrom<Main, Aux, Metadata, Aux, Event>
-        (event, tag, minSize);
-    }
+  auto makeOneTo01dataFrom(Event const& event, art::InputTag const& tag, std::size_t minSize = 0)
+  {
+    return makeOneTo01dataFrom<Main, Aux, Metadata, Aux, Event>(event, tag, minSize);
+  }
 
   /**
    * @brief Creates and returns an one-to-(zero/one) associated data object.
@@ -130,21 +128,15 @@ namespace proxy {
    * auto assData = makeOneTo01dataFrom<recob::Vertex>(handle, event, tag);
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    */
-  template <
-    typename Aux, typename Metadata, typename Tag,
-    typename Handle, typename Event
-    >
-  auto makeOneTo01dataFrom
-    (Handle&& handle, Event const& event, art::InputTag const& tag);
+  template <typename Aux, typename Metadata, typename Tag, typename Handle, typename Event>
+  auto makeOneTo01dataFrom(Handle&& handle, Event const& event, art::InputTag const& tag);
 
   template <typename Aux, typename Metadata, typename Handle, typename Event>
-  auto makeOneTo01dataFrom
-    (Handle&& handle, Event const& event, art::InputTag const& tag)
-    {
-      return makeOneTo01dataFrom<Aux, Metadata, Aux, Handle, Event>
-        (std::forward<Handle>(handle), event, tag);
-    }
-
+  auto makeOneTo01dataFrom(Handle&& handle, Event const& event, art::InputTag const& tag)
+  {
+    return makeOneTo01dataFrom<Aux, Metadata, Aux, Handle, Event>(
+      std::forward<Handle>(handle), event, tag);
+  }
 
   /**
    * @brief Creates and returns an one-to-(zero/one) associated data object.
@@ -162,19 +154,20 @@ namespace proxy {
    */
   template <typename Tag, typename MainColl, typename Assns>
   auto makeOneTo01dataFrom(MainColl const& mainColl, Assns const& assns)
-    { return proxy::makeOneTo01data<Tag>(assns, mainColl.size()); }
+  {
+    return proxy::makeOneTo01data<Tag>(assns, mainColl.size());
+  }
 
   template <typename MainColl, typename Assns>
   auto makeOneTo01dataFrom(MainColl const& mainColl, Assns const& assns)
-    { return proxy::makeOneTo01data<typename Assns::right_t>(mainColl, assns); }
-
+  {
+    return proxy::makeOneTo01data<typename Assns::right_t>(mainColl, assns);
+  }
 
   /// @}
   // --- END LArSoftProxiesAssociatedData --------------------------------------
 
-
 } // namespace proxy
-
 
 //------------------------------------------------------------------------------
 //--- template implementation
@@ -184,49 +177,35 @@ namespace proxy {
   //----------------------------------------------------------------------------
   //--- makeOneTo01dataFrom() implementations
   //----------------------------------------------------------------------------
-  template <
-    typename Main, typename Aux, typename Metadata,
-    typename Tag,
-    typename Event
-    >
-  auto makeOneTo01dataFrom(
-    Event const& event, art::InputTag const& tag, std::size_t minSize /* = 0 */
+  template <typename Main, typename Aux, typename Metadata, typename Tag, typename Event>
+  auto makeOneTo01dataFrom(Event const& event,
+                           art::InputTag const& tag,
+                           std::size_t minSize /* = 0 */
   )
   {
     using Main_t = Main;
     using Aux_t = Aux;
     using Metadata_t = Metadata;
-    using AssociatedData_t
-      = details::OneTo01Data<Main_t, Aux_t, Metadata_t, Tag>;
+    using AssociatedData_t = details::OneTo01Data<Main_t, Aux_t, Metadata_t, Tag>;
     using Assns_t = typename AssociatedData_t::assns_t;
 
-    return makeOneTo01dataFrom<Tag>
-      (*(event.template getValidHandle<Assns_t>(tag)), minSize);
+    return makeOneTo01dataFrom<Tag>(*(event.template getValidHandle<Assns_t>(tag)), minSize);
 
   } // makeOneTo01dataFrom(tag)
 
-
   //----------------------------------------------------------------------------
-  template <
-    typename Aux, typename Metadata,
-    typename Tag,
-    typename Handle, typename Event
-    >
-  auto makeOneTo01dataFrom
-    (Handle&& handle, Event const& event, art::InputTag const& tag)
+  template <typename Aux, typename Metadata, typename Tag, typename Handle, typename Event>
+  auto makeOneTo01dataFrom(Handle&& handle, Event const& event, art::InputTag const& tag)
   {
     // Handle::value_type is the main data product type (a collection)
     using Main_t = util::collection_value_t<typename Handle::value_type>;
     using Aux_t = Aux;
     using Metadata_t = Metadata;
-    return makeOneTo01dataFrom<Main_t, Aux_t, Metadata_t, Tag>
-      (event, tag, handle->size());
+    return makeOneTo01dataFrom<Main_t, Aux_t, Metadata_t, Tag>(event, tag, handle->size());
   } // makeOneTo01dataFrom(handle)
-
 
   //----------------------------------------------------------------------------
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_MAKEONETO01DATAFROM_H

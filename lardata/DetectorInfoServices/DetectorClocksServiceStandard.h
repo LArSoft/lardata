@@ -89,14 +89,9 @@ namespace detinfo {
     void preBeginRun(art::Run const& run);
     void postOpenFile(std::string const& filename);
 
-    DetectorClocksData
-    DataForJob() const override
-    {
-      return fClocks.DataForJob();
-    }
+    DetectorClocksData DataForJob() const override { return fClocks.DataForJob(); }
 
-    DetectorClocksData
-    DataFor(art::Event const& e) const override;
+    DetectorClocksData DataFor(art::Event const& e) const override;
 
     DetectorClocksStandard fClocks;
     bool fInheritClockConfig;
@@ -108,4 +103,3 @@ DECLARE_ART_SERVICE_INTERFACE_IMPL(detinfo::DetectorClocksServiceStandard,
                                    SHARED)
 
 #endif // DETECTORCLOCKSSERVICESTANDARD_H
-

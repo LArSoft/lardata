@@ -28,11 +28,7 @@ namespace trkf {
   public:
     InteractPlane(detinfo::DetectorPropertiesData const& detProp, double tcut);
 
-    Interactor*
-    clone() const override
-    {
-      return new InteractPlane(*this);
-    }
+    Interactor* clone() const override { return new InteractPlane(*this); }
 
     /// Calculate noise matrix.
     bool noise(const KTrack& trk, double s, TrackError& noise_matrix) const override;

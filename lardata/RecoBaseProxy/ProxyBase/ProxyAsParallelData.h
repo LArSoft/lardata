@@ -11,28 +11,23 @@
 #ifndef LARDATA_RECOBASEPROXY_PROXYBASE_PROXYASPARALLELDATA_H
 #define LARDATA_RECOBASEPROXY_PROXYBASE_PROXYASPARALLELDATA_H
 
-
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase/ParallelData.h"
 #include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
+#include "lardata/RecoBaseProxy/ProxyBase/ParallelData.h"
 
 // C/C++ standard
 #include <utility> // std::move()
-
 
 namespace proxy {
 
   namespace details {
 
-    template <
-      typename AuxProxyColl,
-      typename Aux = util::collection_value_t<AuxProxyColl>,
-      typename Tag = Aux
-      >
+    template <typename AuxProxyColl,
+              typename Aux = util::collection_value_t<AuxProxyColl>,
+              typename Tag = Aux>
     struct ProxyAsParallelData;
 
   } // namespace details
-
 
   // --- BEGIN Infrastructure for proxies as auxiliary data --------------------
   /**
@@ -46,21 +41,16 @@ namespace proxy {
    * @{
    */
 
-  template <
-    typename Tag /* = Aux */,
-    typename Aux /* = util::collection_value_t<AuxProxyColl>*/,
-    typename AuxProxyColl
-    >
+  template <typename Tag /* = Aux */,
+            typename Aux /* = util::collection_value_t<AuxProxyColl>*/,
+            typename AuxProxyColl>
   auto makeProxyAsParallelData(AuxProxyColl&& auxProxy)
-    {
-      return details::ProxyAsParallelData<AuxProxyColl, Aux, Tag>
-        (std::move(auxProxy));
-    } // makeProxyAsParallelData()
-
+  {
+    return details::ProxyAsParallelData<AuxProxyColl, Aux, Tag>(std::move(auxProxy));
+  } // makeProxyAsParallelData()
 
   /// @}
   /// --- END Infrastructure for proxies as auxiliary data ---------------------
-
 
   //----------------------------------------------------------------------------
   namespace details {
@@ -76,33 +66,26 @@ namespace proxy {
      * This object inherits its interface from `proxy::ParallelData`.
      * In addition, it owns the proxy it wraps.
      */
-    template <
-      typename AuxProxyColl,
-      typename Aux /* = util::collection_value_t<AuxProxyColl> */,
-      typename Tag /* = Aux */
-      >
-    struct ProxyAsParallelData
-      : private AuxProxyColl
-      , public ParallelData<AuxProxyColl, Aux, Tag>
-    {
+    template <typename AuxProxyColl,
+              typename Aux /* = util::collection_value_t<AuxProxyColl> */,
+              typename Tag /* = Aux */
+              >
+    struct ProxyAsParallelData : private AuxProxyColl, public ParallelData<AuxProxyColl, Aux, Tag> {
       /// Steals and wraps collection `proxy`.
       ProxyAsParallelData(AuxProxyColl&& proxy)
         : AuxProxyColl(std::move(proxy))
-        , ParallelData<AuxProxyColl, Aux, Tag>
-          (static_cast<AuxProxyColl const*>(this))
-        {}
+        , ParallelData<AuxProxyColl, Aux, Tag>(static_cast<AuxProxyColl const*>(this))
+      {}
 
       // explicitly select the tag from the parallel data (same as Tag)
       using typename ParallelData<AuxProxyColl, Aux, Tag>::tag;
 
     }; // class ProxyAsParallelData<>
 
-
     //--------------------------------------------------------------------------
 
   } // namespace details
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_PROXYASPARALLELDATA_H

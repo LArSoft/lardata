@@ -2,132 +2,146 @@
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include <limits>
 
-namespace gshf{
+namespace gshf {
 
   /* multi-Gaussian function, number of Gaussians is npar divided by 3 */
-  void MarqFitAlg::fgauss(const float yd[], const float p[], const int npar, const int ndat, std::vector<float> &res){
-    #if defined WITH_OPENMP
-    #pragma omp simd
-    #endif
-    for(int i=0;i<ndat;i++){
-      float yf=0.;
-      for(int j=0;j<npar;j+=3){
-	yf = yf + p[j]*std::exp(-0.5*std::pow((float(i)-p[j+1])/p[j+2],2));
+  void MarqFitAlg::fgauss(const float yd[],
+                          const float p[],
+                          const int npar,
+                          const int ndat,
+                          std::vector<float>& res)
+  {
+#if defined WITH_OPENMP
+#pragma omp simd
+#endif
+    for (int i = 0; i < ndat; i++) {
+      float yf = 0.;
+      for (int j = 0; j < npar; j += 3) {
+        yf = yf + p[j] * std::exp(-0.5 * std::pow((float(i) - p[j + 1]) / p[j + 2], 2));
       }
-      res[i]=yd[i]-yf;
+      res[i] = yd[i] - yf;
     }
   }
 
   /* analytic derivatives for multi-Gaussian function in fgauss */
-  void MarqFitAlg::dgauss(const float p[], const int npar, const int ndat, std::vector<float> &dydp){
-    #if defined WITH_OPENMP
+  void MarqFitAlg::dgauss(const float p[], const int npar, const int ndat, std::vector<float>& dydp)
+  {
+#if defined WITH_OPENMP
     //#pragma GCC ivdep
-     #pragma omp simd
-    #endif
-    for(int i=0;i<ndat;i++){
-      for(int j=0;j<npar;j+=3){
-	const float xmu=float(i)-p[j+1];
-	const float xmu_sg=xmu/p[j+2];
-	const float xmu_sg2=xmu_sg*xmu_sg;
-	dydp[i*npar+j] = std::exp(-0.5*xmu_sg2);
-	dydp[i*npar+j+1]=p[j]*dydp[i*npar+j]*xmu_sg/p[j+2];
-	dydp[i*npar+j+2]=dydp[i*npar+j+1]*xmu_sg;
+#pragma omp simd
+#endif
+    for (int i = 0; i < ndat; i++) {
+      for (int j = 0; j < npar; j += 3) {
+        const float xmu = float(i) - p[j + 1];
+        const float xmu_sg = xmu / p[j + 2];
+        const float xmu_sg2 = xmu_sg * xmu_sg;
+        dydp[i * npar + j] = std::exp(-0.5 * xmu_sg2);
+        dydp[i * npar + j + 1] = p[j] * dydp[i * npar + j] * xmu_sg / p[j + 2];
+        dydp[i * npar + j + 2] = dydp[i * npar + j + 1] * xmu_sg;
       }
     }
   }
 
   /* calculate ChiSquared */
-  float MarqFitAlg::cal_xi2(const std::vector<float> &res, const int ndat){
+  float MarqFitAlg::cal_xi2(const std::vector<float>& res, const int ndat)
+  {
     int i;
     float xi2;
-    xi2=0.;
-    for(i=0;i<ndat;i++){
-      xi2+=res[i]*res[i];
+    xi2 = 0.;
+    for (i = 0; i < ndat; i++) {
+      xi2 += res[i] * res[i];
     }
     return xi2;
   }
 
   /* setup the beta and  (curvature) matrices */
-  void MarqFitAlg::setup_matrix(const std::vector<float> &res, const std::vector<float> &dydp, const int npar, const int ndat, std::vector<float> &beta, std::vector<float> &alpha)
+  void MarqFitAlg::setup_matrix(const std::vector<float>& res,
+                                const std::vector<float>& dydp,
+                                const int npar,
+                                const int ndat,
+                                std::vector<float>& beta,
+                                std::vector<float>& alpha)
   {
-    int i,j,k;
+    int i, j, k;
 
-    /* ... Calculate beta */
-    #if defined WITH_OPENMP
-     #pragma omp simd
-    //#pragma GCC ivdep
-    #endif
-    for(j=0;j<npar;j++){
-      beta[j]=0.0;
-      for(i=0;i<ndat;i++){
-	beta[j]+=res[i]*dydp[i*npar+j];
+/* ... Calculate beta */
+#if defined WITH_OPENMP
+#pragma omp simd
+//#pragma GCC ivdep
+#endif
+    for (j = 0; j < npar; j++) {
+      beta[j] = 0.0;
+      for (i = 0; i < ndat; i++) {
+        beta[j] += res[i] * dydp[i * npar + j];
       }
     }
 
-    /* ... Calculate alpha */
-    #if defined WITH_OPENMP
-    #pragma omp simd
-    //#pragma GCC ivdep
-    #endif
-    for (j = 0; j < npar; j++){
-      for (k = j; k < npar; k++){
-	alpha[j*npar+k]=0.0;
-	for(i=0;i<ndat;i++){
-	  alpha[j*npar+k]+=dydp[i*npar+j]*dydp[i*npar+k];
-	}
-	if(k!=j)alpha[k*npar+j]=alpha[j*npar+k];
+/* ... Calculate alpha */
+#if defined WITH_OPENMP
+#pragma omp simd
+//#pragma GCC ivdep
+#endif
+    for (j = 0; j < npar; j++) {
+      for (k = j; k < npar; k++) {
+        alpha[j * npar + k] = 0.0;
+        for (i = 0; i < ndat; i++) {
+          alpha[j * npar + k] += dydp[i * npar + j] * dydp[i * npar + k];
+        }
+        if (k != j) alpha[k * npar + j] = alpha[j * npar + k];
       }
     }
   }
 
   /* solve system of linear equations */
-  void MarqFitAlg::solve_matrix(const std::vector<float> &beta, const std::vector<float> &alpha, const int npar, std::vector<float> &dp)
+  void MarqFitAlg::solve_matrix(const std::vector<float>& beta,
+                                const std::vector<float>& alpha,
+                                const int npar,
+                                std::vector<float>& dp)
   {
-    int i,j,k,imax;
-    float hmax,hsav;
+    int i, j, k, imax;
+    float hmax, hsav;
 
-    std::vector<std::vector<float>> h(npar, std::vector<float>(npar+1,0));
+    std::vector<std::vector<float>> h(npar, std::vector<float>(npar + 1, 0));
 
     /* ... set up augmented N x N+1 matrix */
-    for(i=0;i<npar;i++){
-      h[i][npar]=beta[i];
-      for(j=0;j<npar;j++){
-	h[i][j]=alpha[i*npar+j];
+    for (i = 0; i < npar; i++) {
+      h[i][npar] = beta[i];
+      for (j = 0; j < npar; j++) {
+        h[i][j] = alpha[i * npar + j];
       }
     }
 
     /* ... diagonalize N x N matrix but do only terms required for solution */
-    for(i=0;i<npar;i++){
-      hmax=h[i][i];
-      imax=i;
-      for(j=i+1;j<npar;j++){
-	if(h[j][i]>hmax){
-	  hmax=h[j][i];
-	  imax=j;
-	}
+    for (i = 0; i < npar; i++) {
+      hmax = h[i][i];
+      imax = i;
+      for (j = i + 1; j < npar; j++) {
+        if (h[j][i] > hmax) {
+          hmax = h[j][i];
+          imax = j;
+        }
       }
-      if(imax!=i){
-	for(k=0;k<=npar;k++){
-	  hsav=h[i][k];
-	  h[i][k]=h[imax][k];
-	  h[imax][k]=hsav;
-	}
+      if (imax != i) {
+        for (k = 0; k <= npar; k++) {
+          hsav = h[i][k];
+          h[i][k] = h[imax][k];
+          h[imax][k] = hsav;
+        }
       }
-      for(j=0;j<npar;j++){
-	if(j==i)continue;
-	for(k=i;k<npar;k++){
-	  h[j][k+1]-=h[i][k+1]*h[j][i]/h[i][i];
-	}
+      for (j = 0; j < npar; j++) {
+        if (j == i) continue;
+        for (k = i; k < npar; k++) {
+          h[j][k + 1] -= h[i][k + 1] * h[j][i] / h[i][i];
+        }
       }
     }
     /* ... scale (N+1)'th column with factor which normalizes the diagonal */
-    for(i=0;i<npar;i++){
-      dp[i]=h[i][npar]/h[i][i];
+    for (i = 0; i < npar; i++) {
+      dp[i] = h[i][npar] / h[i][i];
     }
-
   }
 
-  float MarqFitAlg::invrt_matrix(std::vector<float> &alphaf, const int npar)
+  float MarqFitAlg::invrt_matrix(std::vector<float>& alphaf, const int npar)
   {
     /*
      Inverts the curvature matrix alpha using Gauss-Jordan elimination and
@@ -140,7 +154,7 @@ namespace gshf{
     */
 
     //turn input alphas into doubles
-    std::vector<double> alpha(npar*npar);
+    std::vector<double> alpha(npar * npar);
 
     int i, j, k;
     std::vector<int> ik(npar);
@@ -148,210 +162,225 @@ namespace gshf{
     double aMax, save, det;
     float detf;
 
-    for (i=0; i<npar*npar; i++){
-      alpha[i]=alphaf[i];
+    for (i = 0; i < npar * npar; i++) {
+      alpha[i] = alphaf[i];
     }
 
     det = 0;
     /* ... search for the largest element which we will then put in the diagonal */
-    for (k = 0; k < npar; k++){
+    for (k = 0; k < npar; k++) {
       aMax = 0;
-      for (i = k; i < npar; i++){
-	for (j = k; j < npar;j++){
+      for (i = k; i < npar; i++) {
+        for (j = k; j < npar; j++) {
 
-	  //	  alpha[i*npar+j]=alphaf[i*npar+j];
+          //	  alpha[i*npar+j]=alphaf[i*npar+j];
 
-	  if  (fabs(alpha[i*npar+j]) > fabs(aMax)){
-	    aMax = alpha[i*npar+j];
-	    ik[k] = i;
-	    jk[k] = j;
-	  }
-	}
+          if (fabs(alpha[i * npar + j]) > fabs(aMax)) {
+            aMax = alpha[i * npar + j];
+            ik[k] = i;
+            jk[k] = j;
+          }
+        }
       }
-      if (aMax == 0)return(det);  /* return 0 determinant to signal problem */
+      if (aMax == 0) return (det); /* return 0 determinant to signal problem */
       det = 1;
       /* ... interchange rows if necessary to put aMax in diag */
       i = ik[k];
-      if (i > k){
-	for (j = 0;j < npar;j++){
-	  save = alpha[k*npar+j];
-	  alpha[k*npar+j] = alpha[i*npar+j];
-	  alpha[i*npar+j] = -save;
-	}
+      if (i > k) {
+        for (j = 0; j < npar; j++) {
+          save = alpha[k * npar + j];
+          alpha[k * npar + j] = alpha[i * npar + j];
+          alpha[i * npar + j] = -save;
+        }
       }
       /* ... interchange columns if necessary to put aMax in diag */
       j = jk[k];
-      if (j > k){
-	for (i = 0; i < npar; i++){
-	  save = alpha[i*npar+k];
-	  alpha[i*npar+k] = alpha[i*npar+j];
-	  alpha[i*npar+j] = -save;
-	}
+      if (j > k) {
+        for (i = 0; i < npar; i++) {
+          save = alpha[i * npar + k];
+          alpha[i * npar + k] = alpha[i * npar + j];
+          alpha[i * npar + j] = -save;
+        }
       }
       /* ... accumulate elements of inverse matrix */
-      for (i = 0; i < npar; i++){
-	if (i != k) alpha[i*npar+k] = -alpha[i*npar+k]/aMax;
+      for (i = 0; i < npar; i++) {
+        if (i != k) alpha[i * npar + k] = -alpha[i * npar + k] / aMax;
       }
-      #if defined WITH_OPENMP
-      #pragma omp simd
-	//#pragma GCC ivdep
-      #endif
-      for (i = 0; i < npar; i++){
-	for (j = 0; j < npar;j++){
-	  if ((i != k)&&(j!= k))alpha[i*npar+j]=alpha[i*npar+j]+alpha[i*npar+k]*alpha[k*npar+j];
-	}
+#if defined WITH_OPENMP
+#pragma omp simd
+      //#pragma GCC ivdep
+#endif
+      for (i = 0; i < npar; i++) {
+        for (j = 0; j < npar; j++) {
+          if ((i != k) && (j != k))
+            alpha[i * npar + j] = alpha[i * npar + j] + alpha[i * npar + k] * alpha[k * npar + j];
+        }
       }
-      for (j = 0; j < npar;j++){
-	if (j != k)  alpha[k*npar+j] = alpha[k*npar+j]/aMax;
+      for (j = 0; j < npar; j++) {
+        if (j != k) alpha[k * npar + j] = alpha[k * npar + j] / aMax;
       }
-      alpha[k*npar+k] = 1/aMax;
+      alpha[k * npar + k] = 1 / aMax;
       det = det * aMax;
     }
 
     /* ... restore ordering of matrix */
-    for (k = npar-1; k >=0; k--){
+    for (k = npar - 1; k >= 0; k--) {
       j = ik[k];
       if (j > k) {
-	for (i = 0; i < npar; i++){
-	  save    = alpha[i*npar+k];
-	  alpha[i*npar+k] = -alpha[i*npar+j];
-	  alpha[i*npar+j] = save;
-	}
+        for (i = 0; i < npar; i++) {
+          save = alpha[i * npar + k];
+          alpha[i * npar + k] = -alpha[i * npar + j];
+          alpha[i * npar + j] = save;
+        }
       }
       i = jk[k];
-      if (i > k){
-	for (j = 0; j < npar;j++){
-	  save    =  alpha[k*npar+j];
-	  alpha[k*npar+j] = -alpha[i*npar+j];
-	  alpha[i*npar+j] =  save;
-	}
+      if (i > k) {
+        for (j = 0; j < npar; j++) {
+          save = alpha[k * npar + j];
+          alpha[k * npar + j] = -alpha[i * npar + j];
+          alpha[i * npar + j] = save;
+        }
       }
     }
 
-    for (i=0; i<npar*npar; i++){
-      alphaf[i]=alpha[i];
+    for (i = 0; i < npar * npar; i++) {
+      alphaf[i] = alpha[i];
     }
 
-    detf=det;
-    return(detf);
-
+    detf = det;
+    return (detf);
   }
 
   /* Calculate parameter errors */
   int MarqFitAlg::cal_perr(float p[], float y[], const int nParam, const int nData, float perr[])
   {
-    int i,j;
+    int i, j;
     float det;
 
     std::vector<float> res(nData);
-    std::vector<float> dydp(nData*nParam);
+    std::vector<float> dydp(nData * nParam);
     std::vector<float> beta(nParam);
-    std::vector<float> alpha(nParam*nParam);
-    std::vector<std::vector<float>> alpsav(nParam,std::vector<float>(nParam));
+    std::vector<float> alpha(nParam * nParam);
+    std::vector<std::vector<float>> alpsav(nParam, std::vector<float>(nParam));
 
     fgauss(y, p, nParam, nData, res);
     dgauss(p, nParam, nData, dydp);
-    setup_matrix(res, dydp, nParam, nData, beta,alpha);
-    for(i=0;i<nParam;i++){
-      for(j=0;j<nParam;j++){
-	alpsav[i][j]=alpha[i*nParam+j];
+    setup_matrix(res, dydp, nParam, nData, beta, alpha);
+    for (i = 0; i < nParam; i++) {
+      for (j = 0; j < nParam; j++) {
+        alpsav[i][j] = alpha[i * nParam + j];
       }
     }
-    det=invrt_matrix(alpha, nParam);
+    det = invrt_matrix(alpha, nParam);
 
-    if(det==0)return 1;
-    for(i=0;i<nParam;i++){
-      if(alpha[i*nParam+i]>=0.){
-	perr[i]=sqrt(alpha[i*nParam+i]);
-      }else{
-	perr[i]=alpha[i*nParam+i];
+    if (det == 0) return 1;
+    for (i = 0; i < nParam; i++) {
+      if (alpha[i * nParam + i] >= 0.) { perr[i] = sqrt(alpha[i * nParam + i]); }
+      else {
+        perr[i] = alpha[i * nParam + i];
       }
     }
 
     return 0;
   }
 
-  int MarqFitAlg::mrqdtfit(float &lambda, float p[], float y[], const int nParam, const int nData, float &chiSqr, float &dchiSqr)
+  int MarqFitAlg::mrqdtfit(float& lambda,
+                           float p[],
+                           float y[],
+                           const int nParam,
+                           const int nData,
+                           float& chiSqr,
+                           float& dchiSqr)
   {
-    std::vector<float> plimmin(nParam,std::numeric_limits<float>::lowest());
-    std::vector<float> plimmax(nParam,std::numeric_limits<float>::max());
+    std::vector<float> plimmin(nParam, std::numeric_limits<float>::lowest());
+    std::vector<float> plimmax(nParam, std::numeric_limits<float>::max());
     return mrqdtfit(lambda, p, &plimmin[0], &plimmax[0], y, nParam, nData, chiSqr, dchiSqr);
   }
 
-  int MarqFitAlg::mrqdtfit(float &lambda, float p[], float plimmin[], float plimmax[], float y[], const int nParam, const int nData, float &chiSqr, float &dchiSqr)
+  int MarqFitAlg::mrqdtfit(float& lambda,
+                           float p[],
+                           float plimmin[],
+                           float plimmax[],
+                           float y[],
+                           const int nParam,
+                           const int nData,
+                           float& chiSqr,
+                           float& dchiSqr)
   {
     int j;
-    float nu,rho,lzmlh,amax,chiSq0;
+    float nu, rho, lzmlh, amax, chiSq0;
 
     std::vector<float> res(nData);
     std::vector<float> beta(nParam);
     std::vector<float> dp(nParam);
     std::vector<float> alpsav(nParam);
     std::vector<float> psav(nParam);
-    std::vector<float> dydp(nData*nParam);
-    std::vector<float> alpha(nParam*nParam);
+    std::vector<float> dydp(nData * nParam);
+    std::vector<float> alpha(nParam * nParam);
 
     bool haslimits = false;
-    for(j=0;j<nParam;j++){
-      if (plimmin[j]>std::numeric_limits<float>::lowest() || plimmax[j]<std::numeric_limits<float>::max()) {
+    for (j = 0; j < nParam; j++) {
+      if (plimmin[j] > std::numeric_limits<float>::lowest() ||
+          plimmax[j] < std::numeric_limits<float>::max()) {
         haslimits = true;
         break;
       }
     }
 
     fgauss(y, p, nParam, nData, res);
-    chiSq0=cal_xi2(res, nData);
+    chiSq0 = cal_xi2(res, nData);
     dgauss(p, nParam, nData, dydp);
     setup_matrix(res, dydp, nParam, nData, beta, alpha);
-    if(lambda<0.){
-      amax=-999.;
-      for(j = 0; j < nParam; j++){
-	if(alpha[j*nParam+j]>amax)amax=alpha[j*nParam+j];
+    if (lambda < 0.) {
+      amax = -999.;
+      for (j = 0; j < nParam; j++) {
+        if (alpha[j * nParam + j] > amax) amax = alpha[j * nParam + j];
       }
-      lambda=0.001*amax;
+      lambda = 0.001 * amax;
     }
-    for(j = 0; j < nParam; j++){
-      alpsav[j]=alpha[j*nParam+j];
-      alpha[j*nParam+j]=alpsav[j]+lambda;
+    for (j = 0; j < nParam; j++) {
+      alpsav[j] = alpha[j * nParam + j];
+      alpha[j * nParam + j] = alpsav[j] + lambda;
     }
     solve_matrix(beta, alpha, nParam, dp);
 
-    nu=2.;
-    rho=-1.;
+    nu = 2.;
+    rho = -1.;
 
-    do{
-      for(j=0;j<nParam;j++){
-	psav[j] = p[j];
-	p[j] = p[j] + dp[j];
+    do {
+      for (j = 0; j < nParam; j++) {
+        psav[j] = p[j];
+        p[j] = p[j] + dp[j];
       }
       fgauss(y, p, nParam, nData, res);
       chiSqr = cal_xi2(res, nData);
       if (haslimits) {
-        for(j=0;j<nParam;j++){
-          if (p[j]<=plimmin[j] || p[j]>=plimmax[j]) chiSqr*=10000;//penalty for going out of limits!
+        for (j = 0; j < nParam; j++) {
+          if (p[j] <= plimmin[j] || p[j] >= plimmax[j])
+            chiSqr *= 10000; //penalty for going out of limits!
         }
       }
 
-      lzmlh=0.;
-      for(j=0;j<nParam;j++){
-	lzmlh+=dp[j]*(lambda*dp[j]+beta[j]);
+      lzmlh = 0.;
+      for (j = 0; j < nParam; j++) {
+        lzmlh += dp[j] * (lambda * dp[j] + beta[j]);
       }
-      rho=2.*(chiSq0-chiSqr)/lzmlh;
-      if (rho<0.){
-	for (j=0;j<nParam;j++)p[j]=psav[j];
-	chiSqr=chiSq0;
-	lambda = nu*lambda;
-	nu=2.*nu;
-	for(j = 0; j < nParam; j++){
-	  alpha[j*nParam+j]=alpsav[j]+lambda;
-	}
-	solve_matrix(beta, alpha, nParam, dp);
+      rho = 2. * (chiSq0 - chiSqr) / lzmlh;
+      if (rho < 0.) {
+        for (j = 0; j < nParam; j++)
+          p[j] = psav[j];
+        chiSqr = chiSq0;
+        lambda = nu * lambda;
+        nu = 2. * nu;
+        for (j = 0; j < nParam; j++) {
+          alpha[j * nParam + j] = alpsav[j] + lambda;
+        }
+        solve_matrix(beta, alpha, nParam, dp);
       }
-    } while(rho<0.);
-    lambda=lambda*fmax(0.333333,1.-pow(2.*rho-1.,3));
-    dchiSqr=chiSqr-chiSq0;
+    } while (rho < 0.);
+    lambda = lambda * fmax(0.333333, 1. - pow(2. * rho - 1., 3));
+    dchiSqr = chiSqr - chiSq0;
     return 0;
-
   }
 
-}//end namespace gshf
+} //end namespace gshf

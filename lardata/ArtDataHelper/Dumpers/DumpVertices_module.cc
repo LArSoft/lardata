@@ -9,9 +9,9 @@
 #include "lardataobj/RecoBase/Vertex.h"
 
 // art libraries
-#include "canvas/Utilities/InputTag.h"
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Principal/Event.h"
+#include "canvas/Utilities/InputTag.h"
 
 // support libraries
 #include "fhiclcpp/ParameterSet.h"
@@ -40,33 +40,30 @@ namespace recob {
    *   point numbers in base 16
    *
    */
-  class DumpVertices: public art::EDAnalyzer {
-      public:
-
+  class DumpVertices : public art::EDAnalyzer {
+  public:
     /// Default constructor
     explicit DumpVertices(fhicl::ParameterSet const& pset);
 
     /// Does the printing
-    virtual void analyze (const art::Event& evt) override;
+    virtual void analyze(const art::Event& evt) override;
 
-      private:
-
-    art::InputTag fInputTag; ///< input tag of the Vertex product
+  private:
+    art::InputTag fInputTag;     ///< input tag of the Vertex product
     std::string fOutputCategory; ///< category for LogInfo output
-    bool fPrintHexFloats; ///< whether to print floats in base 16
+    bool fPrintHexFloats;        ///< whether to print floats in base 16
 
   }; // class DumpVertices
 
 } // namespace recob
-
 
 //==============================================================================
 //===  Implementation section
 //==============================================================================
 
 // LArSoft includes
-#include "lardataobj/RecoBase/Vertex.h"
 #include "lardata/ArtDataHelper/Dumpers/hexfloat.h"
+#include "lardataobj/RecoBase/Vertex.h"
 
 // art libraries
 #include "art/Framework/Core/ModuleMacros.h"
@@ -77,103 +74,82 @@ namespace recob {
 
 // C//C++ standard libraries
 
-
 namespace {
 
   //----------------------------------------------------------------------------
   class VertexDumper {
-      public:
-
+  public:
     /// Collection of available printing style options
     struct PrintOptions_t {
-       bool hexFloats = false; ///< print all floating point numbers in base 16
-    }; // PrintOptions_t
-
+      bool hexFloats = false; ///< print all floating point numbers in base 16
+    };                        // PrintOptions_t
 
     /// Constructor; will dump vertices from the specified list
-    VertexDumper(std::vector<recob::Vertex> const& vertex_list)
-      : VertexDumper(vertex_list, {})
-      {}
+    VertexDumper(std::vector<recob::Vertex> const& vertex_list) : VertexDumper(vertex_list, {}) {}
 
     /// Constructor; will dump vertices from the specified list, using options.
-    VertexDumper(
-      std::vector<recob::Vertex> const& vertex_list,
-      PrintOptions_t print_options
-      )
-      : vertices(vertex_list)
-      , options(print_options)
-      {}
-
+    VertexDumper(std::vector<recob::Vertex> const& vertex_list, PrintOptions_t print_options)
+      : vertices(vertex_list), options(print_options)
+    {}
 
     /// Dump a vertex specified by its index in the input list
     template <typename Stream>
-    void DumpVertex
-      (Stream&& out, size_t iVertex, std::string indentstr = "") const
-      {
-        lar::OptionalHexFloat hexfloat(options.hexFloats);
+    void DumpVertex(Stream&& out, size_t iVertex, std::string indentstr = "") const
+    {
+      lar::OptionalHexFloat hexfloat(options.hexFloats);
 
-        recob::Vertex const& vertex = vertices.at(iVertex);
+      recob::Vertex const& vertex = vertices.at(iVertex);
 
-        //
-        // intro
-        //
-        out << "\n" << indentstr
-          << "[#" << iVertex << "]";
+      //
+      // intro
+      //
+      out << "\n" << indentstr << "[#" << iVertex << "]";
 
-        std::array<double, 3> vtx_pos;
-        vertex.XYZ(vtx_pos.data());
-        out << " ID=" << vertex.ID() << " at ("
-          << hexfloat(vtx_pos[0]) << "," << hexfloat(vtx_pos[1])
-          << "," << hexfloat(vtx_pos[2])
-          << ")";
+      std::array<double, 3> vtx_pos;
+      vertex.XYZ(vtx_pos.data());
+      out << " ID=" << vertex.ID() << " at (" << hexfloat(vtx_pos[0]) << "," << hexfloat(vtx_pos[1])
+          << "," << hexfloat(vtx_pos[2]) << ")";
 
-        //
-        // done
-        //
+      //
+      // done
+      //
 
-      } // DumpVertex()
-
+    } // DumpVertex()
 
     /// Dumps all vertices in the input list
     template <typename Stream>
     void DumpAllVertices(Stream&& out, std::string indentstr = "") const
-      {
-        indentstr += "  ";
-        size_t const nVertices = vertices.size();
-        for (size_t iVertex = 0; iVertex < nVertices; ++iVertex)
-          DumpVertex(out, iVertex, indentstr);
-      } // DumpAllVertices()
+    {
+      indentstr += "  ";
+      size_t const nVertices = vertices.size();
+      for (size_t iVertex = 0; iVertex < nVertices; ++iVertex)
+        DumpVertex(out, iVertex, indentstr);
+    } // DumpAllVertices()
 
-
-
-      protected:
+  protected:
     std::vector<recob::Vertex> const& vertices; ///< input list
 
     PrintOptions_t options; ///< printing and formatting options
 
   }; // VertexDumper
 
-
   //----------------------------------------------------------------------------
 
-
 } // local namespace
-
-
 
 namespace recob {
 
   //----------------------------------------------------------------------------
   DumpVertices::DumpVertices(fhicl::ParameterSet const& pset)
     : EDAnalyzer(pset)
-    , fInputTag      (pset.get<art::InputTag>("VertexModuleLabel"))
-    , fOutputCategory(pset.get<std::string>  ("OutputCategory", "DumpVertices"))
-    , fPrintHexFloats(pset.get<bool>         ("PrintHexFloats", false))
-    {}
-
+    , fInputTag(pset.get<art::InputTag>("VertexModuleLabel"))
+    , fOutputCategory(pset.get<std::string>("OutputCategory", "DumpVertices"))
+    , fPrintHexFloats(pset.get<bool>("PrintHexFloats", false))
+  {}
 
   //----------------------------------------------------------------------------
-  void DumpVertices::analyze(const art::Event& evt) {
+  void DumpVertices::analyze(const art::Event& evt)
+  {
 
     //
     // collect all the available information
@@ -182,9 +158,8 @@ namespace recob {
     auto Vertices = evt.getValidHandle<std::vector<recob::Vertex>>(fInputTag);
 
     size_t const nVertices = Vertices->size();
-    mf::LogVerbatim(fOutputCategory) << "Event " << evt.id()
-      << " contains " << nVertices << " vertices from '"
-      << fInputTag.encode() << "'";
+    mf::LogVerbatim(fOutputCategory) << "Event " << evt.id() << " contains " << nVertices
+                                     << " vertices from '" << fInputTag.encode() << "'";
 
     // prepare the dumper
     VertexDumper::PrintOptions_t options;

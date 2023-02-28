@@ -16,12 +16,10 @@
 #include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard library
-#include <vector>
-#include <utility> // std::forward()
-#include <initializer_list>
 #include <cstdlib> // std::size_t
-
-
+#include <initializer_list>
+#include <utility> // std::forward()
+#include <vector>
 
 namespace lar {
 
@@ -34,11 +32,9 @@ namespace lar {
     using enable_if_type_exists_t = typename enable_if_type_exists<T, R>::type;
 
     template <typename H, typename R = void>
-    using enable_if_is_handle_t
-      = enable_if_type_exists_t<typename std::decay_t<H>::HandleTag, R>;
+    using enable_if_is_handle_t = enable_if_type_exists_t<typename std::decay_t<H>::HandleTag, R>;
 
   } // namespace details
-
 
   /// Type for default tag in `FindManyInChainP` constructors.
   struct SameAsDataTag {};
@@ -108,10 +104,9 @@ namespace lar {
   template <typename Target, typename... Intermediate>
   class FindManyInChainP {
 
-      public:
-    using Target_t = Target; ///< Type of the associated objects.
+  public:
+    using Target_t = Target;                ///< Type of the associated objects.
     using TargetPtr_t = art::Ptr<Target_t>; ///< Pointer to associated objects.
-
 
     /// Type returned by `at()` method.
     using TargetPtrCollection_t = std::vector<TargetPtr_t>;
@@ -134,9 +129,7 @@ namespace lar {
     template <typename Source, typename Event, typename... InputTags>
     FindManyInChainP(Source&& source, Event const& event, InputTags... tags)
       : results(find(std::forward<Source>(source), event, tags...))
-      {}
-
-
+    {}
 
     /// Returns the number of `Source` objects we have information about.
     std::size_t size() const noexcept;
@@ -180,7 +173,6 @@ namespace lar {
      */
     TargetPtrCollection_t const& at(std::size_t i) const;
 
-
     /**
      * @brief Returns target objects associated to all objects contained in the
      *        specified source.
@@ -218,17 +210,16 @@ namespace lar {
      *
      */
     template <typename Source, typename Event, typename... InputTags>
-    static std::vector<TargetPtrCollection_t> find
-      (Source&& source, Event const& event, InputTags... tags);
+    static std::vector<TargetPtrCollection_t> find(Source&& source,
+                                                   Event const& event,
+                                                   InputTags... tags);
 
-      private:
+  private:
     std::vector<TargetPtrCollection_t> results; ///< Stored results.
 
   }; // class FindManyInChainP<>
 
-
 } // namespace lar
-
 
 //------------------------------------------------------------------------------
 //---  template implementation
@@ -236,6 +227,5 @@ namespace lar {
 #include "FindManyInChainP.tcc" // expected in the same directory as this file
 
 //------------------------------------------------------------------------------
-
 
 #endif // LARDATA_UTILITIES_FINDMANYINCHAINP_H

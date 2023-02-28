@@ -63,8 +63,7 @@ namespace trkf {
   /// surface class, since this class doesn't know what the track
   /// parameters mean.
   ///
-  double
-  KETrack::PointingError() const
+  double KETrack::PointingError() const
   {
     if (!isValid())
       throw cet::exception("KETrack") << "Pointing error requested for invalid track.\n";
@@ -85,8 +84,7 @@ namespace trkf {
   /// because the sum of the two error matrices is singular, in which
   /// case the success flag embedded in the return value is false.
   ///
-  std::optional<double>
-  KETrack::combineTrack(const KETrack& tre)
+  std::optional<double> KETrack::combineTrack(const KETrack& tre)
   {
     // Make sure that the two track surfaces are the same.
     // Throw an exception if they are not.
@@ -178,8 +176,7 @@ namespace trkf {
   }
 
   /// Printout
-  std::ostream&
-  KETrack::Print(std::ostream& out, bool doTitle) const
+  std::ostream& KETrack::Print(std::ostream& out, bool doTitle) const
   {
     if (doTitle) out << "KETrack:\n";
 

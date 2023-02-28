@@ -15,15 +15,13 @@
 #ifndef LARDATA_UTILITIES_TENSORINDICES_H
 #define LARDATA_UTILITIES_TENSORINDICES_H
 
-
 // C/C++ standard libraries
-#include <cstddef> // std::size_t
-#include <stdexcept> // std::out_of_range
-#include <string> // std::to_string()
+#include <cstddef>     // std::size_t
+#include <stdexcept>   // std::out_of_range
+#include <string>      // std::to_string()
 #include <type_traits> // std::enable_if
 
 namespace util {
-
 
   /// Types for TensorIndices class
   struct TensorIndicesBasicTypes {
@@ -39,18 +37,15 @@ namespace util {
 
   }; // TensorIndicesBasicTypes
 
-
   // This is the class declaration; it has a specialisation for rank 1 and
   // a generic implementation (valid for rank larger than 1).
   template <unsigned int RANK>
   class TensorIndices;
 
-
   namespace details {
     template <unsigned int RANK, unsigned int DIM>
     struct ExtractTensorDimension;
   } // namespace details
-
 
   /**
    * Specialisation for vector index (rank 1).
@@ -61,90 +56,88 @@ namespace util {
    */
   template <>
   class TensorIndices<1U> {
-      public:
+  public:
+    using Index_t = TensorIndicesBasicTypes::Index_t;
 
-    using Index_t    = TensorIndicesBasicTypes::Index_t   ;
-
-    using DimSize_t  = TensorIndicesBasicTypes::DimSize_t ;
+    using DimSize_t = TensorIndicesBasicTypes::DimSize_t;
 
     using LinIndex_t = TensorIndicesBasicTypes::LinIndex_t;
 
     static constexpr unsigned int rank() { return 1U; }
 
-
-    TensorIndices(DimSize_t dim): dimSize(dim) {}
+    TensorIndices(DimSize_t dim) : dimSize(dim) {}
 
     template <
       typename ITER,
-      typename = std::enable_if_t
-        <std::is_convertible<decltype(*(ITER())), DimSize_t>::value, void>
-      >
-    TensorIndices(ITER dimIter): TensorIndices(*dimIter) {}
+      typename = std::enable_if_t<std::is_convertible<decltype(*(ITER())), DimSize_t>::value, void>>
+    TensorIndices(ITER dimIter) : TensorIndices(*dimIter)
+    {}
 
-
-    LinIndex_t operator() (Index_t index) const { return index; }
+    LinIndex_t operator()(Index_t index) const { return index; }
 
     template <typename ITER>
-    std::enable_if_t
-      <std::is_convertible<decltype(*(ITER())), DimSize_t>::value, LinIndex_t>
-    operator() (ITER indexIter) const { return *indexIter; }
+    std::enable_if_t<std::is_convertible<decltype(*(ITER())), DimSize_t>::value, LinIndex_t>
+    operator()(ITER indexIter) const
+    {
+      return *indexIter;
+    }
 
     LinIndex_t at(Index_t index) const { return checkOuterIndex(index); }
 
     template <typename ITER>
-    std::enable_if_t
-      <std::is_convertible<decltype(*(ITER())), DimSize_t>::value, LinIndex_t>
-    at(ITER indexIter) const
-      { return checkOuterIndex(*indexIter); }
+    std::enable_if_t<std::is_convertible<decltype(*(ITER())), DimSize_t>::value, LinIndex_t> at(
+      ITER indexIter) const
+    {
+      return checkOuterIndex(*indexIter);
+    }
 
-    bool has(Index_t index) const
-      { return (index >= 0) && ((DimSize_t) index < size()); }
+    bool has(Index_t index) const { return (index >= 0) && ((DimSize_t)index < size()); }
 
     template <typename ITER>
-    std::enable_if_t
-      <std::is_convertible<decltype(*(ITER())), DimSize_t>::value, bool>
-    has(ITER indexIter) const
-      { return (*indexIter >= 0) && ((DimSize_t) *indexIter < size()); }
-
+    std::enable_if_t<std::is_convertible<decltype(*(ITER())), DimSize_t>::value, bool> has(
+      ITER indexIter) const
+    {
+      return (*indexIter >= 0) && ((DimSize_t)*indexIter < size());
+    }
 
     template <unsigned int DIM = 0>
-    DimSize_t size() const { return (DIM == 0)? totalSize(): dim<DIM>(); }
+    DimSize_t size() const
+    {
+      return (DIM == 0) ? totalSize() : dim<DIM>();
+    }
 
     template <unsigned int DIM>
     DimSize_t dim() const
-      {
-        static_assert(DIM == 0, "Invalid dimension requested");
-        return dimSize;
-      } // dim()
+    {
+      static_assert(DIM == 0, "Invalid dimension requested");
+      return dimSize;
+    } // dim()
 
     template <unsigned int DIM>
     bool hasIndex(Index_t index) const
-      {
-        static_assert(DIM == 0, "Invalid dimension requested");
-        return has(index);
-      }
+    {
+      static_assert(DIM == 0, "Invalid dimension requested");
+      return has(index);
+    }
 
-    bool hasLinIndex(LinIndex_t linIndex) const
-      { return has((Index_t) linIndex); }
+    bool hasLinIndex(LinIndex_t linIndex) const { return has((Index_t)linIndex); }
 
-    bool operator== (TensorIndices<1U> const& t) const
-      { return t.size() == size(); }
-    bool operator!= (TensorIndices<1U> const& t) const
-      { return t.size() != size(); }
+    bool operator==(TensorIndices<1U> const& t) const { return t.size() == size(); }
+    bool operator!=(TensorIndices<1U> const& t) const { return t.size() != size(); }
 
-      protected:
+  protected:
     Index_t checkOuterIndex(Index_t index) const
-      {
-        if (has(index)) return index; // good
-        throw std::out_of_range("Requested index " + std::to_string(index)
-          + " for a dimension of size " + std::to_string(size()));
-      }
+    {
+      if (has(index)) return index; // good
+      throw std::out_of_range("Requested index " + std::to_string(index) +
+                              " for a dimension of size " + std::to_string(size()));
+    }
 
-      protected:
+  protected:
     /// Returns the size of the outer dimension
     DimSize_t dim0() const { return dimSize; }
 
-      private:
+  private:
     template <unsigned int R, unsigned int D>
     friend struct details::ExtractTensorDimension;
 
@@ -154,7 +147,6 @@ namespace util {
     DimSize_t totalSize() const { return dim0(); }
 
   }; // class TensorIndices<1>
-
 
   /**
    * @brief Converts a tensor element specification into a linear index
@@ -171,29 +163,26 @@ namespace util {
    *
    */
   template <unsigned int RANK>
-  class TensorIndices: private TensorIndices<1U> {
+  class TensorIndices : private TensorIndices<1U> {
     static_assert(RANK > 1, "TensorIndices must have rank 1 or higher");
 
     using Base_t = TensorIndices<1U>; ///< type of base class
 
-      public:
-
+  public:
     /// Type of a single index in the tensor
-    using Index_t    = Base_t::Index_t   ;
+    using Index_t = Base_t::Index_t;
 
     /// Type for the specification of a dimension size
-    using DimSize_t  = Base_t::DimSize_t ;
+    using DimSize_t = Base_t::DimSize_t;
 
     /// Type of the linear index
     using LinIndex_t = Base_t::LinIndex_t;
-
 
     /// Rank of this tensor
     static constexpr unsigned int rank() { return RANK; }
 
     /// Type of the tensor indices with rank smaller by one
     using MinorTensor_t = TensorIndices<rank() - 1>;
-
 
     /**
      * @brief Constructor: initialises the dimension of the tensor
@@ -209,8 +198,8 @@ namespace util {
      */
     template <typename... OTHERDIMS>
     TensorIndices(DimSize_t first, OTHERDIMS... others)
-      : Base_t(first), m(others...), totSize(dim0() * m.size()) {}
-
+      : Base_t(first), m(others...), totSize(dim0() * m.size())
+    {}
 
     /**
      * @brief Constructor: initialises the dimension of the tensor
@@ -234,12 +223,9 @@ namespace util {
     // only if ITER can be dereferenced into something convertible to DimSize_t
     template <
       typename ITER,
-      typename = std::enable_if_t
-        <std::is_convertible<decltype(*(ITER())), DimSize_t>::value, void>
-      >
-    TensorIndices(ITER dimIter)
-      : Base_t(dimIter), m(++dimIter), totSize(dim0() * m.size()) {}
-
+      typename = std::enable_if_t<std::is_convertible<decltype(*(ITER())), DimSize_t>::value, void>>
+    TensorIndices(ITER dimIter) : Base_t(dimIter), m(++dimIter), totSize(dim0() * m.size())
+    {}
 
     /**
      * @brief Returns the linear index corresponding to the tensor indices
@@ -262,9 +248,10 @@ namespace util {
      * the return value will not be valid!).
      */
     template <typename... OTHERINDICES>
-    LinIndex_t operator() (Index_t first, OTHERINDICES... others) const
-      { return first * minorTensor().size() + minorTensor()(others...); }
-
+    LinIndex_t operator()(Index_t first, OTHERINDICES... others) const
+    {
+      return first * minorTensor().size() + minorTensor()(others...);
+    }
 
     /**
      * @brief Returns the linear index corresponding to the tensor indices
@@ -286,14 +273,12 @@ namespace util {
      * `operator()(Index_t first, OTHERINDICES... others)`.
      */
     template <typename ITER>
-    std::enable_if_t
-      <std::is_convertible<decltype(*(ITER())), DimSize_t>::value, LinIndex_t>
-    operator() (ITER indexIter) const
-      {
-        auto const baseSize = (*indexIter) * minorTensor().size();
-        return baseSize + minorTensor()(++indexIter);
-      }
-
+    std::enable_if_t<std::is_convertible<decltype(*(ITER())), DimSize_t>::value, LinIndex_t>
+    operator()(ITER indexIter) const
+    {
+      auto const baseSize = (*indexIter) * minorTensor().size();
+      return baseSize + minorTensor()(++indexIter);
+    }
 
     /**
      * @brief Returns the linear index corresponding to the tensor indices
@@ -319,10 +304,9 @@ namespace util {
      */
     template <typename... OTHERINDICES>
     LinIndex_t at(Index_t first, OTHERINDICES... others) const
-      {
-        return Base_t::checkOuterIndex(first) * minorTensor().size()
-          + minorTensor().at(others...);
-      }
+    {
+      return Base_t::checkOuterIndex(first) * minorTensor().size() + minorTensor().at(others...);
+    }
 
     /**
      * @brief Returns the linear index corresponding to the tensor indices
@@ -346,15 +330,12 @@ namespace util {
      *
      */
     template <typename ITER>
-    std::enable_if_t
-      <std::is_convertible<decltype(*(ITER())), DimSize_t>::value, LinIndex_t>
-    at(ITER indexIter) const
-      {
-        auto const baseSize
-          = Base_t::checkOuterIndex(*indexIter) * minorTensor().size();
-        return baseSize + minorTensor()(++indexIter);
-      }
-
+    std::enable_if_t<std::is_convertible<decltype(*(ITER())), DimSize_t>::value, LinIndex_t> at(
+      ITER indexIter) const
+    {
+      auto const baseSize = Base_t::checkOuterIndex(*indexIter) * minorTensor().size();
+      return baseSize + minorTensor()(++indexIter);
+    }
 
     /**
      * @brief Returns whether the specified set of indices is valid
@@ -382,7 +363,9 @@ namespace util {
      */
     template <typename... OTHERINDICES>
     bool has(Index_t first, OTHERINDICES... others) const
-      { return Base_t::has(first) && minorTensor().has(others...); }
+    {
+      return Base_t::has(first) && minorTensor().has(others...);
+    }
 
     /**
      * @brief Returns whether the specified set of indices is valid
@@ -407,11 +390,11 @@ namespace util {
 
      */
     template <typename ITER>
-    std::enable_if_t
-      <std::is_convertible<decltype(*(ITER())), DimSize_t>::value, bool>
-    has(ITER indexIter) const
-      { return Base_t::has(*indexIter)? minorTensor().has(++indexIter): false; }
-
+    std::enable_if_t<std::is_convertible<decltype(*(ITER())), DimSize_t>::value, bool> has(
+      ITER indexIter) const
+    {
+      return Base_t::has(*indexIter) ? minorTensor().has(++indexIter) : false;
+    }
 
     /**
      * @brief Returns the size of the specified dimension
@@ -422,8 +405,9 @@ namespace util {
      */
     template <unsigned int DIM>
     DimSize_t dim() const
-      { return details::ExtractTensorDimension<rank(), DIM>::dim(*this); }
-
+    {
+      return details::ExtractTensorDimension<rank(), DIM>::dim(*this);
+    }
 
     /**
      * @brief Returns whether a index is valid within a specified dimension
@@ -451,8 +435,9 @@ namespace util {
      */
     template <unsigned int DIM>
     bool hasIndex(Index_t index) const
-      { return (index >= 0U) && ((DimSize_t) index < dim<DIM>()); }
-
+    {
+      return (index >= 0U) && ((DimSize_t)index < dim<DIM>());
+    }
 
     /**
      * @brief Returns the size of the minor tensor
@@ -469,15 +454,15 @@ namespace util {
      */
     template <unsigned int DIM = 0>
     DimSize_t size() const
-      {
-        return (DIM == 0)? totalSize():
-          details::ExtractTensorDimension<rank(), DIM>::size(*this);
-      }
+    {
+      return (DIM == 0) ? totalSize() : details::ExtractTensorDimension<rank(), DIM>::size(*this);
+    }
 
     /// Returns whether the specified linear index is valid in this tensor
     bool hasLinIndex(LinIndex_t linIndex) const
-      { return (linIndex >= 0U) && ((DimSize_t) linIndex < size()); }
-
+    {
+      return (linIndex >= 0U) && ((DimSize_t)linIndex < size());
+    }
 
     /// Returns the tensor of rank `Rank-1` from stripping the first dimension
     /// Note that the minorTensor variable was previously named "minor".
@@ -485,16 +470,18 @@ namespace util {
     MinorTensor_t const& minorTensor() const { return m; }
 
     /// Returns whether all sizes of the tensor t are the same as this one
-    bool operator== (TensorIndices<RANK> const& t) const
-      { return Base_t::operator==(t) && (minorTensor() == t.minorTensor()); }
+    bool operator==(TensorIndices<RANK> const& t) const
+    {
+      return Base_t::operator==(t) && (minorTensor() == t.minorTensor());
+    }
 
     /// Returns whether any size of the tensor t is different from this one
-    bool operator!= (TensorIndices<RANK> const& t) const
-      { return Base_t::operator!=(t) || (minorTensor() != t.minorTensor()); }
+    bool operator!=(TensorIndices<RANK> const& t) const
+    {
+      return Base_t::operator!=(t) || (minorTensor() != t.minorTensor());
+    }
 
-
-
-      protected:
+  protected:
     // need to be friend of the dimension extractor
     template <unsigned int R, unsigned int D>
     friend struct details::ExtractTensorDimension;
@@ -507,24 +494,23 @@ namespace util {
 
   }; // class TensorIndices<>
 
-
+  /// Comparison operator with tensors of different rank
+  template <unsigned int RANK1,
+            unsigned int RANK2,
+            typename = std::enable_if_t<(RANK1 != RANK2), bool>>
+  bool operator==(TensorIndices<RANK1> const& a, TensorIndices<RANK2> const& b)
+  {
+    return false;
+  }
 
   /// Comparison operator with tensors of different rank
-  template <
-    unsigned int RANK1, unsigned int RANK2,
-    typename = std::enable_if_t<(RANK1 != RANK2), bool>
-    >
-  bool operator== (TensorIndices<RANK1> const& a, TensorIndices<RANK2> const& b)
-    { return false; }
-
-  /// Comparison operator with tensors of different rank
-  template <
-    unsigned int RANK1, unsigned int RANK2,
-    typename = std::enable_if_t<(RANK1 != RANK2), bool>
-    >
-  bool operator!= (TensorIndices<RANK1> const& a, TensorIndices<RANK2> const& b)
-    { return true; }
-
+  template <unsigned int RANK1,
+            unsigned int RANK2,
+            typename = std::enable_if_t<(RANK1 != RANK2), bool>>
+  bool operator!=(TensorIndices<RANK1> const& a, TensorIndices<RANK2> const& b)
+  {
+    return true;
+  }
 
   /**
    * @brief Instantiates a TensorIndices class with the specified dimensions
@@ -541,18 +527,14 @@ namespace util {
    */
   template <typename... DIMS>
   auto makeTensorIndices(DIMS... dims)
-    {
-      return TensorIndices<sizeof...(DIMS)>
-        { TensorIndicesBasicTypes::DimSize_t(dims)... };
-    }
-
+  {
+    return TensorIndices<sizeof...(DIMS)>{TensorIndicesBasicTypes::DimSize_t(dims)...};
+  }
 
   /// Type for indexing a 2D-tensor (matrix)
   using MatrixIndices = TensorIndices<2U>;
 
-
 } // namespace util
-
 
 //------------------------------------------------------------------------------
 //--- details implementation
@@ -579,32 +561,34 @@ namespace util {
     template <unsigned int RANK, unsigned int DIM>
     struct ExtractTensorDimension {
       static_assert(RANK > DIM, "Invalid dimension requested");
-      static TensorIndicesBasicTypes::DimSize_t dim
-        (TensorIndices<RANK> const& t)
-        { return ExtractTensorDimension<RANK-1U, DIM-1U>::dim(t.minorTensor()); }
+      static TensorIndicesBasicTypes::DimSize_t dim(TensorIndices<RANK> const& t)
+      {
+        return ExtractTensorDimension<RANK - 1U, DIM - 1U>::dim(t.minorTensor());
+      }
 
-      static TensorIndicesBasicTypes::DimSize_t size
-        (TensorIndices<RANK> const& t)
-        { return ExtractTensorDimension<RANK-1U, DIM-1U>::size(t.minorTensor()); }
+      static TensorIndicesBasicTypes::DimSize_t size(TensorIndices<RANK> const& t)
+      {
+        return ExtractTensorDimension<RANK - 1U, DIM - 1U>::size(t.minorTensor());
+      }
 
     }; // ExtractTensorDimension<>()
 
     template <unsigned int RANK>
     struct ExtractTensorDimension<RANK, 0U> {
       static_assert(RANK > 0, "Invalid rank 0 for TensorIndices");
-      static TensorIndicesBasicTypes::DimSize_t dim
-        (TensorIndices<RANK> const& t)
-        { return t.dim0(); }
+      static TensorIndicesBasicTypes::DimSize_t dim(TensorIndices<RANK> const& t)
+      {
+        return t.dim0();
+      }
 
-      static TensorIndicesBasicTypes::DimSize_t size
-        (TensorIndices<RANK> const& t)
-        { return t.size(); }
+      static TensorIndicesBasicTypes::DimSize_t size(TensorIndices<RANK> const& t)
+      {
+        return t.size();
+      }
 
     }; // ExtractTensorDimension<RANK, 0>()
 
   } // namespace details
 } // namespace util
-
-
 
 #endif // LARDATA_UTILITIES_TENSORINDICES_H

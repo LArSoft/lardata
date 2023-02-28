@@ -6,7 +6,6 @@
  *
  */
 
-
 // LArSoft libraries
 #include "lardataobj/Simulation/SimPhotons.h"
 
@@ -20,16 +19,14 @@
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // C/C++ standard libraries
-#include <string>
 #include <iomanip> // std::setw()
 #include <numeric> // std::accumulate()
+#include <string>
 #include <utility> // std::forward()
-
 
 namespace sim {
   class DumpSimPhotonsLite;
 } // namespace sim
-
 
 namespace {
   using namespace fhicl;
@@ -39,25 +36,22 @@ namespace {
     using Name = fhicl::Name;
     using Comment = fhicl::Comment;
 
-    fhicl::Atom<art::InputTag> InputPhotons {
+    fhicl::Atom<art::InputTag> InputPhotons{
       Name("InputPhotons"),
-      Comment("data product with the SimPhotonsLite to be dumped")
-      };
+      Comment("data product with the SimPhotonsLite to be dumped")};
 
-    fhicl::Atom<std::string> OutputCategory {
+    fhicl::Atom<std::string> OutputCategory{
       Name("OutputCategory"),
       Comment("name of the output stream (managed by the message facility)"),
       "DumpSimPhotonsLite" /* default value */
-      };
+    };
 
   }; // struct Config
 
-
 } // local namespace
 
-
-class sim::DumpSimPhotonsLite: public art::EDAnalyzer {
-    public:
+class sim::DumpSimPhotonsLite : public art::EDAnalyzer {
+public:
   // type to enable module parameters description by art
   using Parameters = art::EDAnalyzer::Table<Config>;
 
@@ -66,14 +60,12 @@ class sim::DumpSimPhotonsLite: public art::EDAnalyzer {
 
   // Plugins should not be copied or assigned.
   DumpSimPhotonsLite(DumpSimPhotonsLite const&) = delete;
-  DumpSimPhotonsLite(DumpSimPhotonsLite &&) = delete;
-  DumpSimPhotonsLite& operator = (DumpSimPhotonsLite const&) = delete;
-  DumpSimPhotonsLite& operator = (DumpSimPhotonsLite &&) = delete;
-
+  DumpSimPhotonsLite(DumpSimPhotonsLite&&) = delete;
+  DumpSimPhotonsLite& operator=(DumpSimPhotonsLite const&) = delete;
+  DumpSimPhotonsLite& operator=(DumpSimPhotonsLite&&) = delete;
 
   // Operates on the event
   void analyze(art::Event const& event) override;
-
 
   /**
    * @brief Dumps the content of specified SimPhotonsLite in the output stream.
@@ -89,25 +81,22 @@ class sim::DumpSimPhotonsLite: public art::EDAnalyzer {
    * The output starts on the current line, and the last line is *not* broken.
    */
   template <typename Stream>
-  void DumpPhoton(
-    Stream&& out, sim::SimPhotonsLite const& photons,
-    std::string indent, std::string firstIndent
-    ) const;
+  void DumpPhoton(Stream&& out,
+                  sim::SimPhotonsLite const& photons,
+                  std::string indent,
+                  std::string firstIndent) const;
 
   template <typename Stream>
-  void DumpPhoton
-    (Stream&& out, sim::SimPhotonsLite const& photons, std::string indent = "")
-    const
-    { DumpPhoton(std::forward<Stream>(out), photons, indent, indent); }
+  void DumpPhoton(Stream&& out, sim::SimPhotonsLite const& photons, std::string indent = "") const
+  {
+    DumpPhoton(std::forward<Stream>(out), photons, indent, indent);
+  }
 
-
-    private:
-
+private:
   art::InputTag fInputPhotons; ///< name of SimPhotons's data product
   std::string fOutputCategory; ///< name of the stream for output
 
 }; // class sim::DumpSimPhotonsLite
-
 
 //------------------------------------------------------------------------------
 //---  module implementation
@@ -121,23 +110,24 @@ sim::DumpSimPhotonsLite::DumpSimPhotonsLite(Parameters const& config)
 
 //------------------------------------------------------------------------------
 template <typename Stream>
-void sim::DumpSimPhotonsLite::DumpPhoton(
-  Stream&& out, sim::SimPhotonsLite const& photons,
-  std::string indent, std::string firstIndent
-) const {
+void sim::DumpSimPhotonsLite::DumpPhoton(Stream&& out,
+                                         sim::SimPhotonsLite const& photons,
+                                         std::string indent,
+                                         std::string firstIndent) const
+{
 
-  unsigned int const nPhotons = std::accumulate(
-    photons.DetectedPhotons.begin(), photons.DetectedPhotons.end(),
-    0U, [](auto sum, auto const& entry){ return sum + entry.second; }
-    );
+  unsigned int const nPhotons =
+    std::accumulate(photons.DetectedPhotons.begin(),
+                    photons.DetectedPhotons.end(),
+                    0U,
+                    [](auto sum, auto const& entry) { return sum + entry.second; });
 
-  out << firstIndent
-    << "channel=" << photons.OpChannel << " has ";
+  out << firstIndent << "channel=" << photons.OpChannel << " has ";
   if (nPhotons) {
     out << nPhotons << " photons (format: [tick] photons):";
     constexpr unsigned int PageSize = 5;
     unsigned int pager = 0;
-    for (auto const& pair: photons.DetectedPhotons) {
+    for (auto const& pair : photons.DetectedPhotons) {
       if (pager-- == 0) {
         pager = PageSize - 1;
         out << "\n" << indent << " ";
@@ -151,31 +141,29 @@ void sim::DumpSimPhotonsLite::DumpPhoton(
 
 } // sim::DumpSimPhotonsLite::DumpPhoton()
 
-
 //------------------------------------------------------------------------------
-void sim::DumpSimPhotonsLite::analyze(art::Event const& event) {
+void sim::DumpSimPhotonsLite::analyze(art::Event const& event)
+{
 
   // get the particles from the event
-  auto const& Photons
-    = *(event.getValidHandle<std::vector<sim::SimPhotonsLite>>(fInputPhotons));
+  auto const& Photons = *(event.getValidHandle<std::vector<sim::SimPhotonsLite>>(fInputPhotons));
 
-  mf::LogVerbatim(fOutputCategory) << "Event " << event.id()
-    << " : data product '" << fInputPhotons.encode() << "' contains "
+  mf::LogVerbatim(fOutputCategory)
+    << "Event " << event.id() << " : data product '" << fInputPhotons.encode() << "' contains "
     << Photons.size() << " SimPhotonsLite";
 
   unsigned int iChannel = 0;
-  for (sim::SimPhotonsLite const& photons: Photons) {
+  for (sim::SimPhotonsLite const& photons : Photons) {
 
     mf::LogVerbatim log(fOutputCategory);
     // a bit of a header
     log << "[#" << (iChannel++) << "] ";
     DumpPhoton(log, photons, "  ");
 
-  } // for
+  }                                         // for
   mf::LogVerbatim(fOutputCategory) << "\n"; // just an empty line
 
 } // sim::DumpSimPhotonsLite::analyze()
-
 
 //------------------------------------------------------------------------------
 DEFINE_ART_MODULE(sim::DumpSimPhotonsLite)

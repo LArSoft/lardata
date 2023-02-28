@@ -39,15 +39,13 @@ namespace detinfo {
     reg.sPreBeginRun.watch(this, &DetectorClocksServiceStandard::preBeginRun);
   }
 
-  void
-  DetectorClocksServiceStandard::preBeginRun(art::Run const& run)
+  void DetectorClocksServiceStandard::preBeginRun(art::Run const& run)
   {
     // This callback probably is not necessary.
     fClocks.ApplyParams();
   }
 
-  void
-  DetectorClocksServiceStandard::postOpenFile(string const& filename)
+  void DetectorClocksServiceStandard::postOpenFile(string const& filename)
   {
     if (!fInheritClockConfig) { return; }
     if (filename.empty()) { return; }
@@ -122,12 +120,11 @@ namespace detinfo {
     }
     fClocks.ApplyParams();
   } // DetectorClocksServiceStandard::postOpenFile()
-  
-  
-  DetectorClocksData DetectorClocksServiceStandard::DataFor
-    (art::Event const& e) const
-    { return detinfo::detectorClocksStandardDataFor(fClocks, e); }
-  
+
+  DetectorClocksData DetectorClocksServiceStandard::DataFor(art::Event const& e) const
+  {
+    return detinfo::detectorClocksStandardDataFor(fClocks, e);
+  }
 
 } // namespace detinfo
 

@@ -14,17 +14,15 @@
 #define HITUTILS_H
 
 // LArSoft libraries
-#include "lardataobj/RecoBase/Wire.h"
-#include "lardataobj/RecoBase/Hit.h"
 #include "lardata/ArtDataHelper/FindAllP.h"
-
+#include "lardataobj/RecoBase/Hit.h"
+#include "lardataobj/RecoBase/Wire.h"
 
 /// LArSoft-specific namespace
 namespace lar {
 
   /// LArSoft utility namespace
   namespace util {
-
 
     /** ************************************************************************
      * @brief Query object connecting a hit to a wire
@@ -55,12 +53,8 @@ namespace lar {
      */
     using HitToWire = details::FindAllP<recob::Hit, recob::Wire>;
 
-
   } // namespace util
 
 } // namespace lar
-
-
-
 
 #endif // HITUTILS_H

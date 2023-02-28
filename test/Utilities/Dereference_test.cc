@@ -9,8 +9,8 @@
  */
 
 // static tests
-#include <type_traits>
 #include <memory>
+#include <type_traits>
 
 // Boost libraries
 /*
@@ -22,160 +22,105 @@
  * This also makes fairly complicate to receive parameters from the command line
  * (for example, a random seed).
  */
-#define BOOST_TEST_MODULE ( StatCollector_test )
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
-#include <boost/test/test_tools.hpp> // BOOST_CHECK(), BOOST_CHECK_EQUAL()
+#define BOOST_TEST_MODULE (StatCollector_test)
+#include <boost/test/test_tools.hpp>                      // BOOST_CHECK(), BOOST_CHECK_EQUAL()
 #include <boost/test/tools/floating_point_comparison.hpp> // BOOST_CHECK_CLOSE()
+#include <cetlib/quiet_unit_test.hpp>                     // BOOST_AUTO_TEST_CASE()
 
 // library to be tested:
 #include "lardata/Utilities/Dereference.h"
-
 
 //------------------------------------------------------------------------------
 // custom "smart pointer" type
 template <typename T>
 struct MyPtr {
-	using element_type = T;
-	MyPtr(T* p = nullptr): ptr(p) {}
+  using element_type = T;
+  MyPtr(T* p = nullptr) : ptr(p) {}
 
-	T& operator* () { return *ptr; }
+  T& operator*() { return *ptr; }
 
-	T* ptr;
+  T* ptr;
 }; // struct MyPtr<>
-
 
 //******************************************************************************
 //*** static (compilation-time) tests
 //***
 // test details::is_type<>
 static_assert(lar::util::details::is_type<decltype(*(std::unique_ptr<int>()))>::value,
-  "is_type<*(unique_ptr<int>())> not working");
-
+              "is_type<*(unique_ptr<int>())> not working");
 
 // test details::has_dereference_class
 static_assert(!lar::util::details::has_dereference_class<int>::value,
-  "details::has_dereference_class<int> is not working");
+              "details::has_dereference_class<int> is not working");
 static_assert(lar::util::details::has_dereference_class<int*>::value,
-  "details::has_dereference_class<int*> is not working");
+              "details::has_dereference_class<int*> is not working");
 static_assert(lar::util::details::has_dereference_class<MyPtr<int>>::value,
-  "details::has_dereference_class<MyPtr<int>> is not working");
+              "details::has_dereference_class<MyPtr<int>> is not working");
 static_assert(lar::util::details::has_dereference_class<std::unique_ptr<int>>::value,
-  "details::has_dereference_class<unique_ptr<int>> is not working");
-
+              "details::has_dereference_class<unique_ptr<int>> is not working");
 
 // test details::dereferenced_type; should always have type = int&
-static_assert(std::is_same<
-    typename lar::util::details::dereferenced_type<int, false>::type,
-    int
-  >::value,
-  "details::dereferenced_type<int> is not working"
-  );
-static_assert(std::is_same<
-    typename lar::util::details::dereferenced_type<int*, true>::type,
-    int&
-  >::value,
-  "details::dereferenced_type<int*> is not working"
-  );
-static_assert(std::is_same<
-    typename lar::util::details::dereferenced_type<MyPtr<int>, true>::type,
-    int&
-  >::value,
-  "details::dereferenced_type<MyPtr<int>> is not working"
-  );
-static_assert(std::is_same<
-    typename lar::util::details::dereferenced_type<std::unique_ptr<int>, true>::type,
-    int&
-  >::value,
-  "details::dereferenced_type<unique_ptr<int>> is not working"
-  );
-
+static_assert(
+  std::is_same<typename lar::util::details::dereferenced_type<int, false>::type, int>::value,
+  "details::dereferenced_type<int> is not working");
+static_assert(
+  std::is_same<typename lar::util::details::dereferenced_type<int*, true>::type, int&>::value,
+  "details::dereferenced_type<int*> is not working");
+static_assert(
+  std::is_same<typename lar::util::details::dereferenced_type<MyPtr<int>, true>::type, int&>::value,
+  "details::dereferenced_type<MyPtr<int>> is not working");
+static_assert(
+  std::is_same<typename lar::util::details::dereferenced_type<std::unique_ptr<int>, true>::type,
+               int&>::value,
+  "details::dereferenced_type<unique_ptr<int>> is not working");
 
 // test dereference_class pointer type; should always be int*
-static_assert(std::is_same<
-    lar::util::details::dereference_class<int, false>::reference_type,
-    int&
-  >::value,
-  "details::dereference_class<int> not working"
-  );
-static_assert(std::is_same<
-    lar::util::details::dereference_class<int*, true>::reference_type,
-    int&
-  >::value,
-  "details::dereference_class<int*> not working"
-  );
-static_assert(std::is_same<
-    lar::util::details::dereference_class<MyPtr<int>, true>::reference_type,
-    int&
-  >::value,
-  "details::dereference_class<MyPtr<int>> not working"
-  );
-static_assert(std::is_same<
-    lar::util::details::dereference_class<std::unique_ptr<int>, true>::reference_type,
-    int&
-  >::value,
-  "details::dereference_class<unique_ptr<int>> not working"
-  );
-
+static_assert(
+  std::is_same<lar::util::details::dereference_class<int, false>::reference_type, int&>::value,
+  "details::dereference_class<int> not working");
+static_assert(
+  std::is_same<lar::util::details::dereference_class<int*, true>::reference_type, int&>::value,
+  "details::dereference_class<int*> not working");
+static_assert(std::is_same<lar::util::details::dereference_class<MyPtr<int>, true>::reference_type,
+                           int&>::value,
+              "details::dereference_class<MyPtr<int>> not working");
+static_assert(
+  std::is_same<lar::util::details::dereference_class<std::unique_ptr<int>, true>::reference_type,
+               int&>::value,
+  "details::dereference_class<unique_ptr<int>> not working");
 
 // test dereference_class pointer type; should always be int*
-static_assert(std::is_same<
-    lar::util::details::make_pointer_class<int, false>::pointer_type,
-    int*
-  >::value,
-  "details::make_pointer_class<int> not working"
-  );
-static_assert(std::is_same<
-    lar::util::details::make_pointer_class<int*, true>::pointer_type,
-    int*
-  >::value,
-  "details::make_pointer_class<int*> not working"
-  );
-static_assert(std::is_same<
-    lar::util::details::make_pointer_class<MyPtr<int>, true>::pointer_type,
-    int*
-  >::value,
-  "details::make_pointer_class<MyPtr<int>> not working"
-  );
-static_assert(std::is_same<
-    lar::util::details::make_pointer_class<std::unique_ptr<int>, true>::pointer_type,
-    int*
-  >::value,
-  "details::make_pointer_class<unique_ptr<int>> not working"
-  );
-
+static_assert(
+  std::is_same<lar::util::details::make_pointer_class<int, false>::pointer_type, int*>::value,
+  "details::make_pointer_class<int> not working");
+static_assert(
+  std::is_same<lar::util::details::make_pointer_class<int*, true>::pointer_type, int*>::value,
+  "details::make_pointer_class<int*> not working");
+static_assert(
+  std::is_same<lar::util::details::make_pointer_class<MyPtr<int>, true>::pointer_type, int*>::value,
+  "details::make_pointer_class<MyPtr<int>> not working");
+static_assert(
+  std::is_same<lar::util::details::make_pointer_class<std::unique_ptr<int>, true>::pointer_type,
+               int*>::value,
+  "details::make_pointer_class<unique_ptr<int>> not working");
 
 // test dereferenced_type type; should always be int
-static_assert(std::is_same<
-    typename lar::util::dereferenced_type<int>::type,
-    int
-  >::value,
-  "dereferenced_type<int> not working"
-  );
-static_assert(std::is_same<
-    typename lar::util::dereferenced_type<int*>::type,
-    int&
-  >::value,
-  "dereferenced_type<int*> not working"
-  );
-static_assert(std::is_same<
-    typename lar::util::dereferenced_type<MyPtr<int>>::type,
-    int&
-  >::value,
-  "dereferenced_type<MyPtr<int>> not working"
-  );
-static_assert(std::is_same<
-    typename lar::util::dereferenced_type<std::unique_ptr<int>>::type,
-    int&
-  >::value,
-  "dereferenced_type<unique_ptr<int>> not working"
-  );
-
+static_assert(std::is_same<typename lar::util::dereferenced_type<int>::type, int>::value,
+              "dereferenced_type<int> not working");
+static_assert(std::is_same<typename lar::util::dereferenced_type<int*>::type, int&>::value,
+              "dereferenced_type<int*> not working");
+static_assert(std::is_same<typename lar::util::dereferenced_type<MyPtr<int>>::type, int&>::value,
+              "dereferenced_type<MyPtr<int>> not working");
+static_assert(
+  std::is_same<typename lar::util::dereferenced_type<std::unique_ptr<int>>::type, int&>::value,
+  "dereferenced_type<unique_ptr<int>> not working");
 
 //******************************************************************************
 //***  testing starts here;
 //***  still mostly a compilation test
 template <typename T>
-void test() {
+void test()
+{
 
   T value = T(17);
   T* cptr = &value;
@@ -199,12 +144,13 @@ void test() {
 
 } // test<>()
 
-
 //******************************************************************************
-BOOST_AUTO_TEST_CASE(TestInt) {
+BOOST_AUTO_TEST_CASE(TestInt)
+{
   test<int>();
 }
 
-BOOST_AUTO_TEST_CASE(TestConstInt) {
+BOOST_AUTO_TEST_CASE(TestConstInt)
+{
   test<const int>();
 }

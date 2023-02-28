@@ -4,11 +4,11 @@
 // Purpose: Single source executable with tests for track classes
 //
 
-#include <iostream>
-#include <cassert>
-#include "lardata/RecoObjects/KTrack.h"
 #include "lardata/RecoObjects/KETrack.h"
 #include "lardata/RecoObjects/KFitTrack.h"
+#include "lardata/RecoObjects/KTrack.h"
+#include <cassert>
+#include <iostream>
 
 int main()
 {
@@ -16,7 +16,7 @@ int main()
 
   bool assert_flag = false;
   assert((assert_flag = true, assert_flag));
-  if ( ! assert_flag ) {
+  if (!assert_flag) {
     std::cerr << "Assert is disabled" << std::endl;
     return 1;
   }

@@ -9,13 +9,13 @@
 
 #include "lardata/ArtDataHelper/MVAWrapperBase.h"
 
-#include <cxxabi.h>
 #include <algorithm>
+#include <cxxabi.h>
 
 namespace anab {
 
-std::string FVectorWrapperBase::getProductName(std::type_info const & ti) const
-{
+  std::string FVectorWrapperBase::getProductName(std::type_info const& ti) const
+  {
     char* realname;
     int status;
 
@@ -23,10 +23,10 @@ std::string FVectorWrapperBase::getProductName(std::type_info const & ti) const
     std::string pname(realname);
     free(realname);
 
-    pname.erase( std::remove(pname.begin(), pname.end(), ' '), pname.end() );
-    pname.erase( std::remove(pname.begin(), pname.end(), ':'), pname.end() );
+    pname.erase(std::remove(pname.begin(), pname.end(), ' '), pname.end());
+    pname.erase(std::remove(pname.begin(), pname.end(), ':'), pname.end());
 
     return pname;
-}
+  }
 
 } // namespace anab

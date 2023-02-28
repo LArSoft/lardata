@@ -9,13 +9,12 @@
 #define UTIL_DUMPASSOCIATIONS_H 1
 
 // C//C++ standard libraries
-#include <typeinfo>
 #include <type_traits> // std::is_same<>
+#include <typeinfo>
 
 // framework and supporting libraries
-#include "cetlib_except/demangle.h"
 #include "canvas/Persistency/Common/Assns.h"
-
+#include "cetlib_except/demangle.h"
 
 namespace util {
 
@@ -29,24 +28,18 @@ namespace util {
    * @param assns the associations to be dumped
    */
   template <typename Stream, typename Left, typename Right, typename Data>
-  void DumpAssociationsIntro
-    (Stream&& out, art::Assns<Left, Right, Data> const& assns)
+  void DumpAssociationsIntro(Stream&& out, art::Assns<Left, Right, Data> const& assns)
   {
-    out << "Association between '" << cet::demangle_symbol(typeid(Left).name())
-      << "' and '" << cet::demangle_symbol(typeid(Right).name()) << "'";
+    out << "Association between '" << cet::demangle_symbol(typeid(Left).name()) << "' and '"
+        << cet::demangle_symbol(typeid(Right).name()) << "'";
     if (std::is_same<Data, void>()) {
-      out << " with '" << cet::demangle_symbol(typeid(Data).name())
-        << "' metadata";
+      out << " with '" << cet::demangle_symbol(typeid(Data).name()) << "' metadata";
     }
-    if (assns.size() > 0) {
-      out << " contains " << assns.size() << " relations";
-    }
+    if (assns.size() > 0) { out << " contains " << assns.size() << " relations"; }
     else {
       out << " is empty";
     }
   } // DumpAssociationsIntro<Data>()
-
-
 
 } // namespace util
 

@@ -55,10 +55,8 @@
 
 namespace trkf {
 
-  class SurfLine : public Surface
-  {
+  class SurfLine : public Surface {
   public:
-
     /// Default constructor.
     SurfLine();
 

@@ -25,10 +25,8 @@
 
 namespace trkf {
 
-  class SurfPlane : public Surface
-  {
+  class SurfPlane : public Surface {
   public:
-
     /// Default constructor.
     SurfPlane();
 

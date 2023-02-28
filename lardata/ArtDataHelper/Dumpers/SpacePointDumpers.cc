@@ -11,4 +11,3 @@
 
 // LArSoft libraries
 #include "lardata/ArtDataHelper/Dumpers/SpacePointDumpers.h"
-

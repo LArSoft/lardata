@@ -16,13 +16,12 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_WITHASSOCIATED_H
 
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase/WithAssociatedStructBase.h"
 #include "lardata/RecoBaseProxy/ProxyBase/AssociatedDataProxyMaker.h"
+#include "lardata/RecoBaseProxy/ProxyBase/WithAssociatedStructBase.h"
 
 // C/C++ standard libraries
 #include <tuple>
 #include <utility> // std::forward(), std::move()
-
 
 namespace proxy {
 
@@ -50,22 +49,17 @@ namespace proxy {
      * This is not a customization point: to have a custom associated data
      * produced, specialize `proxy::AssociatedDataProxyMaker` class
      */
-    template <
-      typename Aux, typename Metadata,
-      typename ArgTuple, typename AuxTag = Aux
-      >
+    template <typename Aux, typename Metadata, typename ArgTuple, typename AuxTag = Aux>
     using WithAssociatedStruct = WithAssociatedStructBase<
       Aux,
       Metadata,
       ArgTuple,
       AssociatedDataProxyMakerWrapper<Aux, Metadata, AuxTag>::template maker_t,
-      AuxTag
-      >;
+      AuxTag>;
 
     //--------------------------------------------------------------------------
 
   } // namespace details
-
 
   // --- BEGIN One-to-many sequential associations -----------------------------
   /**
@@ -146,13 +140,12 @@ namespace proxy {
    * For more extensive information, see `proxy::withAssociatedMeta()`.
    */
   template <typename Aux, typename Metadata, typename AuxTag, typename... Args>
-  auto withAssociatedMetaAs(Args&&... args) {
+  auto withAssociatedMetaAs(Args&&... args)
+  {
     using ArgTuple_t = std::tuple<Args&&...>;
     ArgTuple_t argsTuple(std::forward<Args>(args)...);
-    return details::WithAssociatedStruct<Aux, Metadata, ArgTuple_t, AuxTag>
-      (std::move(argsTuple));
+    return details::WithAssociatedStruct<Aux, Metadata, ArgTuple_t, AuxTag>(std::move(argsTuple));
   } // withAssociatedMetaAs()
-
 
   //----------------------------------------------------------------------------
   /**
@@ -204,11 +197,9 @@ namespace proxy {
    */
   template <typename Aux, typename AuxTag, typename... Args>
   auto withAssociatedAs(Args&&... args)
-    {
-      return withAssociatedMetaAs<Aux, void, AuxTag>
-        (std::forward<Args>(args)...);
-    }
-
+  {
+    return withAssociatedMetaAs<Aux, void, AuxTag>(std::forward<Args>(args)...);
+  }
 
   //----------------------------------------------------------------------------
   /**
@@ -333,11 +324,9 @@ namespace proxy {
    */
   template <typename Aux, typename Metadata, typename... Args>
   auto withAssociatedMeta(Args&&... args)
-    {
-      return withAssociatedMetaAs<Aux, Metadata, Aux>
-        (std::forward<Args>(args)...);
-    }
-
+  {
+    return withAssociatedMetaAs<Aux, Metadata, Aux>(std::forward<Args>(args)...);
+  }
 
   /**
    * @brief Helper function to merge associated data with no metadata.
@@ -376,8 +365,9 @@ namespace proxy {
    */
   template <typename Aux, typename... Args>
   auto withAssociated(Args&&... args)
-    { return withAssociatedMeta<Aux, void>(std::forward<Args>(args)...); }
-
+  {
+    return withAssociatedMeta<Aux, void>(std::forward<Args>(args)...);
+  }
 
   //----------------------------------------------------------------------------
   /**
@@ -424,14 +414,11 @@ namespace proxy {
    */
   template <typename AuxTag, typename Assns>
   auto wrapAssociatedAs(Assns const& assns)
-    {
-      using Aux_t = typename Assns::right_t;
-      using Metadata_t = lar::util::assns_metadata_t<Assns>;
-      return
-        details::WithAssociatedStruct<Aux_t, Metadata_t, std::tuple<>, AuxTag>
-        ({});
-    } // wrapAssociatedAs()
-
+  {
+    using Aux_t = typename Assns::right_t;
+    using Metadata_t = lar::util::assns_metadata_t<Assns>;
+    return details::WithAssociatedStruct<Aux_t, Metadata_t, std::tuple<>, AuxTag>({});
+  } // wrapAssociatedAs()
 
   /**
    * @brief Helper function to merge associated data from a given association.
@@ -477,8 +464,9 @@ namespace proxy {
    */
   template <typename Assns>
   auto wrapAssociated(Assns const& assns)
-    { return wrapAssociatedAs<typename Assns::right_t>(assns); }
-
+  {
+    return wrapAssociatedAs<typename Assns::right_t>(assns);
+  }
 
   /**
    * @brief Helper function to merge associated data from a given association.
@@ -495,11 +483,12 @@ namespace proxy {
    */
   template <typename AuxTag, typename Assns>
   auto wrapAssociated(Assns const& assns)
-    { return wrapAssociatedAs<AuxTag>(assns); }
+  {
+    return wrapAssociatedAs<AuxTag>(assns);
+  }
 
   //----------------------------------------------------------------------------
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_WITHASSOCIATED_H

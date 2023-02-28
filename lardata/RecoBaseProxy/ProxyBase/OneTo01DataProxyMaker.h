@@ -19,9 +19,8 @@
 #include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard libraries
-#include <utility> // std::forward()
 #include <type_traits> // std::is_convertible<>
-
+#include <utility>     // std::forward()
 
 namespace proxy {
 
@@ -46,10 +45,7 @@ namespace proxy {
    * the specializations of the latter can still inherit from this one if they
    * its facilities.
    */
-  template <
-    typename Main, typename Aux, typename Metadata = void,
-    typename AuxTag = Aux
-    >
+  template <typename Main, typename Aux, typename Metadata = void, typename AuxTag = Aux>
   struct OneTo01DataProxyMakerBase {
 
     /// Tag labelling the associated data we are going to produce.
@@ -65,8 +61,8 @@ namespace proxy {
     using metadata_t = Metadata;
 
     /// Type of associated data proxy being created.
-    using aux_collection_proxy_t = details::OneTo01Data
-       <main_element_t, aux_element_t, metadata_t, data_tag>;
+    using aux_collection_proxy_t =
+      details::OneTo01Data<main_element_t, aux_element_t, metadata_t, data_tag>;
 
     /// Type of _art_ association being used as input.
     using assns_t = typename aux_collection_proxy_t::assns_t;
@@ -89,13 +85,11 @@ namespace proxy {
      * by explicit type cast into a `art::InputTag`; that input tag will be
      * used to fetch the association.
      */
-    template<typename Event, typename Handle, typename MainArgs>
-    static auto make
-      (Event const& event, Handle&& mainHandle, MainArgs const& mainArgs)
-      {
-        return createFromTag
-          (event, std::forward<Handle>(mainHandle), art::InputTag(mainArgs));
-      }
+    template <typename Event, typename Handle, typename MainArgs>
+    static auto make(Event const& event, Handle&& mainHandle, MainArgs const& mainArgs)
+    {
+      return createFromTag(event, std::forward<Handle>(mainHandle), art::InputTag(mainArgs));
+    }
 
     /**
      * @brief Create a association proxy collection using the specified tag.
@@ -111,15 +105,14 @@ namespace proxy {
      * data indexed by the index of the corresponding object in the main
      * collection.
      */
-    template<typename Event, typename Handle, typename MainArgs>
-    static auto make(
-      Event const& event, Handle&& mainHandle,
-      MainArgs const&, art::InputTag const& auxInputTag
-      )
-      {
-        return
-          createFromTag(event, std::forward<Handle>(mainHandle), auxInputTag);
-      }
+    template <typename Event, typename Handle, typename MainArgs>
+    static auto make(Event const& event,
+                     Handle&& mainHandle,
+                     MainArgs const&,
+                     art::InputTag const& auxInputTag)
+    {
+      return createFromTag(event, std::forward<Handle>(mainHandle), auxInputTag);
+    }
 
     /**
      * @brief Create a association proxy collection using the specified tag.
@@ -134,31 +127,25 @@ namespace proxy {
      * data indexed by the index of the corresponding object in the main
      * collection.
      */
-    template<typename Event, typename Handle, typename MainArgs, typename Assns>
-    static auto make
-      (Event const&, Handle&& handle, MainArgs const&, Assns const& assns)
-      {
-        static_assert(
-          std::is_convertible<typename Assns::right_t, aux_element_t>(),
-          "Improper right type for one-to-(zero-or-one) association."
-          );
-        return makeOneTo01dataFrom<data_tag>(assns, handle->size());
-      }
+    template <typename Event, typename Handle, typename MainArgs, typename Assns>
+    static auto make(Event const&, Handle&& handle, MainArgs const&, Assns const& assns)
+    {
+      static_assert(std::is_convertible<typename Assns::right_t, aux_element_t>(),
+                    "Improper right type for one-to-(zero-or-one) association.");
+      return makeOneTo01dataFrom<data_tag>(assns, handle->size());
+    }
 
-
-      private:
-    template<typename Event, typename Handle>
-    static auto createFromTag(
-      Event const& event, Handle&& mainHandle, art::InputTag const& auxInputTag
-      )
-      {
-        return makeOneTo01dataFrom
-          <main_element_t, aux_element_t, metadata_t, data_tag>
-          (event, auxInputTag, mainHandle->size());
-      }
+  private:
+    template <typename Event, typename Handle>
+    static auto createFromTag(Event const& event,
+                              Handle&& mainHandle,
+                              art::InputTag const& auxInputTag)
+    {
+      return makeOneTo01dataFrom<main_element_t, aux_element_t, metadata_t, data_tag>(
+        event, auxInputTag, mainHandle->size());
+    }
 
   }; // struct OneTo01DataProxyMakerBase<>
-
 
   //--------------------------------------------------------------------------
   /**
@@ -194,13 +181,8 @@ namespace proxy {
    * The last template argument is designed for specialization of associations
    * in the context of a specific proxy type.
    */
-  template <
-    typename Main, typename Aux, typename Metadata,
-    typename CollProxy, typename Tag = Aux
-    >
-  class OneTo01DataProxyMaker
-    : public OneTo01DataProxyMakerBase<Main, Aux, Metadata, Tag>
-  {
+  template <typename Main, typename Aux, typename Metadata, typename CollProxy, typename Tag = Aux>
+  class OneTo01DataProxyMaker : public OneTo01DataProxyMakerBase<Main, Aux, Metadata, Tag> {
     //
     // Note that this implementation is here only to document how to derive
     // a OneTo01DataProxyMaker (specialization) from
@@ -208,8 +190,7 @@ namespace proxy {
     //
     using base_t = OneTo01DataProxyMakerBase<Main, Aux, Metadata, Tag>;
 
-      public:
-
+  public:
     /// Type of the main datum ("left").
     using typename base_t::main_element_t;
 
@@ -245,47 +226,33 @@ namespace proxy {
      * by explicit type cast into a `art::InputTag`; that input tag will be
      * used to fetch the association.
      */
-    template
-      <typename Event, typename Handle, typename MainArgs, typename... Args>
-    static auto make(
-      Event const& event, Handle&& mainHandle, MainArgs const& margs,
-      Args&&... args
-      )
-      {
-        return base_t::make(
-          event,
-          std::forward<Handle>(mainHandle),
-          margs,
-          std::forward<Args>(args)...
-          );
-      }
+    template <typename Event, typename Handle, typename MainArgs, typename... Args>
+    static auto make(Event const& event, Handle&& mainHandle, MainArgs const& margs, Args&&... args)
+    {
+      return base_t::make(
+        event, std::forward<Handle>(mainHandle), margs, std::forward<Args>(args)...);
+    }
 
   }; // struct OneTo01DataProxyMaker<>
 
-
   /// @}
   // --- END LArSoftProxiesAssociatedData --------------------------------------
-
 
   namespace details {
 
     //--------------------------------------------------------------------------
     //---  Stuff for one-to-(zero or one) associated data
     //--------------------------------------------------------------------------
-    template <
-       typename Aux, typename Metadata /* = void */,
-       typename AuxTag /* = Aux */
-       >
+    template <typename Aux, typename Metadata /* = void */, typename AuxTag /* = Aux */
+              >
     struct OneTo01DataProxyMakerWrapper {
       template <typename CollProxy>
-      using maker_t = OneTo01DataProxyMaker
-        <typename CollProxy::main_element_t, Aux, Metadata, CollProxy, AuxTag>;
+      using maker_t =
+        OneTo01DataProxyMaker<typename CollProxy::main_element_t, Aux, Metadata, CollProxy, AuxTag>;
     };
 
   } // namespace details
 
-
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_ONETO01DATAPROXYMAKER_H

@@ -12,21 +12,18 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_PARALLELDATAPROXYMAKER_H
 
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase/makeParallelDataFrom.h"
-#include "lardata/RecoBaseProxy/ProxyBase/ParallelData.h"
 #include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
+#include "lardata/RecoBaseProxy/ProxyBase/ParallelData.h"
+#include "lardata/RecoBaseProxy/ProxyBase/makeParallelDataFrom.h"
 
 // framework libraries
 #include "canvas/Utilities/InputTag.h"
 
 // C/C++ standard
-#include <vector>
 #include <utility> // std::forward()
-
-
+#include <vector>
 
 namespace proxy {
-
 
   // -- BEGIN Parallel data infrastructure -------------------------------------
   /**
@@ -60,12 +57,10 @@ namespace proxy {
    * the specializations of the latter can still inherit from this one if they
    * its facilities.
    */
-  template <
-    typename Main,
-    typename AuxColl,
-    typename Aux,
-    typename AuxTag = util::collection_value_t<AuxColl>
-    >
+  template <typename Main,
+            typename AuxColl,
+            typename Aux,
+            typename AuxTag = util::collection_value_t<AuxColl>>
   struct ParallelDataProxyMakerBase {
 
     /// Tag labelling the associated data we are going to produce.
@@ -81,8 +76,7 @@ namespace proxy {
     using aux_element_t = Aux;
 
     /// Type of associated data proxy being created.
-    using aux_collection_proxy_t
-       = details::ParallelData<aux_collection_t, aux_element_t, data_tag>;
+    using aux_collection_proxy_t = details::ParallelData<aux_collection_t, aux_element_t, data_tag>;
 
     /**
      * @brief Create a parallel data proxy collection using main collection tag.
@@ -102,13 +96,11 @@ namespace proxy {
      * by explicit type cast into a `art::InputTag`; that input tag will be
      * used to fetch the parallel data collection.
      */
-    template<typename Event, typename Handle, typename MainArgs>
-    static auto make
-      (Event const& event, Handle&& mainHandle, MainArgs const& mainArgs)
-      {
-        return createFromTag
-          (event, std::forward<Handle>(mainHandle), art::InputTag(mainArgs));
-      }
+    template <typename Event, typename Handle, typename MainArgs>
+    static auto make(Event const& event, Handle&& mainHandle, MainArgs const& mainArgs)
+    {
+      return createFromTag(event, std::forward<Handle>(mainHandle), art::InputTag(mainArgs));
+    }
 
     /**
      * @brief Create a parallel data proxy collection using the specified tag.
@@ -124,15 +116,14 @@ namespace proxy {
      * data indexed by the index of the corresponding object in the main
      * collection.
      */
-    template<typename Event, typename Handle, typename MainArgs>
-    static auto make(
-      Event const& event, Handle&& mainHandle,
-      MainArgs const&, art::InputTag const& auxInputTag
-      )
-      {
-        return
-          createFromTag(event, std::forward<Handle>(mainHandle), auxInputTag);
-      }
+    template <typename Event, typename Handle, typename MainArgs>
+    static auto make(Event const& event,
+                     Handle&& mainHandle,
+                     MainArgs const&,
+                     art::InputTag const& auxInputTag)
+    {
+      return createFromTag(event, std::forward<Handle>(mainHandle), auxInputTag);
+    }
 
     /**
      * @brief Create a parallel data proxy collection using the specified tag.
@@ -146,26 +137,20 @@ namespace proxy {
      * data indexed by the index of the corresponding object in the main
      * collection.
      */
-    template<typename Event, typename Handle, typename MainArgs>
-    static auto make
-      (Event const&, Handle&&, MainArgs const&, aux_collection_t const& auxColl)
-      {
-        return makeParallelDataFrom<aux_collection_t, aux_element_t, data_tag>
-          (auxColl);
-      }
+    template <typename Event, typename Handle, typename MainArgs>
+    static auto make(Event const&, Handle&&, MainArgs const&, aux_collection_t const& auxColl)
+    {
+      return makeParallelDataFrom<aux_collection_t, aux_element_t, data_tag>(auxColl);
+    }
 
-
-      private:
-    template<typename Event, typename Handle>
-    static auto createFromTag
-      (Event const& event, Handle&&, art::InputTag const& auxInputTag)
-      {
-        return makeParallelDataFrom<aux_collection_t, aux_element_t, data_tag>
-          (event, auxInputTag);
-      }
+  private:
+    template <typename Event, typename Handle>
+    static auto createFromTag(Event const& event, Handle&&, art::InputTag const& auxInputTag)
+    {
+      return makeParallelDataFrom<aux_collection_t, aux_element_t, data_tag>(event, auxInputTag);
+    }
 
   }; // struct ParallelDataProxyMakerBase<>
-
 
   //--------------------------------------------------------------------------
   /**
@@ -200,13 +185,12 @@ namespace proxy {
    * The last template argument is designed for specialization of auxiliary data
    * in the context of a specific proxy type.
    */
-  template<
-    typename Main, typename Aux, typename CollProxy, typename Tag = Aux,
-    typename AuxColl = std::vector<Aux>
-    >
-  class ParallelDataProxyMaker
-    : public ParallelDataProxyMakerBase<Main, AuxColl, Aux, Tag>
-  {
+  template <typename Main,
+            typename Aux,
+            typename CollProxy,
+            typename Tag = Aux,
+            typename AuxColl = std::vector<Aux>>
+  class ParallelDataProxyMaker : public ParallelDataProxyMakerBase<Main, AuxColl, Aux, Tag> {
     //
     // Note that this implementation is here only to document how to derive
     // a ParallelDataProxyMaker (specialization) from
@@ -214,8 +198,7 @@ namespace proxy {
     //
     using base_t = ParallelDataProxyMakerBase<Main, AuxColl, Aux, Tag>;
 
-      public:
-
+  public:
     /// Type of the main datum.
     using typename base_t::main_element_t;
 
@@ -227,7 +210,6 @@ namespace proxy {
 
     /// Type of collection data proxy being created.
     using typename base_t::aux_collection_proxy_t;
-
 
     /**
      * @brief Create a association proxy collection using main collection tag.
@@ -249,27 +231,17 @@ namespace proxy {
      * by explicit type cast into a `art::InputTag`; that input tag will be
      * used to fetch the association.
      */
-    template
-      <typename Event, typename Handle, typename MainArgs, typename... Args>
-    static auto make(
-      Event const& event, Handle&& mainHandle, MainArgs const& margs,
-      Args&&... args
-      )
-      {
-        return base_t::make(
-          event,
-          std::forward<Handle>(mainHandle),
-          margs,
-          std::forward<Args>(args)...
-          );
-      }
+    template <typename Event, typename Handle, typename MainArgs, typename... Args>
+    static auto make(Event const& event, Handle&& mainHandle, MainArgs const& margs, Args&&... args)
+    {
+      return base_t::make(
+        event, std::forward<Handle>(mainHandle), margs, std::forward<Args>(args)...);
+    }
 
   }; // struct ParallelDataProxyMaker<>
 
-
   /// @}
   // -- END Parallel data infrastructure ---------------------------------------
-
 
   //----------------------------------------------------------------------------
   namespace details {
@@ -280,22 +252,19 @@ namespace proxy {
     template <typename Aux, typename AuxTag, typename AuxColl = void>
     struct ParallelDataProxyMakerWrapper {
       template <typename CollProxy>
-      using maker_t = ParallelDataProxyMaker
-        <typename CollProxy::main_element_t, Aux, CollProxy, AuxTag, AuxColl>;
+      using maker_t =
+        ParallelDataProxyMaker<typename CollProxy::main_element_t, Aux, CollProxy, AuxTag, AuxColl>;
     }; // struct ParallelDataProxyMakerWrapper<Aux, AuxTag, AuxColl>
 
     template <typename Aux, typename AuxTag>
     struct ParallelDataProxyMakerWrapper<Aux, AuxTag, void> {
       template <typename CollProxy>
-      using maker_t = ParallelDataProxyMaker
-        <typename CollProxy::main_element_t, Aux, CollProxy, AuxTag>;
+      using maker_t =
+        ParallelDataProxyMaker<typename CollProxy::main_element_t, Aux, CollProxy, AuxTag>;
     }; // struct ParallelDataProxyMakerWrapper<Aux, AuxTag>
-
 
   } // namespace details
 
-
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_PARALLELDATAPROXYMAKER_H

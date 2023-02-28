@@ -9,6 +9,4 @@
 
 #include "lardata/ArtDataHelper/MVAReader.h"
 
-namespace anab {
-
-} // namespace anab
+namespace anab {} // namespace anab

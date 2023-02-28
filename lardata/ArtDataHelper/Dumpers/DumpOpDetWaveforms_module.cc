@@ -82,8 +82,7 @@ namespace detsim {
 
       fhicl::Atom<bool> SortByChannelAndTime{
         Name("SortByChannelAndTime"),
-        Comment
-          ("waveforms are dumped in channel number order, and then timestamp"),
+        Comment("waveforms are dumped in channel number order, and then timestamp"),
         true};
 
       fhicl::Atom<std::string> TickLabel{
@@ -104,12 +103,11 @@ namespace detsim {
     void analyze(const art::Event& evt);
 
   private:
-    
     enum class sortMode {
       DataProductOrder, ///< Unsorted: same order as the input data product.
       ChannelAndTime    ///< Sort by PMT channel number, then timestamp.
-    }; // sortMode
-    
+    };                  // sortMode
+
     /// Base functor for printing time according to tick number.
     struct TimestampLabelMaker : public dump::raw::OpDetWaveformDumper::TimeLabelMaker {
       double tickDuration; // should this me `util::quantities::microsecond`?
@@ -118,8 +116,8 @@ namespace detsim {
       TimestampLabelMaker(double tickDuration) : tickDuration(tickDuration) {}
 
       /// Returns the electronics time of the specified waveform tick.
-      virtual std::string
-      label(raw::OpDetWaveform const& waveform, unsigned int tick) const override
+      virtual std::string label(raw::OpDetWaveform const& waveform,
+                                unsigned int tick) const override
       {
         return std::to_string(waveform.TimeStamp() + tick * tickDuration);
       }
@@ -130,8 +128,7 @@ namespace detsim {
     std::string fOutputCategory;      ///< Category for `mf::LogInfo` output.
     unsigned int fDigitsPerLine;      ///< ADC readings per line in the output.
     raw::ADC_Count_t fPedestal;       ///< ADC pedestal (subtracted from readings).
-    sortMode fSortByChannelAndTime; ///< How to sort the waveforms in the dump.
-    
+    sortMode fSortByChannelAndTime;   ///< How to sort the waveforms in the dump.
 
     /// The object used to print tick labels.
     std::unique_ptr<dump::raw::OpDetWaveformDumper::TimeLabelMaker> fTimeLabel;
@@ -156,9 +153,8 @@ namespace detsim {
     , fOutputCategory(config().OutputCategory())
     , fDigitsPerLine(config().DigitsPerLine())
     , fPedestal(config().Pedestal())
-    , fSortByChannelAndTime(config().SortByChannelAndTime()
-        ? sortMode::ChannelAndTime: sortMode::DataProductOrder
-      )
+    , fSortByChannelAndTime(config().SortByChannelAndTime() ? sortMode::ChannelAndTime :
+                                                              sortMode::DataProductOrder)
   {
     std::string const tickLabelStr = config().TickLabel();
     if (tickLabelStr == "none") {
@@ -180,13 +176,11 @@ namespace detsim {
   } // DumpOpDetWaveforms::DumpOpDetWaveforms()
 
   //-------------------------------------------------
-  void
-  DumpOpDetWaveforms::analyze(const art::Event& event)
+  void DumpOpDetWaveforms::analyze(const art::Event& event)
   {
 
     // fetch the data to be dumped on screen
-    auto const& Waveforms
-      = event.getProduct<std::vector<raw::OpDetWaveform>>(fOpDetWaveformsTag);
+    auto const& Waveforms = event.getProduct<std::vector<raw::OpDetWaveform>>(fOpDetWaveformsTag);
 
     dump::raw::OpDetWaveformDumper dump(fPedestal, fDigitsPerLine);
     dump.setTimeLabelMaker(fTimeLabel.get());
@@ -199,45 +193,40 @@ namespace detsim {
     } // if pedestal
 
     switch (fSortByChannelAndTime) {
-      case sortMode::DataProductOrder:
-        {
-          dump.setIndent("  ");
-          for (raw::OpDetWaveform const& waveform : Waveforms) {
-            mf::LogVerbatim log(fOutputCategory);
-            dump(log, waveform);
-          } // for waveforms on channel
-        }
-        break; // sortMode::DataProductOrder
-      case sortMode::ChannelAndTime:
-        {
-          dump.setIndent("    ");
+    case sortMode::DataProductOrder: {
+      dump.setIndent("  ");
+      for (raw::OpDetWaveform const& waveform : Waveforms) {
+        mf::LogVerbatim log(fOutputCategory);
+        dump(log, waveform);
+      }      // for waveforms on channel
+    } break; // sortMode::DataProductOrder
+    case sortMode::ChannelAndTime: {
+      dump.setIndent("    ");
 
-          auto groupedWaveforms = groupByChannel(Waveforms);
-          for (auto& channelWaveforms : groupedWaveforms) {
-            if (channelWaveforms.empty()) continue;
+      auto groupedWaveforms = groupByChannel(Waveforms);
+      for (auto& channelWaveforms : groupedWaveforms) {
+        if (channelWaveforms.empty()) continue;
 
-            sortByTimestamp(channelWaveforms);
-            auto const channel = channelWaveforms.front()->ChannelNumber();
+        sortByTimestamp(channelWaveforms);
+        auto const channel = channelWaveforms.front()->ChannelNumber();
 
-            mf::LogVerbatim(fOutputCategory)
-              << "  optical detector channel #" << channel << " has "
-              << channelWaveforms.size() << " waveforms:";
+        mf::LogVerbatim(fOutputCategory) << "  optical detector channel #" << channel << " has "
+                                         << channelWaveforms.size() << " waveforms:";
 
-            for (raw::OpDetWaveform const* pWaveform : channelWaveforms) {
-              mf::LogVerbatim log(fOutputCategory);
-              dump(log, *pWaveform);
-            } // for waveforms on channel
+        for (raw::OpDetWaveform const* pWaveform : channelWaveforms) {
+          mf::LogVerbatim log(fOutputCategory);
+          dump(log, *pWaveform);
+        } // for waveforms on channel
 
-          } // for all channels
-        }
-        break; // sortMode::ChannelAndTime
-    } // switch (fSortMode)
+      }      // for all channels
+    } break; // sortMode::ChannelAndTime
+    }        // switch (fSortMode)
 
   } // DumpOpDetWaveforms::analyze()
 
   //----------------------------------------------------------------------------
-  std::vector<std::vector<raw::OpDetWaveform const*>>
-  DumpOpDetWaveforms::groupByChannel(std::vector<raw::OpDetWaveform> const& waveforms)
+  std::vector<std::vector<raw::OpDetWaveform const*>> DumpOpDetWaveforms::groupByChannel(
+    std::vector<raw::OpDetWaveform> const& waveforms)
   {
     std::vector<std::vector<raw::OpDetWaveform const*>> groups;
     for (auto const& waveform : waveforms) {
@@ -249,14 +238,12 @@ namespace detsim {
   } // DumpOpDetWaveforms::groupByChannel()
 
   //----------------------------------------------------------------------------
-  void
-  DumpOpDetWaveforms::sortByTimestamp(std::vector<raw::OpDetWaveform const*>& waveforms)
+  void DumpOpDetWaveforms::sortByTimestamp(std::vector<raw::OpDetWaveform const*>& waveforms)
   {
 
     struct ChannelSorter {
 
-      static bool
-      sort(raw::OpDetWaveform const& a, raw::OpDetWaveform const& b)
+      static bool sort(raw::OpDetWaveform const& a, raw::OpDetWaveform const& b)
       {
         if (a.ChannelNumber() < b.ChannelNumber()) return true;
         if (a.ChannelNumber() > b.ChannelNumber()) return false;
@@ -264,14 +251,12 @@ namespace detsim {
         return (a.TimeStamp() < b.TimeStamp());
       }
 
-      bool
-      operator()(raw::OpDetWaveform const& a, raw::OpDetWaveform const& b) const
+      bool operator()(raw::OpDetWaveform const& a, raw::OpDetWaveform const& b) const
       {
         return sort(a, b);
       }
 
-      bool
-      operator()(raw::OpDetWaveform const* a, raw::OpDetWaveform const* b) const
+      bool operator()(raw::OpDetWaveform const* a, raw::OpDetWaveform const* b) const
       {
         return sort(*a, *b);
       }

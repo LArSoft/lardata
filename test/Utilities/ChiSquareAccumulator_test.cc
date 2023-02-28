@@ -12,12 +12,11 @@
  * not given yet
  */
 
-
 // Boost libraries
-#define BOOST_TEST_MODULE ( ChiSquareAccumulator_test )
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
-#include <boost/test/test_tools.hpp> // BOOST_CHECK(), BOOST_CHECK_EQUAL()
+#define BOOST_TEST_MODULE (ChiSquareAccumulator_test)
+#include <boost/test/test_tools.hpp>                      // BOOST_CHECK(), BOOST_CHECK_EQUAL()
 #include <boost/test/tools/floating_point_comparison.hpp> // BOOST_CHECK_CLOSE()
+#include <cetlib/quiet_unit_test.hpp>                     // BOOST_AUTO_TEST_CASE()
 
 // LArSoft libraries
 #include "lardata/Utilities/ChiSquareAccumulator.h"
@@ -25,11 +24,11 @@
 // C/C++ standard libraries
 #include <type_traits> // std::is_same<>
 
-
 //------------------------------------------------------------------------------
-void testChiSquareAccumulator() {
+void testChiSquareAccumulator()
+{
 
-  auto one = [](double){ return 1.0; };
+  auto one = [](double) { return 1.0; };
 
   auto chiSquare = lar::util::makeChiSquareAccumulator(one);
 
@@ -62,9 +61,9 @@ void testChiSquareAccumulator() {
 
 } // testChiSquareAccumulator()
 
-
 //------------------------------------------------------------------------------
-void testChiSquareAccumulator_documentation() {
+void testChiSquareAccumulator_documentation()
+{
   /*
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
    * double const a =  2.0;
@@ -81,9 +80,9 @@ void testChiSquareAccumulator_documentation() {
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    * promised `chi2value` `8.0` and `degreeOfFreedom` `0`.
    */
-  double const a =  2.0;
+  double const a = 2.0;
   double const b = -1.0;
-  auto f = [a,b](double x){ return a + b * x; };
+  auto f = [a, b](double x) { return a + b * x; };
   lar::util::ChiSquareAccumulator<decltype(f)> chiSquare(f);
 
   chiSquare.add(0.0, 1.0, 0.5); // add ( 0 ; 1.0 +/- 0.5 )
@@ -98,9 +97,9 @@ void testChiSquareAccumulator_documentation() {
 
 } // testChiSquareAccumulator_documentation();
 
-
 //------------------------------------------------------------------------------
-void testMakeChiSquareAccumulator_documentation1() {
+void testMakeChiSquareAccumulator_documentation1()
+{
 
   /*
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -110,21 +109,20 @@ void testMakeChiSquareAccumulator_documentation1() {
    * declare `chiSquare` in a way equivalent to:
    * `lar::util::ChiSquareAccumulator<decltype(zero)> chiSquare(zero)`.
    */
-  auto zero = [](double){ return 0.0; }; // expectation function
+  auto zero = [](double) { return 0.0; }; // expectation function
   auto const& chiSquare = lar::util::makeChiSquareAccumulator(zero);
 
   BOOST_CHECK_EQUAL(chiSquare.expected(-2.0), 0.0);
   BOOST_CHECK_EQUAL(chiSquare.expected(0.0), 0.0);
   BOOST_CHECK_EQUAL(chiSquare.expected(2.0), 0.0);
   static_assert(std::is_same<decltype(chiSquare()), double>::value,
-    "makeChiSquareAccumulator() returned an unexpected type!"
-    );
+                "makeChiSquareAccumulator() returned an unexpected type!");
 
 } // testMakeChiSquareAccumulator_documentation1()
 
-
 //------------------------------------------------------------------------------
-void testMakeChiSquareAccumulator_documentation2() {
+void testMakeChiSquareAccumulator_documentation2()
+{
 
   /*
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -134,21 +132,20 @@ void testMakeChiSquareAccumulator_documentation2() {
    * declare `chiSquare` in a way equivalent to:
    * `lar::util::ChiSquareAccumulator<decltype(zero), float> chiSquare(zero)`.
    */
-  auto zero = [](float){ return 0.0F; }; // expectation function
+  auto zero = [](float) { return 0.0F; }; // expectation function
   auto chiSquare = lar::util::makeChiSquareAccumulator<float>(zero);
 
   BOOST_CHECK_EQUAL(chiSquare.expected(-2.0F), 0.0F);
   BOOST_CHECK_EQUAL(chiSquare.expected(0.0F), 0.0F);
   BOOST_CHECK_EQUAL(chiSquare.expected(2.0F), 0.0F);
   static_assert(std::is_same<decltype(chiSquare()), float>::value,
-    "makeChiSquareAccumulator<float>() returned an unexpected type!"
-    );
+                "makeChiSquareAccumulator<float>() returned an unexpected type!");
 
 } // testMakeChiSquareAccumulator_documentation2()
 
-
 //------------------------------------------------------------------------------
-BOOST_AUTO_TEST_CASE(ChiSquareAccumulatorTestCase) {
+BOOST_AUTO_TEST_CASE(ChiSquareAccumulatorTestCase)
+{
 
   testChiSquareAccumulator();
   testChiSquareAccumulator_documentation();
@@ -157,6 +154,4 @@ BOOST_AUTO_TEST_CASE(ChiSquareAccumulatorTestCase) {
 
 } // ChiSquareAccumulatorTestCase
 
-
 //------------------------------------------------------------------------------
-

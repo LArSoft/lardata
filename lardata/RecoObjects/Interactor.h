@@ -29,11 +29,7 @@ namespace trkf {
     explicit Interactor(double tcut);
     virtual ~Interactor();
 
-    double
-    getTcut() const
-    {
-      return fTcut;
-    }
+    double getTcut() const { return fTcut; }
 
     /// Clone method.
     virtual Interactor* clone() const = 0;

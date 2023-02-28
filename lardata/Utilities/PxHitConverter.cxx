@@ -19,9 +19,8 @@ namespace util {
   PxHitConverter::PxHitConverter(GeometryUtilities const& geomUtils) : fGeomUtils{geomUtils} {}
 
   /// Generate: from 1 set of hits => 1 set of PxHits using indexes (association)
-  void
-  PxHitConverter::GeneratePxHit(std::vector<art::Ptr<recob::Hit>> const& hits,
-                                std::vector<util::PxHit>& pxhits) const
+  void PxHitConverter::GeneratePxHit(std::vector<art::Ptr<recob::Hit>> const& hits,
+                                     std::vector<util::PxHit>& pxhits) const
   {
     if (empty(hits)) throw UtilException(Form("Hit list empty! (%s)", __FUNCTION__));
 
@@ -35,14 +34,13 @@ namespace util {
     GeneratePxHit(hit_index, hits, pxhits);
   }
 
-  void
-  PxHitConverter::GenerateSinglePxHit(art::Ptr<recob::Hit> const& hit, util::PxHit& pxhit) const
+  void PxHitConverter::GenerateSinglePxHit(art::Ptr<recob::Hit> const& hit,
+                                           util::PxHit& pxhit) const
   {
     pxhit = ToPxHit(hit);
   }
 
-  PxHit
-  PxHitConverter::HitToPxHit(recob::Hit const& hit) const
+  PxHit PxHitConverter::HitToPxHit(recob::Hit const& hit) const
   {
     PxHit pxhit;
     pxhit.t = hit.PeakTime() * fGeomUtils.TimeToCm();
@@ -55,10 +53,9 @@ namespace util {
   } // PxHitConverter::HitToPxHit(recob::Hit)
 
   /// Generate: from 1 set of hits => 1 set of PxHits using indexes (association)
-  void
-  PxHitConverter::GeneratePxHit(const std::vector<unsigned int>& hit_index,
-                                const std::vector<art::Ptr<recob::Hit>> hits,
-                                std::vector<util::PxHit>& pxhits) const
+  void PxHitConverter::GeneratePxHit(const std::vector<unsigned int>& hit_index,
+                                     const std::vector<art::Ptr<recob::Hit>> hits,
+                                     std::vector<util::PxHit>& pxhits) const
   {
     if (empty(hit_index)) throw UtilException(Form("Hit list empty! (%s)", __FUNCTION__));
 

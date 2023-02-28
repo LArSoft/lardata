@@ -12,18 +12,17 @@
 #define LARDATA_RECOBASEPROXY_PROXYBASE_COLLECTIONPROXY_H
 
 // LArSoft libraries
-#include "lardata/RecoBaseProxy/ProxyBase/MainCollectionProxy.h"
-#include "lardata/RecoBaseProxy/ProxyBase/CollectionProxyElement.h"
-#include "lardata/Utilities/TupleLookupByTag.h" // util::type_with_tag_t, ...
 #include "larcorealg/CoreUtils/ContainerMeta.h" // util::collection_value_t, ...
+#include "lardata/RecoBaseProxy/ProxyBase/CollectionProxyElement.h"
+#include "lardata/RecoBaseProxy/ProxyBase/MainCollectionProxy.h"
+#include "lardata/Utilities/TupleLookupByTag.h" // util::type_with_tag_t, ...
 
 // C/C++ standard
-#include <vector>
+#include <cstdlib> // std::size_t
+#include <limits>  // std::numeric_limits<>
 #include <tuple>
 #include <utility> // std::move()
-#include <limits> // std::numeric_limits<>
-#include <cstdlib> // std::size_t
-
+#include <vector>
 
 namespace proxy {
 
@@ -36,7 +35,6 @@ namespace proxy {
     struct TemplateAdaptorOnePlus;
 
   } // namespace details
-
 
   // --- BEGIN Collection proxy infrastructure ---------------------------------
   /**
@@ -75,7 +73,6 @@ namespace proxy {
    * @{
    */
 
-
   //----------------------------------------------------------------------------
   /**
    * @brief Base representation of a collection of proxied objects.
@@ -109,22 +106,15 @@ namespace proxy {
    *       with the definition of the types that both classes need.
    *
    */
-  template <
-    template <typename CollProxy> class Element,
-    typename MainColl,
-    typename... AuxColls
-    >
-  class CollectionProxyBase
-    : public details::MainCollectionProxy<MainColl>, public AuxColls...
-  {
+  template <template <typename CollProxy> class Element, typename MainColl, typename... AuxColls>
+  class CollectionProxyBase : public details::MainCollectionProxy<MainColl>, public AuxColls... {
     /// This type.
-    using collection_proxy_t
-      = CollectionProxyBase<Element, MainColl, AuxColls...>;
+    using collection_proxy_t = CollectionProxyBase<Element, MainColl, AuxColls...>;
 
     /// Type of wrapper used for the main data product.
     using main_collection_proxy_t = details::MainCollectionProxy<MainColl>;
 
-      public:
+  public:
     /// Type of element of the main data product.
     using typename main_collection_proxy_t::main_element_t;
 
@@ -157,7 +147,7 @@ namespace proxy {
      */
     CollectionProxyBase(main_collection_t const& main, AuxColls&&... aux)
       : main_collection_proxy_t(main), AuxColls(std::move(aux))...
-      {}
+    {}
 
     /**
      * @brief Returns the element of this collection with the specified index.
@@ -169,11 +159,11 @@ namespace proxy {
      * The structure exposes the `i`-th element in the main collection, plus all
      * objects that are associated to it.
      */
-    element_proxy_t const operator[] (std::size_t i) const
-      {
-        return details::makeCollectionProxyElement<element_proxy_t>
-          (i, getMainAt(i), aux<AuxColls>().operator[](i)...);
-      }
+    element_proxy_t const operator[](std::size_t i) const
+    {
+      return details::makeCollectionProxyElement<element_proxy_t>(
+        i, getMainAt(i), aux<AuxColls>().operator[](i)...);
+    }
 
     /// Returns an iterator to the first element of the collection.
     const_iterator begin() const { return makeIterator(0U); }
@@ -187,11 +177,12 @@ namespace proxy {
     /// Returns the size of this collection.
     std::size_t size() const { return main().size(); }
 
-
     /// Returns the associated data proxy specified by `AuxTag`.
     template <typename AuxTag>
-    auto get() const -> decltype(auto) { return auxByTag<AuxTag>(); }
-
+    auto get() const -> decltype(auto)
+    {
+      return auxByTag<AuxTag>();
+    }
 
     /**
      * @brief Returns the auxiliary data specified by type (`Tag`).
@@ -203,7 +194,7 @@ namespace proxy {
      *
      * @deprecated C++17 `if constexpr` should be used instead
      *             (see the example below)
-     *             
+     *
      * This method is a `get()` which forgives when the requested type is not
      * available (because this proxy was configured not to hold it).
      *
@@ -247,30 +238,34 @@ namespace proxy {
      * @deprecated Use C++17 constexpr if instead.
      */
     template <typename Tag, typename T = std::vector<Tag> const&>
-    [[deprecated("Use C++17 constexpr if instead and get() instead")]]
-    auto getIf() const -> decltype(auto);
-
+    [[deprecated("Use C++17 constexpr if instead and get() instead")]] auto getIf() const
+      -> decltype(auto);
 
     /// Returns whether this class knowns about the specified type (`Tag`).
     template <typename Tag>
     static constexpr bool has()
-      { return util::has_tag_v<Tag, aux_collections_t>; }
+    {
+      return util::has_tag_v<Tag, aux_collections_t>;
+    }
 
-
-      protected:
+  protected:
+    using main_collection_proxy_t::getMainAt;
     using main_collection_proxy_t::main;
     using main_collection_proxy_t::mainProxy;
-    using main_collection_proxy_t::getMainAt;
 
     /// Returns the auxiliary data specified by type.
     template <typename AuxColl>
-    AuxColl const& aux() const { return static_cast<AuxColl const&>(*this); }
+    AuxColl const& aux() const
+    {
+      return static_cast<AuxColl const&>(*this);
+    }
 
     /// Returns the auxiliary data specified by type.
     template <typename AuxTag>
     auto auxByTag() const -> decltype(auto)
-      { return aux<util::type_with_tag_t<AuxTag, aux_collections_t>>(); }
-
+    {
+      return aux<util::type_with_tag_t<AuxTag, aux_collections_t>>();
+    }
 
     template <typename Tag, typename>
     auto getIfHas(std::bool_constant<true>) const -> decltype(auto);
@@ -278,14 +273,12 @@ namespace proxy {
     [[noreturn]] auto getIfHas(std::bool_constant<false>) const -> T;
 
     /// Returns an iterator pointing to the specified index of this collection.
-    const_iterator makeIterator(std::size_t i) const { return { *this, i }; }
-
+    const_iterator makeIterator(std::size_t i) const { return {*this, i}; }
 
     static_assert(!util::has_duplicate_tags<aux_collections_t>(),
-      "Some auxiliary data collections share the same tag. They should not.");
+                  "Some auxiliary data collections share the same tag. They should not.");
 
   }; // struct CollectionProxyBase
-
 
   //----------------------------------------------------------------------------
   /**
@@ -298,16 +291,13 @@ namespace proxy {
    * `proxy::CollectionProxyElement` as element type.
    */
   template <typename MainColl, typename... AuxColls>
-  using CollectionProxy
-    = CollectionProxyBase<CollectionProxyElement, MainColl, AuxColls...>;
-
+  using CollectionProxy = CollectionProxyBase<CollectionProxyElement, MainColl, AuxColls...>;
 
   // this joke is necessary because expanding directly CollectionProxy<Args...>
   // into CollectionProxy<Main, Aux...>  template arguments does not work
   template <typename... Args>
-  using CollectionProxyFromArgs
-    = typename details::TemplateAdaptorOnePlus<CollectionProxy, Args...>::type;
-
+  using CollectionProxyFromArgs =
+    typename details::TemplateAdaptorOnePlus<CollectionProxy, Args...>::type;
 
   /// @}
   // --- END Collection proxy infrastructure -----------------------------------
@@ -317,24 +307,19 @@ namespace proxy {
 
     //--------------------------------------------------------------------------
     /// Creates a collection proxy of a specified type with the given arguments.
-    template <
-      template <typename...> class CollProxy,
-      typename MainColl, typename... AuxColl
-      >
+    template <template <typename...> class CollProxy, typename MainColl, typename... AuxColl>
     auto createCollectionProxy(MainColl const& main, AuxColl&&... aux)
-      {
-        return CollProxy<MainColl, AuxColl...>
-          (main, std::forward<AuxColl>(aux)...);
-      }
+    {
+      return CollProxy<MainColl, AuxColl...>(main, std::forward<AuxColl>(aux)...);
+    }
 
     //--------------------------------------------------------------------------
     /// Creates a `CollectionProxy` object with the given arguments.
     template <typename MainColl, typename... AuxColl>
     auto makeCollectionProxy(MainColl const& main, AuxColl&&... aux)
-      {
-        return createCollectionProxy<CollectionProxy>
-          (main, std::forward<AuxColl>(aux)...);
-      }
+    {
+      return createCollectionProxy<CollectionProxy>(main, std::forward<AuxColl>(aux)...);
+    }
 
     //--------------------------------------------------------------------------
     /**
@@ -346,7 +331,7 @@ namespace proxy {
     template <typename Cont>
     class IndexBasedIterator {
 
-        public:
+    public:
       using container_t = Cont;
 
       using value_type = util::collection_value_t<container_t>;
@@ -357,20 +342,26 @@ namespace proxy {
 
       /// Constructor: initializes from an iterator of the proxy main collection.
       IndexBasedIterator(container_t const& cont, std::size_t index = 0)
-        : fCont(&cont), fIndex(index) {}
+        : fCont(&cont), fIndex(index)
+      {}
 
       /// Returns the value pointed by this iterator.
-      auto operator* () const -> decltype(auto)
-        { return fCont->operator[](fIndex); }
+      auto operator*() const -> decltype(auto) { return fCont->operator[](fIndex); }
 
       /// Returns the value pointed by this iterator.
-      const_iterator& operator++ () { ++fIndex; return *this; }
+      const_iterator& operator++()
+      {
+        ++fIndex;
+        return *this;
+      }
 
       /// Returns whether the iterators point to the same element.
-      bool operator!= (const_iterator const& other) const
-        { return (other.fIndex != fIndex) || (other.fCont != fCont); }
+      bool operator!=(const_iterator const& other) const
+      {
+        return (other.fIndex != fIndex) || (other.fCont != fCont);
+      }
 
-        protected:
+    protected:
       container_t const* fCont = nullptr; ///< Pointer to the original container.
 
       /// Current index in the main collection.
@@ -382,7 +373,6 @@ namespace proxy {
 
 } // namespace proxy
 
-
 //------------------------------------------------------------------------------
 //--- template implementation
 //------------------------------------------------------------------------------
@@ -391,57 +381,41 @@ namespace proxy {
   namespace details {
 
     //--------------------------------------------------------------------------
-    template <
-      template <typename, typename...> class F,
-      typename First, typename... Others
-      >
-    struct TemplateAdaptorOnePlus<F, First, Others...>
-      { using type = F<First, Others...>; };
+    template <template <typename, typename...> class F, typename First, typename... Others>
+    struct TemplateAdaptorOnePlus<F, First, Others...> {
+      using type = F<First, Others...>;
+    };
 
   } // namespace details
-
 
   //----------------------------------------------------------------------------
   //---  CollectionProxyBase
   //----------------------------------------------------------------------------
-  template <
-    template <typename CollProxy> class Element,
-    typename MainColl,
-    typename... AuxColls
-    >
+  template <template <typename CollProxy> class Element, typename MainColl, typename... AuxColls>
   template <typename Tag, typename T>
-  auto CollectionProxyBase<Element, MainColl, AuxColls...>::getIf() const
-    -> decltype(auto)
-    { return getIfHas<Tag, T>(std::bool_constant<has<Tag>()>{}); }
+  auto CollectionProxyBase<Element, MainColl, AuxColls...>::getIf() const -> decltype(auto)
+  {
+    return getIfHas<Tag, T>(std::bool_constant<has<Tag>()>{});
+  }
 
-
-  template <
-    template <typename CollProxy> class Element,
-    typename MainColl,
-    typename... AuxColls
-    >
+  template <template <typename CollProxy> class Element, typename MainColl, typename... AuxColls>
   template <typename Tag, typename>
-  auto CollectionProxyBase<Element, MainColl, AuxColls...>::getIfHas
-    (std::bool_constant<true>) const -> decltype(auto)
-    { return get<Tag>(); }
+  auto CollectionProxyBase<Element, MainColl, AuxColls...>::getIfHas(std::bool_constant<true>) const
+    -> decltype(auto)
+  {
+    return get<Tag>();
+  }
 
-  template <
-    template <typename CollProxy> class Element,
-    typename MainColl,
-    typename... AuxColls
-    >
+  template <template <typename CollProxy> class Element, typename MainColl, typename... AuxColls>
   template <typename Tag, typename T>
-  auto CollectionProxyBase<Element, MainColl, AuxColls...>::getIfHas
-    (std::bool_constant<false>) const -> T
-    {
-      throw std::logic_error
-        ("Tag '" + lar::debug::demangle<Tag>() + "' not available.");
-    }
-
+  auto CollectionProxyBase<Element, MainColl, AuxColls...>::getIfHas(
+    std::bool_constant<false>) const -> T
+  {
+    throw std::logic_error("Tag '" + lar::debug::demangle<Tag>() + "' not available.");
+  }
 
   //----------------------------------------------------------------------------
 
 } // namespace proxy
-
 
 #endif // LARDATA_RECOBASEPROXY_PROXYBASE_COLLECTIONPROXY_H

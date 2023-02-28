@@ -16,20 +16,19 @@
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
 
-#include "canvas/Persistency/Common/Ptr.h"
 #include "canvas/Persistency/Common/Assns.h"
+#include "canvas/Persistency/Common/Ptr.h"
 #include "canvas/Utilities/InputTag.h"
 
 #include "fhiclcpp/types/Atom.h"
-#include "fhiclcpp/types/Sequence.h"
-#include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/Comment.h"
+#include "fhiclcpp/types/Name.h"
+#include "fhiclcpp/types/Sequence.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // C/C++ standard libraries
+#include <memory>  // std::make_unique()
 #include <utility> // std::move()
-#include <memory> // std::make_unique()
-
 
 namespace lar {
   namespace test {
@@ -45,18 +44,15 @@ namespace lar {
     *     objects to be made into showers
     *
     */
-    class AssnsChainShowerMaker: public art::EDProducer {
-        public:
-
+    class AssnsChainShowerMaker : public art::EDProducer {
+    public:
       struct Config {
         using Name = fhicl::Name;
         using Comment = fhicl::Comment;
 
         fhicl::Sequence<art::InputTag> particles{
           Name("particles"),
-          Comment
-            ("collections of particle flow objects to be made into showers")
-          };
+          Comment("collections of particle flow objects to be made into showers")};
 
       }; // struct Config
 
@@ -64,31 +60,29 @@ namespace lar {
 
       explicit AssnsChainShowerMaker(Parameters const& config)
         : EDProducer{config}, particleTags(config().particles())
-        {
-          produces<std::vector<recob::Shower>>();
-          produces<art::Assns<recob::PFParticle, recob::Shower>>();
-        }
+      {
+        produces<std::vector<recob::Shower>>();
+        produces<art::Assns<recob::PFParticle, recob::Shower>>();
+      }
 
       virtual void produce(art::Event& event) override;
 
-        private:
+    private:
       std::vector<art::InputTag> particleTags; ///< List of PFParticle tags.
 
       /// Returns a list of PFParticle objects to be made into showers.
-      std::vector<art::Ptr<recob::PFParticle>> collectPFOs
-        (art::Event const& event) const;
+      std::vector<art::Ptr<recob::PFParticle>> collectPFOs(art::Event const& event) const;
 
-    };  // AssnsChainShowerMaker
+    }; // AssnsChainShowerMaker
 
     // -------------------------------------------------------------------------
-
 
   } // namespace test
 } // namespace lar
 
-
 // -----------------------------------------------------------------------------
-void lar::test::AssnsChainShowerMaker::produce(art::Event& event) {
+void lar::test::AssnsChainShowerMaker::produce(art::Event& event)
+{
 
   //
   // prepare input: merge all hits in a single collection
@@ -99,8 +93,7 @@ void lar::test::AssnsChainShowerMaker::produce(art::Event& event) {
   // prepare output
   //
   auto showers = std::make_unique<std::vector<recob::Shower>>();
-  auto PFOshowerAssns
-    = std::make_unique<art::Assns<recob::PFParticle, recob::Shower>>();
+  auto PFOshowerAssns = std::make_unique<art::Assns<recob::PFParticle, recob::Shower>>();
 
   //
   // create the showers
@@ -114,20 +107,19 @@ void lar::test::AssnsChainShowerMaker::produce(art::Event& event) {
     //
     // generate the shower
     //
-    showers->push_back(recob::Shower(
-      { 0.0, 0.0, 1.0 }, // dcosVtx
-      { 0.1, 0.1, 0.1 }, // dcosVtxErr
-      { 0.0, 0.0, 0.0 }, // xyz
-      { 1.0, 1.0, 1.0 }, // xyzErr
-      { 1.0, 1.0, 1.0 }, // TotalEnergy
-      { 0.1, 0.1, 0.1 }, // TotalEnergyErr
-      { 2.0, 2.0, 2.0 }, // dEdx
-      { 0.1, 0.1, 0.1 }, // dEdxErr
-      0,                 // bestplane
-      i,                 // id
-      1.0,               // length
-      1.0                // openAngle
-      ));
+    showers->push_back(recob::Shower({0.0, 0.0, 1.0}, // dcosVtx
+                                     {0.1, 0.1, 0.1}, // dcosVtxErr
+                                     {0.0, 0.0, 0.0}, // xyz
+                                     {1.0, 1.0, 1.0}, // xyzErr
+                                     {1.0, 1.0, 1.0}, // TotalEnergy
+                                     {0.1, 0.1, 0.1}, // TotalEnergyErr
+                                     {2.0, 2.0, 2.0}, // dEdx
+                                     {0.1, 0.1, 0.1}, // dEdxErr
+                                     0,               // bestplane
+                                     i,               // id
+                                     1.0,             // length
+                                     1.0              // openAngle
+                                     ));
 
     //
     // generate associations
@@ -138,22 +130,22 @@ void lar::test::AssnsChainShowerMaker::produce(art::Event& event) {
 
   mf::LogInfo("AssnsChainShowerMaker")
     << "Created " << showers->size() << " showers from " << particles.size()
-    << " particle flow objects and " << PFOshowerAssns->size()
-    << " associations from " << particleTags.size() << " collections";
+    << " particle flow objects and " << PFOshowerAssns->size() << " associations from "
+    << particleTags.size() << " collections";
 
   event.put(std::move(showers));
   event.put(std::move(PFOshowerAssns));
 
 } // lar::test::AssnsChainShowerMaker::produce()
 
-
 // -----------------------------------------------------------------------------
-std::vector<art::Ptr<recob::PFParticle>>
-lar::test::AssnsChainShowerMaker::collectPFOs(art::Event const& event) const {
+std::vector<art::Ptr<recob::PFParticle>> lar::test::AssnsChainShowerMaker::collectPFOs(
+  art::Event const& event) const
+{
 
   std::vector<art::Ptr<recob::PFParticle>> allPFOs;
 
-  for (auto const& tag: particleTags) {
+  for (auto const& tag : particleTags) {
     auto PFOs = event.getValidHandle<std::vector<recob::PFParticle>>(tag);
 
     std::size_t const nPFOs = PFOs->size();
@@ -164,7 +156,6 @@ lar::test::AssnsChainShowerMaker::collectPFOs(art::Event const& event) const {
 
   return allPFOs;
 } // lar::test::AssnsChainShowerMaker::collectHits()
-
 
 // -----------------------------------------------------------------------------
 DEFINE_ART_MODULE(lar::test::AssnsChainShowerMaker)

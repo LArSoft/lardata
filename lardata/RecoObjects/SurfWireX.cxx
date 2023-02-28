@@ -9,9 +9,9 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "lardata/RecoObjects/SurfWireX.h"
+#include "TMath.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcorealg/Geometry/WireGeo.h"
-#include "TMath.h"
 
 namespace trkf {
 
@@ -44,7 +44,6 @@ namespace trkf {
   }
 
   /// Destructor.
-  SurfWireX::~SurfWireX()
-  {}
+  SurfWireX::~SurfWireX() {}
 
 } // end namespace trkf

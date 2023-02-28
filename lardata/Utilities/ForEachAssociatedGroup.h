@@ -11,7 +11,6 @@
  *
  */
 
-
 #ifndef LARDATA_UTILITIES_FOR_EACH_ASSOCIATED_GROUP_H
 #define LARDATA_UTILITIES_FOR_EACH_ASSOCIATED_GROUP_H
 
@@ -23,15 +22,14 @@
 
 // range library
 #include "range/v3/algorithm/for_each.hpp"
-#include "range/v3/view/group_by.hpp"
-#include "range/v3/view/transform.hpp"
-#include "range/v3/view/map.hpp" // range::views::values
 #include "range/v3/view/all.hpp"
+#include "range/v3/view/group_by.hpp"
+#include "range/v3/view/map.hpp" // range::views::values
+#include "range/v3/view/transform.hpp"
 
 // C/C++ standard libraries
-#include <utility> // std::make_pair()
 #include <iterator> // std::next()
-
+#include <utility>  // std::make_pair()
 
 namespace util {
   /**
@@ -45,10 +43,11 @@ namespace util {
    * @deprecated Moved into _canvas_: `art::for_each_group()`.
    */
   template <class A, class F>
-  [[deprecated("Use art::for_each_group() instead")]]
-  void for_each_associated_group(A const & assns, F & func)
-     { art::for_each_group(assns, func); }
-
+  [[deprecated("Use art::for_each_group() instead")]] void for_each_associated_group(A const& assns,
+                                                                                     F& func)
+  {
+    art::for_each_group(assns, func);
+  }
 
   /**
    * @brief  Helper functions to access associations in order.
@@ -91,15 +90,14 @@ namespace util {
    *    `util::associated_groups_with_left()` instead.
    */
   template <class A>
-  auto associated_groups(A const & assns) {
-     return assns |
-            ranges::views::all |
-            ranges::views::group_by([](auto a1, auto a2) { return a1.first == a2.first;}) |
-            ranges::views::transform([] (auto pairs) {return pairs | ranges::views::values | util::range_for;}) |
-            util::range_for
-            ;
+  auto associated_groups(A const& assns)
+  {
+    return assns | ranges::views::all |
+           ranges::views::group_by([](auto a1, auto a2) { return a1.first == a2.first; }) |
+           ranges::views::transform(
+             [](auto pairs) { return pairs | ranges::views::values | util::range_for; }) |
+           util::range_for;
   } // associated_groups()
-
 
   /**
    * @brief  Helper functions to access associations in order, also with key.
@@ -149,21 +147,16 @@ namespace util {
    *    `begin()`/`end()` free functions, or in a range-for loop.
    */
   template <class A>
-  auto associated_groups_with_left(A const & assns) {
-     return assns
-        | ranges::views::all
-        | ranges::views::group_by([](auto a1, auto a2) { return a1.first == a2.first;})
-        | ranges::views::transform([] (auto pairs)
-           {
-             return std::make_pair(
-               pairs.front().first, // assuming they're all the same, pick first
-               pairs | ranges::views::values | util::range_for
-               );
-           })
-        | util::range_for
-        ;
+  auto associated_groups_with_left(A const& assns)
+  {
+    return assns | ranges::views::all |
+           ranges::views::group_by([](auto a1, auto a2) { return a1.first == a2.first; }) |
+           ranges::views::transform([](auto pairs) {
+             return std::make_pair(pairs.front().first, // assuming they're all the same, pick first
+                                   pairs | ranges::views::values | util::range_for);
+           }) |
+           util::range_for;
   } // associated_groups_with_left()
-
 
   /**
    * @brief  Returns the group within `groups` with the specified index.
@@ -178,7 +171,9 @@ namespace util {
    */
   template <typename Groups>
   auto groupByIndex(Groups&& groups, std::size_t index) -> decltype(auto)
-    { return *(std::next(groups.begin(), index)); }
+  {
+    return *(std::next(groups.begin(), index));
+  }
 
 } // namespace util
 
