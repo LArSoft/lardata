@@ -1,56 +1,79 @@
-include_directories(${FFTW_INCLUDE_DIR})
-cet_find_library(FFTW_LIBRARY NAMES fftw3 fftw3-3 PATHS ENV FFTW_LIBRARY )
+cet_make_library(LIBRARY_NAME AssociationUtil INTERFACE
+  SOURCE AssociationUtil.h
+  LIBRARIES INTERFACE
+  art::Framework_Principal
+  art::Persistency_Common
+  canvas::canvas
+  messagefacility::MF_MessageLogger
+)
 
-art_make(NO_PLUGINS
-         LIB_LIBRARIES
-            lardata_Utilities_LArFFT_service
-            lardataobj_RecoBase
-            larcorealg_Geometry
-              art::Framework_Core
-              art::Framework_Principal
-              art::Persistency_Provenance
-            canvas::canvas
-            messagefacility::MF_MessageLogger
-            cetlib_except::cetlib_except
-            FFTW_LIBRARY)
+cet_make_library(LIBRARY_NAME ForEachAssociatedGroup INTERFACE
+  SOURCE ForEachAssociatedGroup.h
+  LIBRARIES INTERFACE
+  canvas::AssnsAlgorithms
+)
 
-simple_plugin(DatabaseUtil "service"
-              messagefacility::MF_MessageLogger
-              PQ
-              art::Framework_Core
-              art::Framework_Principal
-              ${ART_ROOT_IO_ROOTDB}
-              art::Persistency_Provenance)
+cet_make_library(LIBRARY_NAME SimpleFits INTERFACE
+  SOURCE SimpleFits.h
+  LIBRARIES INTERFACE
+  lardataalg::UtilitiesHeaders
+)
 
-simple_plugin(LArFFT "service"
-              lardataalg_DetectorInfo
-              messagefacility::MF_MessageLogger
-              ROOT::Core
-              ROOT::FFTW
-              ROOT::Hist
-              ROOT::MathCore
-              ROOT::Physics)
+cet_make_library(SOURCE
+  GeometryUtilities.cxx
+  LArFFTW.cxx
+  LArFFTWPlan.cxx
+  PxHitConverter.cxx
+  Range.cxx
+  SignalShaper.cxx
+  SignalShaping.cxx
+  UniqueRangeSet.cxx
+  UtilException.cxx
+  LIBRARIES PUBLIC
+  lardata_Utilities_LArFFT_service
+  lardataobj::RecoBase
+  larcorealg::Geometry
+  larvecutils::MarqFitAlg
+  larcore::headers
+  art::Framework_Core
+  art::Framework_Principal
+  art::Persistency_Provenance
+  PRIVATE
+  canvas::canvas
+  messagefacility::MF_MessageLogger
+  cetlib_except::cetlib_except
+  FFTW3::FFTW3
+)
 
-simple_plugin(ComputePi "module"
-              messagefacility::MF_MessageLogger)
+cet_build_plugin(DatabaseUtil art::service
+  LIBRARIES PUBLIC
+  art::Persistency_Provenance
+  art::Framework_Core
+  art::Framework_Principal
+  art_root_io::RootDB
+  PRIVATE
+  messagefacility::MF_MessageLogger
+  PostgreSQL::PostgreSQL
+)
 
-include(FindOpenMP)
-if(OPENMP_FOUND)
-  # even if OpenMP is found on a SLF6 machine, it cannot be used.
-  # see the discussion in https://cdcvs.fnal.gov/redmine/issues/23001
-  if( ${CMAKE_HOST_SYSTEM_VERSION} MATCHES "^2.6.32.*" )
-    message(STATUS "OpenMP is not supported on SLF6")
-  else()
-    add_definitions(-DWITH_OPENMP)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-  endif()
-endif(OPENMP_FOUND)
+cet_build_plugin(LArFFT art::service
+  LIBRARIES
+  PUBLIC
+  lardataalg::DetectorInfo
+  larcore::headers
+  PRIVATE
+  messagefacility::MF_MessageLogger
+  ROOT::Core
+  ROOT::FFTW
+  ROOT::Hist
+  ROOT::MathCore
+  ROOT::Physics
+)
 
-## Problematic with cetbuildtools 8 and does not appear to be used
-##add_library (gshf_MarqFitAlg STATIC MarqFitAlg.cxx)
-##set_property(TARGET gshf_MarqFitAlg PROPERTY POSITION_INDEPENDENT_CODE ON)
+cet_build_plugin(ComputePi art::module
+  LIBRARIES REG
+  messagefacility::MF_MessageLogger
+)
 
 install_headers()
 install_fhicl()

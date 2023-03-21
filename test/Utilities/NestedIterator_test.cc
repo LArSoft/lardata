@@ -27,8 +27,7 @@
  * (for example, a random seed).
  */
 #define BOOST_TEST_MODULE (NestedIterator_test)
-#include <boost/test/test_tools.hpp>  // BOOST_CHECK()
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
+#include "boost/test/unit_test.hpp"
 
 // LArSoft libraries
 #include "lardata/Utilities/NestedIterator.h"
@@ -86,8 +85,8 @@ void RunVectorVectorTest()
     ++iElem;
   } // while
 
-  BOOST_CHECK_EQUAL((unsigned int)expected, NElements);
-  BOOST_CHECK_EQUAL(nMismatches, 0U);
+  BOOST_TEST((unsigned int)expected == NElements);
+  BOOST_TEST(nMismatches == 0U);
 } // RunVectorVectorTest()
 
 /**
@@ -138,8 +137,8 @@ void RunVectorMapTest()
     ++iElem;
   } // while
 
-  BOOST_CHECK_EQUAL((unsigned int)expected, NElements);
-  BOOST_CHECK_EQUAL(nMismatches, 0U);
+  BOOST_TEST((unsigned int)expected == NElements);
+  BOOST_TEST(nMismatches == 0U);
 } // RunVectorMapTest()
 
 //------------------------------------------------------------------------------

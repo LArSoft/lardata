@@ -1,25 +1,32 @@
-art_make(NO_PLUGINS
-         EXCLUDE LArRawInputDriverUBooNE.cxx
-         LIB_LIBRARIES lardataobj_RawData
-                       larcorealg_Geometry
-                       larcoreobj_SummaryData
-                       art::Framework_Core
-                       art::Framework_IO_Sources
-                       art::Framework_Principal
-                       art::Persistency_Common
-                       art::Persistency_Provenance
-                       canvas::canvas
-                       cetlib_except::cetlib_except
-                       PQ
-                       ${Boost_SERIALIZATION_LIBRARY}
-                       ${Boost_DATE_TIME_LIBRARY}
-                       ROOT::Core
-                       ROOT::RIO
-                       ROOT::Tree
-        )
+cet_make_library(SOURCE
+  LArRawInputDriver.cxx
+  LArRawInputDriverJP250L.cxx
+  LArRawInputDriverLongBo.cxx
+  LArRawInputDriverShortBo.cxx
+  LIBRARIES
+  PUBLIC
+  lardataobj::RawData
+  larcorealg::Geometry
+  larcoreobj::SummaryData
+  art::Framework_Core
+  art::Framework_IO_Sources
+  art::Framework_Principal
+  art::Persistency_Common
+  art::Persistency_Provenance
+  PRIVATE
+  canvas::canvas
+  cetlib_except::cetlib_except
+  PostgreSQL::PostgreSQL
+  Boost::serialization
+  Boost::date_time
+  ROOT::Core
+  ROOT::RIO
+  ROOT::Tree
+)
 
-simple_plugin(LArRawInputSource "source"
-  lardataobj_RawData
+cet_build_plugin(LArRawInputSource art::source
+  LIBRARIES REG
+  lardataobj::RawData
   lardata_RawData_utils
   art::Framework_IO_Sources
 )

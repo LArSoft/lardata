@@ -23,9 +23,7 @@
  * (for example, a random seed).
  */
 #define BOOST_TEST_MODULE (StatCollector_test)
-#include <boost/test/test_tools.hpp>                      // BOOST_CHECK(), BOOST_CHECK_EQUAL()
-#include <boost/test/tools/floating_point_comparison.hpp> // BOOST_CHECK_CLOSE()
-#include <cetlib/quiet_unit_test.hpp>                     // BOOST_AUTO_TEST_CASE()
+#include "boost/test/unit_test.hpp"
 
 // library to be tested:
 #include "lardata/Utilities/Dereference.h"
@@ -129,18 +127,18 @@ void test()
 
   T* ptr;
   ptr = lar::util::make_pointer(uptr);
-  BOOST_CHECK_EQUAL(*ptr, value);
+  BOOST_TEST(*ptr == value);
   ptr = lar::util::make_pointer(my_ptr);
-  BOOST_CHECK_EQUAL(*ptr, value);
+  BOOST_TEST(*ptr == value);
   ptr = lar::util::make_pointer(cptr);
-  BOOST_CHECK_EQUAL(*ptr, value);
+  BOOST_TEST(*ptr == value);
   ptr = lar::util::make_pointer(value);
-  BOOST_CHECK_EQUAL(*ptr, value);
+  BOOST_TEST(*ptr == value);
 
-  BOOST_CHECK_EQUAL(lar::util::dereference(uptr), value);
-  BOOST_CHECK_EQUAL(lar::util::dereference(my_ptr), value);
-  BOOST_CHECK_EQUAL(lar::util::dereference(cptr), value);
-  BOOST_CHECK_EQUAL(lar::util::dereference(value), value);
+  BOOST_TEST(lar::util::dereference(uptr) == value);
+  BOOST_TEST(lar::util::dereference(my_ptr) == value);
+  BOOST_TEST(lar::util::dereference(cptr) == value);
+  BOOST_TEST(lar::util::dereference(value) == value);
 
 } // test<>()
 

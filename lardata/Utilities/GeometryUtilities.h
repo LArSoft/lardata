@@ -9,7 +9,9 @@
 #ifndef UTIL_GEOMETRYUTILITIES_H
 #define UTIL_GEOMETRYUTILITIES_H
 
-#include "RtypesCore.h"
+#include "larcorealg/Geometry/geo_vectors_utils.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_vectors.h"
+
 #include "TVector3.h"
 
 #include "PxUtils.h"
@@ -30,7 +32,7 @@ namespace geo {
 /// General LArSoft Utilities
 namespace util {
 
-  constexpr double kINVALID_DOUBLE = std::numeric_limits<Double_t>::max();
+  constexpr double kINVALID_DOUBLE = std::numeric_limits<double>::max();
 
   class GeometryUtilities {
   public:
@@ -38,162 +40,160 @@ namespace util {
                       detinfo::DetectorClocksData const& clockData,
                       detinfo::DetectorPropertiesData const& propData);
 
-    Int_t Get3DaxisN(Int_t iplane0,
-                     Int_t iplane1,
-                     Double_t omega0,
-                     Double_t omega1,
-                     Double_t& phi,
-                     Double_t& theta) const;
+    int Get3DaxisN(int iplane0,
+                   int iplane1,
+                   double omega0,
+                   double omega1,
+                   double& phi,
+                   double& theta) const;
 
-    Double_t CalculatePitch(UInt_t iplane0, Double_t phi, Double_t theta) const;
+    double CalculatePitch(unsigned int iplane0, double phi, double theta) const;
 
-    Double_t CalculatePitchPolar(UInt_t iplane0, Double_t phi, Double_t theta) const;
+    double CalculatePitchPolar(unsigned int iplane0, double phi, double theta) const;
 
-    Double_t Get3DSpecialCaseTheta(Int_t iplane0, Int_t iplane1, Double_t dw0, Double_t dw1) const;
+    double Get3DSpecialCaseTheta(int iplane0, int iplane1, double dw0, double dw1) const;
 
-    Double_t Get2Dangle(Double_t deltawire, Double_t deltatime) const;
+    double Get2Dangle(double deltawire, double deltatime) const;
 
-    Double_t Get2Dangle(Double_t wireend,
-                        Double_t wirestart,
-                        Double_t timeend,
-                        Double_t timestart) const;
+    double Get2Dangle(double wireend, double wirestart, double timeend, double timestart) const;
 
-    double Get2Dangle(const util::PxPoint* endpoint, const util::PxPoint* startpoint) const;
+    double Get2Dangle(const PxPoint* endpoint, const PxPoint* startpoint) const;
 
     double Get2DangleFrom3D(unsigned int plane, double phi, double theta) const;
 
     double Get2DangleFrom3D(unsigned int plane, TVector3 dir_vector) const;
 
-    Double_t Get2Dslope(Double_t deltawire, Double_t deltatime) const;
+    double Get2Dslope(double deltawire, double deltatime) const;
 
-    Double_t Get2Dslope(Double_t wireend,
-                        Double_t wirestart,
-                        Double_t timeend,
-                        Double_t timestart) const;
+    double Get2Dslope(double wireend, double wirestart, double timeend, double timestart) const;
 
-    double Get2Dslope(const util::PxPoint* endpoint, const util::PxPoint* startpoint) const;
+    double Get2Dslope(const PxPoint* endpoint, const PxPoint* startpoint) const;
 
-    Double_t Get2DDistance(Double_t wire1, Double_t time1, Double_t wire2, Double_t time2) const;
+    double Get2DDistance(double wire1, double time1, double wire2, double time2) const;
 
-    double Get2DDistance(const util::PxPoint* point1, const util::PxPoint* point2) const;
+    double Get2DDistance(const PxPoint* point1, const PxPoint* point2) const;
 
-    Double_t Get2DPitchDistance(Double_t angle, Double_t inwire, Double_t wire) const;
+    double Get2DPitchDistance(double angle, double inwire, double wire) const;
 
-    Double_t Get2DPitchDistanceWSlope(Double_t slope, Double_t inwire, Double_t wire) const;
-
-    Int_t GetPointOnLine(Double_t slope,
-                         Double_t intercept,
-                         Double_t wire1,
-                         Double_t time1,
-                         Double_t& wireout,
-                         Double_t& timeout) const;
-
-    Int_t GetPointOnLine(Double_t slope,
-                         Double_t wirestart,
-                         Double_t timestart,
-                         Double_t wire1,
-                         Double_t time1,
-                         Double_t& wireout,
-                         Double_t& timeout) const;
-
-    int GetPointOnLine(Double_t slope,
-                       const util::PxPoint* startpoint,
-                       const util::PxPoint* point1,
-                       util::PxPoint& pointout) const;
+    double Get2DPitchDistanceWSlope(double slope, double inwire, double wire) const;
 
     int GetPointOnLine(double slope,
                        double intercept,
-                       const util::PxPoint* point1,
-                       util::PxPoint& pointout) const;
+                       double wire1,
+                       double time1,
+                       double& wireout,
+                       double& timeout) const;
 
-    Int_t GetPointOnLineWSlopes(Double_t slope,
-                                Double_t intercept,
-                                Double_t ort_intercept,
-                                Double_t& wireout,
-                                Double_t& timeout) const;
+    int GetPointOnLine(double slope,
+                       double wirestart,
+                       double timestart,
+                       double wire1,
+                       double time1,
+                       double& wireout,
+                       double& timeout) const;
 
-    Int_t GetPointOnLineWSlopes(double slope,
-                                double intercept,
-                                double ort_intercept,
-                                util::PxPoint& pointonline) const;
+    int GetPointOnLine(double slope,
+                       const PxPoint* startpoint,
+                       const PxPoint* point1,
+                       PxPoint& pointout) const;
 
-    PxPoint Get2DPointProjection(Double_t* xyz, Int_t plane) const;
+    int GetPointOnLine(double slope,
+                       double intercept,
+                       const PxPoint* point1,
+                       PxPoint& pointout) const;
 
-    PxPoint Get2DPointProjectionCM(std::vector<double> xyz, int plane) const;
+    int GetPointOnLineWSlopes(double slope,
+                              double intercept,
+                              double ort_intercept,
+                              double& wireout,
+                              double& timeout) const;
 
-    PxPoint Get2DPointProjectionCM(double* xyz, int plane) const;
+    int GetPointOnLineWSlopes(double slope,
+                              double intercept,
+                              double ort_intercept,
+                              PxPoint& pointonline) const;
 
-    PxPoint Get2DPointProjectionCM(TLorentzVector* xyz, int plane) const;
+    inline PxPoint Get2DPointProjection(double const* xyz, unsigned int plane) const
+    {
+      return Get2DPointProjection(geo::vect::toPoint(xyz), plane);
+    }
+    PxPoint Get2DPointProjection(geo::Point_t const& xyz, unsigned int plane) const;
 
-    Double_t GetTimeTicks(Double_t x, Int_t plane) const;
+    PxPoint Get2DPointProjectionCM(std::vector<double> const& xyz, unsigned int plane) const;
 
-    Int_t GetProjectedPoint(const PxPoint* p0, const PxPoint* p1, PxPoint& pN) const;
+    PxPoint Get2DPointProjectionCM(double const* xyz, unsigned int plane) const;
 
-    util::PxHit FindClosestHit(std::vector<util::PxHit> const& hitlist,
-                               unsigned int wirein,
-                               double timein) const;
+    PxPoint Get2DPointProjectionCM(TLorentzVector const* xyz, unsigned int plane) const;
 
-    unsigned int FindClosestHitIndex(std::vector<util::PxHit> const& hitlist,
+    double GetTimeTicks(double x, unsigned int plane) const;
+
+    int GetProjectedPoint(const PxPoint* p0, const PxPoint* p1, PxPoint& pN) const;
+
+    PxHit FindClosestHit(std::vector<PxHit> const& hitlist,
+                         unsigned int wirein,
+                         double timein) const;
+
+    unsigned int FindClosestHitIndex(std::vector<PxHit> const& hitlist,
                                      unsigned int wirein,
                                      double timein) const;
 
-    Int_t GetYZ(const PxPoint* p0, const PxPoint* p1, Double_t* yz) const;
+    int GetYZ(const PxPoint* p0, const PxPoint* p1, double* yz) const;
 
-    Int_t GetXYZ(const PxPoint* p0, const PxPoint* p1, Double_t* xyz) const;
+    int GetXYZ(const PxPoint* p0, const PxPoint* p1, double* xyz) const;
 
-    Double_t PitchInView(UInt_t plane, Double_t phi, Double_t theta) const;
+    double PitchInView(unsigned int plane, double phi, double theta) const;
 
-    void GetDirectionCosines(Double_t phi, Double_t theta, Double_t* dirs) const;
+    void GetDirectionCosines(double phi, double theta, double* dirs) const;
 
     // interface without average Hit
-    void SelectLocalHitlist(const std::vector<util::PxHit>& hitlist,
-                            std::vector<const util::PxHit*>& hitlistlocal,
-                            util::PxPoint& startHit,
-                            Double_t& linearlimit,
-                            Double_t& ortlimit,
-                            Double_t& lineslopetest) const;
+    void SelectLocalHitlist(const std::vector<PxHit>& hitlist,
+                            std::vector<const PxHit*>& hitlistlocal,
+                            PxPoint& startHit,
+                            double& linearlimit,
+                            double& ortlimit,
+                            double& lineslopetest) const;
 
-    void SelectLocalHitlist(const std::vector<util::PxHit>& hitlist,
-                            std::vector<const util::PxHit*>& hitlistlocal,
-                            util::PxPoint& startHit,
-                            Double_t& linearlimit,
-                            Double_t& ortlimit,
-                            Double_t& lineslopetest,
-                            util::PxHit& averageHit) const;
+    void SelectLocalHitlist(const std::vector<PxHit>& hitlist,
+                            std::vector<const PxHit*>& hitlistlocal,
+                            PxPoint& startHit,
+                            double& linearlimit,
+                            double& ortlimit,
+                            double& lineslopetest,
+                            PxHit& averageHit) const;
 
-    void SelectLocalHitlistIndex(const std::vector<util::PxHit>& hitlist,
+    void SelectLocalHitlistIndex(const std::vector<PxHit>& hitlist,
                                  std::vector<unsigned int>& hitlistlocal_index,
-                                 util::PxPoint& startHit,
-                                 Double_t& linearlimit,
-                                 Double_t& ortlimit,
-                                 Double_t& lineslopetest) const;
+                                 PxPoint& startHit,
+                                 double& linearlimit,
+                                 double& ortlimit,
+                                 double& lineslopetest) const;
 
-    void SelectPolygonHitList(const std::vector<util::PxHit>& hitlist,
-                              std::vector<const util::PxHit*>& hitlistlocal) const;
+    void SelectPolygonHitList(const std::vector<PxHit>& hitlist,
+                              std::vector<const PxHit*>& hitlistlocal) const;
 
-    std::vector<size_t> PolyOverlap(std::vector<const util::PxHit*> ordered_hits,
+    std::vector<size_t> PolyOverlap(std::vector<const PxHit*> ordered_hits,
                                     std::vector<size_t> candidate_polygon) const;
 
     bool Clockwise(double Ax, double Ay, double Bx, double By, double Cx, double Cy) const;
 
-    Double_t TimeToCm() const { return fTimetoCm; }
-    Double_t WireToCm() const { return fWiretoCm; }
-    Double_t WireTimeToCmCm() const { return fWireTimetoCmCm; }
-    UInt_t Nplanes() const { return fNPlanes; }
+    double TimeToCm() const { return fTimetoCm; }
+    double WireToCm() const { return fWiretoCm; }
+    double WireTimeToCmCm() const { return fWireTimetoCmCm; }
+    unsigned int Nplanes() const { return fNPlanes; }
 
   private:
     geo::GeometryCore const& fGeom;
     detinfo::DetectorClocksData const& fClocks;
     detinfo::DetectorPropertiesData const& fDetProp;
 
-    std::vector<Double_t> vertangle; // angle wrt to vertical
-    Double_t fWirePitch;
-    Double_t fTimeTick;
-    Double_t fDriftVelocity;
-    UInt_t fNPlanes;
-    Double_t fWiretoCm;
-    Double_t fTimetoCm;
-    Double_t fWireTimetoCmCm;
+    std::vector<double> vertangle; // angle wrt to vertical
+    double fWirePitch;
+    double fTimeTick;
+    double fDriftVelocity;
+    unsigned int fNPlanes;
+    double fWiretoCm;
+    double fTimetoCm;
+    double fWireTimetoCmCm;
   }; // class GeometryUtilities
 
 } // namespace util

@@ -9,14 +9,17 @@
 #ifndef DETECTORPROPERTIESSERVICESTANDARD_H
 #define DETECTORPROPERTIESSERVICESTANDARD_H
 
+#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
+#include "lardataalg/DetectorInfo/DetectorPropertiesStandard.h"
+
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
 #include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
 #include "art/Persistency/Provenance/ScheduleContext.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/types/Atom.h"
-#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
-#include "lardataalg/DetectorInfo/DetectorPropertiesStandard.h"
+#include "fhiclcpp/types/Comment.h"
+#include "fhiclcpp/types/Name.h"
 
 /// General LArSoft Utilities
 namespace detinfo {

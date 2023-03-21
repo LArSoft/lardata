@@ -9,9 +9,11 @@
 #ifndef DETECTORCLOCKSSERVICE_H
 #define DETECTORCLOCKSSERVICE_H
 
-#include "art/Framework/Principal/fwd.h"
+namespace art {
+  class Event;
+}
+
 #include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
-#include "larcore/CoreUtils/ServiceUtil.h"
 #include "lardataalg/DetectorInfo/DetectorClocks.h"
 #include "lardataalg/DetectorInfo/DetectorClocksData.h"
 

@@ -7,6 +7,8 @@ set(RawDataDumpers
   "DumpOpDetWaveforms")
 set(RecoBaseDumpers
   "DumpWires"
+  "DumpOpHits"
+  "DumpOpFlashes"
   "DumpHits"
   "DumpClusters"
   "DumpSeeds"
@@ -19,41 +21,62 @@ set(RecoBaseDumpers
 set(SimulationDumpers
   "DumpSimPhotonsLite"
   "DumpSimEnergyDeposits"
+  "DumpParticleIDs"
   )
 set(MCDumper)
 
 
-art_make(NO_PLUGINS LIB_LIBRARIES lardataobj_RecoBase)
+cet_make_library(SOURCE
+  PCAxisDumpers.cc
+  SpacePointDumpers.cc
+  LIBRARIES
+  PUBLIC
+  lardataobj::RecoBase
+)
 
 foreach(Dumper IN LISTS RawDataDumpers)
-  simple_plugin(${Dumper} "module"
-      lardataobj_RawData
-      art::Framework_Services_Registry
-      messagefacility::MF_MessageLogger)
+  cet_build_plugin(${Dumper} art::module
+    LIBRARIES REG
+    larcorealg::CoreUtils
+    lardataobj::RawData
+    lardataalg::UtilitiesHeaders
+    larcore::headers
+    art::Framework_Services_Registry
+    messagefacility::MF_MessageLogger
+)
 endforeach()
 
 
 foreach(Dumper IN LISTS RecoBaseDumpers)
-  simple_plugin(${Dumper} "module"
-      lardataobj_RecoBase
-      lardata_ArtDataHelper_Dumpers
-      lardata_RecoBaseProxy
-      messagefacility::MF_MessageLogger)
+  cet_build_plugin(${Dumper} art::module
+    LIBRARIES REG
+    lardataobj::RecoBase
+    lardataalg::UtilitiesHeaders
+    lardata_ArtDataHelper_Dumpers
+    lardata_RecoBaseProxy
+    messagefacility::MF_MessageLogger
+  )
 endforeach()
 
 
 foreach(Dumper IN LISTS SimulationDumpers)
-  simple_plugin(${Dumper} "module"
-      lardataalg_MCDumpers
-      lardataobj_Simulation
-      messagefacility::MF_MessageLogger
-      ROOT::GenVector
-      ROOT::Core)
+  cet_build_plugin(${Dumper} art::module
+    LIBRARIES REG
+    larcorealg::CoreUtils
+    lardataalg::MCDumpers
+    lardataobj::Simulation
+    messagefacility::MF_MessageLogger
+    ROOT::GenVector
+    ROOT::Core
+  )
 endforeach(Dumper IN LISTS SimulationDumpers)
 
 
 foreach(Dumper IN LISTS MCDumpers)
-  simple_plugin(${Dumper} "module" lardataobj_MCBase)
+  cet_build_plugin(${Dumper} art::module
+    LIBRARIES REG
+    lardataobj::MCBase
+)
 endforeach()
 
 

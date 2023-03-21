@@ -26,7 +26,7 @@
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // Boost libraries
-#include <boost/test/test_tools.hpp> // BOOST_CHECK()
+#include "boost/test/unit_test.hpp"
 
 // C/C++ libraries
 #include <cassert>
@@ -122,16 +122,16 @@ void ChargedSpacePointProxyTest::testChargedSpacePoints(art::Event const& event)
 
   static_assert(points.has<recob::PointCharge>(), "recob::Charge not found!!!");
 
-  BOOST_CHECK_EQUAL(points.empty(), expectedSpacePoints.empty());
-  BOOST_CHECK_EQUAL(points.size(), expectedSpacePoints.size());
+  BOOST_TEST(points.empty() == expectedSpacePoints.empty());
+  BOOST_TEST(points.size() == expectedSpacePoints.size());
 
   decltype(auto) spacePoints = points.spacePoints();
-  BOOST_CHECK_EQUAL(std::addressof(spacePoints), std::addressof(expectedSpacePoints));
-  BOOST_CHECK_EQUAL(spacePoints.size(), expectedSpacePoints.size());
+  BOOST_TEST(std::addressof(spacePoints) == std::addressof(expectedSpacePoints));
+  BOOST_TEST(spacePoints.size() == expectedSpacePoints.size());
 
   decltype(auto) charges = points.charges();
-  BOOST_CHECK_EQUAL(std::addressof(charges), std::addressof(expectedCharges));
-  BOOST_CHECK_EQUAL(charges.size(), expectedCharges.size());
+  BOOST_TEST(std::addressof(charges) == std::addressof(expectedCharges));
+  BOOST_TEST(charges.size() == expectedCharges.size());
 
   std::size_t iExpectedPoint = 0;
   for (auto pointProxy : points) {
@@ -140,22 +140,21 @@ void ChargedSpacePointProxyTest::testChargedSpacePoints(art::Event const& event)
 
     recob::SpacePoint const& spacePointRef = *pointProxy;
 
-    BOOST_CHECK_EQUAL(std::addressof(spacePointRef), std::addressof(expectedSpacePoint));
-    BOOST_CHECK_EQUAL(std::addressof(pointProxy.point()), std::addressof(expectedSpacePoint));
-    BOOST_CHECK_EQUAL(pointProxy.position(),
-                      geo::vect::makePointFromCoords(expectedSpacePoint.XYZ()));
-    BOOST_CHECK_EQUAL(pointProxy.ID(), expectedSpacePoint.ID());
-    BOOST_CHECK_EQUAL(pointProxy.hasCharge(), expectedChargeInfo.hasCharge());
-    BOOST_CHECK_EQUAL(pointProxy.charge(), expectedChargeInfo.charge());
+    BOOST_TEST(std::addressof(spacePointRef) == std::addressof(expectedSpacePoint));
+    BOOST_TEST(std::addressof(pointProxy.point()) == std::addressof(expectedSpacePoint));
+    BOOST_TEST(pointProxy.position() == geo::vect::makePointFromCoords(expectedSpacePoint.XYZ()));
+    BOOST_TEST(pointProxy.ID() == expectedSpacePoint.ID());
+    BOOST_TEST(pointProxy.hasCharge() == expectedChargeInfo.hasCharge());
+    BOOST_TEST(pointProxy.charge() == expectedChargeInfo.charge());
 
     decltype(auto) chargeInfo = pointProxy.get<recob::PointCharge>();
     static_assert(std::is_lvalue_reference<decltype(chargeInfo)>(),
                   "Copy of parallel data element!");
-    BOOST_CHECK_EQUAL(std::addressof(chargeInfo), std::addressof(expectedChargeInfo));
+    BOOST_TEST(std::addressof(chargeInfo) == std::addressof(expectedChargeInfo));
 
     ++iExpectedPoint;
   } // for
-  BOOST_CHECK_EQUAL(iExpectedPoint, expectedSpacePoints.size());
+  BOOST_TEST(iExpectedPoint == expectedSpacePoints.size());
 
 } // ChargedSpacePointProxyTest::testChargedSpacePoints()
 

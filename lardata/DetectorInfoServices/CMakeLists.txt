@@ -1,29 +1,68 @@
-simple_plugin(DetectorClocksServiceStandard "service"
-              art_root_io_detail
-              lardataalg_DetectorInfo
-              lardataobj_RawData
-              art::Framework_Core
-              art::Framework_Principal
-              ${ART_ROOT_IO_ROOTDB}
-              art::Persistency_Provenance
-              ${SQLITE3}
-              ROOT::Core
-              ROOT::RIO
-              ROOT::Tree)
+cet_make_library(LIBRARY_NAME ServicePack INTERFACE
+  SOURCE ServicePack.h
+  LIBRARIES INTERFACE
+  larcore::ServiceUtil
+  larcorealg::headers
+  )
 
-simple_plugin(DetectorPropertiesServiceStandard "service"
-              lardataalg_DetectorInfo
-              larcore_Geometry_Geometry_service
-              larcorealg_Geometry
-              ${ART_ROOT_IO_ROOTDB}
-              ${SQLITE3}
-              messagefacility::MF_MessageLogger
-              ROOT::Core
-              ROOT::RIO)
+# Service interfaces.
+set(builder_dest Modules)
+set(builders)
+function(make_simple_service_builder STEM)
+  # Define an interface library for services and modules that use this
+  # service interface.
+  cet_make_library(LIBRARY_NAME ${STEM}Service INTERFACE
+    SOURCE ${STEM}Service.h
+    LIBRARIES INTERFACE ${ARGN}
+  )
+  # Make a plugin builder for services of this type.
+  cet_write_plugin_builder(lar::${STEM}Service art::service ${builder_dest}
+    INSTALL_BUILDER
+    LIBRARIES CONDITIONAL lardata::${STEM}Service
+  )
+  list(APPEND builders lar::${STEM}Service)
+  set(builders ${builders} PARENT_SCOPE)
+endfunction()
 
-simple_plugin(LArPropertiesServiceStandard "service"
-              lardataalg_DetectorInfo
-              art::Framework_Principal)
+make_simple_service_builder(DetectorClocks lardataalg::DetectorInfo)
+make_simple_service_builder(DetectorProperties lardataalg::DetectorInfo)
+make_simple_service_builder(LArProperties lardataalg::DetectorInfo)
+
+cet_collect_plugin_builders(${builder_dest} lar::DetectorInfoServiceBuilders
+  LIST ${builders}
+)
+
+include(lar::DetectorInfoServiceBuilders)
+
+cet_build_plugin(DetectorClocksServiceStandard lar::DetectorClocksService
+  LIBRARIES PRIVATE
+  art_root_io::RootDB
+  art_root_io::detail
+  canvas::canvas
+  fhiclcpp::fhiclcpp
+  cetlib_except::cetlib_except
+  ROOT::Hist
+  ROOT::RIO
+)
+
+cet_build_plugin(DetectorPropertiesServiceStandard lar::DetectorPropertiesService
+  LIBRARIES
+  PUBLIC
+  fhiclcpp::types
+  fhiclcpp::fhiclcpp
+  PRIVATE
+  lardata::LArPropertiesService
+  lardata::ServicePack
+  art_root_io::RootDB
+  messagefacility::MF_MessageLogger
+  ROOT::Tree
+  ROOT::RIO
+)
+
+cet_build_plugin(LArPropertiesServiceStandard lar::LArPropertiesService
+  LIBRARIES PRIVATE
+  art::Framework_Principal
+)
 
 install_headers()
 install_fhicl()

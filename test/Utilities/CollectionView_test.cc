@@ -12,8 +12,7 @@
 
 // Boost libraries
 #define BOOST_TEST_MODULE (CollectionView_test)
-#include <boost/test/test_tools.hpp> // BOOST_CHECK()
-#include <boost/test/unit_test.hpp>  // BOOST_AUTO_TEST_CASE()
+#include <boost/test/unit_test.hpp> // BOOST_AUTO_TEST_CASE()
 
 // C/C++ standard libraries
 #include <deque>
@@ -35,29 +34,29 @@ BOOST_AUTO_TEST_CASE(VectorTestCase)
 
   auto cv = lar::makeCollectionView(cbegin, cend);
 
-  BOOST_CHECK_EQUAL(cv.empty(), c.empty());
-  BOOST_CHECK_EQUAL(cv.size(), c.size());
+  BOOST_TEST(cv.empty() == c.empty());
+  BOOST_TEST(cv.size() == c.size());
 
   //
   // iterators
   //
-  BOOST_CHECK((cv.cbegin() == c.cbegin()));
-  BOOST_CHECK((cv.cend() == c.cend()));
-  BOOST_CHECK((cv.crbegin() == c.crbegin()));
-  BOOST_CHECK((cv.crend() == c.crend()));
+  BOOST_TEST((cv.cbegin() == c.cbegin()));
+  BOOST_TEST((cv.cend() == c.cend()));
+  BOOST_TEST((cv.crbegin() == c.crbegin()));
+  BOOST_TEST((cv.crend() == c.crend()));
 
   //
   // elements
   //
-  BOOST_CHECK_EQUAL(&(cv.front()), &(c.front()));
-  BOOST_CHECK_EQUAL(cv.front(), c.front());
-  BOOST_CHECK_EQUAL(&(cv.back()), &(c.back()));
-  BOOST_CHECK_EQUAL(cv.back(), c.back());
+  BOOST_TEST(&(cv.front()) == &(c.front()));
+  BOOST_TEST(cv.front() == c.front());
+  BOOST_TEST(&(cv.back()) == &(c.back()));
+  BOOST_TEST(cv.back() == c.back());
 
   //
   // data
   //
-  BOOST_CHECK_EQUAL(cv.data(), c.data());
+  BOOST_TEST(cv.data() == c.data());
 
   //
   // range-for iteration
@@ -65,16 +64,16 @@ BOOST_AUTO_TEST_CASE(VectorTestCase)
   auto ic = cbegin;
   size_t i = 0;
   for (auto const& d : cv) {
-    BOOST_CHECK_EQUAL(d, *ic);
-    BOOST_CHECK_EQUAL(cv[i], d);
-    BOOST_CHECK_EQUAL(&(cv[i]), &(c[i]));
-    BOOST_CHECK_EQUAL(cv.at(i), d);
-    BOOST_CHECK_EQUAL(&(cv.at(i)), &(c.at(i)));
+    BOOST_TEST(d == *ic);
+    BOOST_TEST(cv[i] == d);
+    BOOST_TEST(&(cv[i]) == &(c[i]));
+    BOOST_TEST(cv.at(i) == d);
+    BOOST_TEST(&(cv.at(i)) == &(c.at(i)));
 
     ++i;
     ++ic;
   } // for
-  BOOST_CHECK((ic == cend));
+  BOOST_TEST((ic == cend));
 
 } // BOOST_AUTO_TEST_CASE(VectorTestCase)
 
@@ -90,24 +89,24 @@ BOOST_AUTO_TEST_CASE(DequeTestCase)
 
   auto cv = lar::makeCollectionView(cbegin, cend);
 
-  BOOST_CHECK_EQUAL(cv.empty(), c.empty());
-  BOOST_CHECK_EQUAL(cv.size(), c.size());
+  BOOST_TEST(cv.empty() == c.empty());
+  BOOST_TEST(cv.size() == c.size());
 
   //
   // iterators
   //
-  BOOST_CHECK((cv.cbegin() == c.cbegin()));
-  BOOST_CHECK((cv.cend() == c.cend()));
-  BOOST_CHECK((cv.crbegin() == c.crbegin()));
-  BOOST_CHECK((cv.crend() == c.crend()));
+  BOOST_TEST((cv.cbegin() == c.cbegin()));
+  BOOST_TEST((cv.cend() == c.cend()));
+  BOOST_TEST((cv.crbegin() == c.crbegin()));
+  BOOST_TEST((cv.crend() == c.crend()));
 
   //
   // elements
   //
-  BOOST_CHECK_EQUAL(&(cv.front()), &(c.front()));
-  BOOST_CHECK_EQUAL(cv.front(), c.front());
-  BOOST_CHECK_EQUAL(&(cv.back()), &(c.back()));
-  BOOST_CHECK_EQUAL(cv.back(), c.back());
+  BOOST_TEST(&(cv.front()) == &(c.front()));
+  BOOST_TEST(cv.front() == c.front());
+  BOOST_TEST(&(cv.back()) == &(c.back()));
+  BOOST_TEST(cv.back() == c.back());
 
   //
   // range-for iteration
@@ -115,16 +114,16 @@ BOOST_AUTO_TEST_CASE(DequeTestCase)
   auto ic = cbegin;
   size_t i = 0;
   for (auto const& d : cv) {
-    BOOST_CHECK_EQUAL(d, *ic);
-    BOOST_CHECK_EQUAL(cv[i], d);
-    BOOST_CHECK_EQUAL(&(cv[i]), &(c[i]));
-    BOOST_CHECK_EQUAL(cv.at(i), d);
-    BOOST_CHECK_EQUAL(&(cv.at(i)), &(c.at(i)));
+    BOOST_TEST(d == *ic);
+    BOOST_TEST(cv[i] == d);
+    BOOST_TEST(&(cv[i]) == &(c[i]));
+    BOOST_TEST(cv.at(i) == d);
+    BOOST_TEST(&(cv.at(i)) == &(c.at(i)));
 
     ++i;
     ++ic;
   } // for
-  BOOST_CHECK((ic == cend));
+  BOOST_TEST((ic == cend));
 
 } // BOOST_AUTO_TEST_CASE(DequeTestCase)
 
@@ -140,35 +139,35 @@ BOOST_AUTO_TEST_CASE(ListTestCase)
 
   auto cv = lar::makeCollectionView(cbegin, cend);
 
-  BOOST_CHECK_EQUAL(cv.empty(), c.empty());
-  BOOST_CHECK_EQUAL(cv.size(), c.size());
+  BOOST_TEST(cv.empty() == c.empty());
+  BOOST_TEST(cv.size() == c.size());
 
   //
   // iterators
   //
-  BOOST_CHECK((cv.cbegin() == c.cbegin()));
-  BOOST_CHECK((cv.cend() == c.cend()));
-  BOOST_CHECK((cv.crbegin() == c.crbegin()));
-  BOOST_CHECK((cv.crend() == c.crend()));
+  BOOST_TEST((cv.cbegin() == c.cbegin()));
+  BOOST_TEST((cv.cend() == c.cend()));
+  BOOST_TEST((cv.crbegin() == c.crbegin()));
+  BOOST_TEST((cv.crend() == c.crend()));
 
   //
   // elements
   //
-  BOOST_CHECK_EQUAL(&(cv.front()), &(c.front()));
-  BOOST_CHECK_EQUAL(cv.front(), c.front());
-  BOOST_CHECK_EQUAL(&(cv.back()), &(c.back()));
-  BOOST_CHECK_EQUAL(cv.back(), c.back());
+  BOOST_TEST(&(cv.front()) == &(c.front()));
+  BOOST_TEST(cv.front() == c.front());
+  BOOST_TEST(&(cv.back()) == &(c.back()));
+  BOOST_TEST(cv.back() == c.back());
 
   //
   // range-for iteration
   //
   auto ic = cbegin;
   for (auto const& d : cv) {
-    BOOST_CHECK_EQUAL(d, *ic);
+    BOOST_TEST(d == *ic);
 
     ++ic;
   } // for
-  BOOST_CHECK((ic == cend));
+  BOOST_TEST((ic == cend));
 
 } // BOOST_AUTO_TEST_CASE(ListTestCase)
 
@@ -184,30 +183,30 @@ BOOST_AUTO_TEST_CASE(ForwardListTestCase)
 
   auto cv = lar::makeCollectionView(cbegin, cend);
 
-  BOOST_CHECK_EQUAL(cv.empty(), c.empty());
+  BOOST_TEST(cv.empty() == c.empty());
 
   //
   // iterators
   //
-  BOOST_CHECK((cv.cbegin() == c.cbegin()));
-  BOOST_CHECK((cv.cend() == c.cend()));
+  BOOST_TEST((cv.cbegin() == c.cbegin()));
+  BOOST_TEST((cv.cend() == c.cend()));
 
   //
   // elements
   //
-  BOOST_CHECK_EQUAL(&(cv.front()), &(c.front()));
-  BOOST_CHECK_EQUAL(cv.front(), c.front());
+  BOOST_TEST(&(cv.front()) == &(c.front()));
+  BOOST_TEST(cv.front() == c.front());
 
   //
   // range-for iteration
   //
   auto ic = cbegin;
   for (auto const& d : cv) {
-    BOOST_CHECK_EQUAL(d, *ic);
+    BOOST_TEST(d == *ic);
 
     ++ic;
   } // for
-  BOOST_CHECK((ic == cend));
+  BOOST_TEST((ic == cend));
 
 } // BOOST_AUTO_TEST_CASE(ForwardListTestCase)
 
@@ -240,7 +239,7 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase)
   }
   std::cout << out.str() << std::endl;
 
-  BOOST_CHECK_EQUAL(out.str(), "1 2 3 4 5 ");
+  BOOST_TEST(out.str() == "1 2 3 4 5 ");
 
   /*
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -255,7 +254,7 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase)
       out << d << " ";
     }
 
-    BOOST_CHECK_EQUAL(out.str(), "1 2 3 4 5 ");
+    BOOST_TEST(out.str() == "1 2 3 4 5 ");
   }
 
   /*
@@ -271,7 +270,7 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase)
       out << d << " ";
     }
 
-    BOOST_CHECK_EQUAL(out.str(), "1 2 3 4 5 ");
+    BOOST_TEST(out.str() == "1 2 3 4 5 ");
   }
 
   /* The promise:
@@ -295,7 +294,7 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase)
   }
   std::cout << out.str() << std::endl;
 
-  BOOST_CHECK_EQUAL(out.str(), "4 5 6 ");
+  BOOST_TEST(out.str() == "4 5 6 ");
 
   /* The promise:
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -350,7 +349,7 @@ BOOST_AUTO_TEST_CASE(DocumentationTestCase)
     }
     std::cout << out.str() << std::endl;
 
-    BOOST_CHECK_EQUAL(out.str(), "0 1 2 3 4 5 6 7 8 9 ");
+    BOOST_TEST(out.str() == "0 1 2 3 4 5 6 7 8 9 ");
   }
 
 } // BOOST_AUTO_TEST_CASE(DocumentationTestCase)

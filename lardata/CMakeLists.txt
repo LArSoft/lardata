@@ -1,3 +1,5 @@
+cet_make_library(HEADERS_TARGET_ONLY)
+
 add_subdirectory(Utilities)
 add_subdirectory(RecoObjects)
 add_subdirectory(ArtDataHelper)

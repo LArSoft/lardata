@@ -14,8 +14,7 @@
 
 // Boost libraries
 #define BOOST_TEST_MODULE (filterRangeFor_test)
-#include <boost/test/test_tools.hpp>  // BOOST_CHECK(), BOOST_CHECK_EQUAL()
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
+#include "boost/test/unit_test.hpp"
 
 // C/C++ standard libraries
 #include <algorithm> // std::count_if()
@@ -32,10 +31,10 @@ void testPredicate(Cont& data, Pred pred)
   for (auto const& v : util::filterRangeFor(data, pred)) {
     ++n;
     BOOST_TEST_CHECKPOINT("  testing value: " << v);
-    BOOST_CHECK(pred(v));
+    BOOST_TEST(pred(v));
   } // for
 
-  BOOST_CHECK_EQUAL(n, nPass);
+  BOOST_TEST(n == nPass);
 } // testPredicate()
 
 //-----------------------------------------------------------------------------

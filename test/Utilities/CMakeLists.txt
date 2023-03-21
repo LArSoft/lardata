@@ -10,8 +10,14 @@ add_subdirectory( testAssnsChainUtils )
 
 cet_test(NestedIterator_test USE_BOOST_UNIT)
 cet_test(CountersMap_test USE_BOOST_UNIT)
-cet_test(FastMatrixMath_test USE_BOOST_UNIT)
-cet_test(SimpleFits_test USE_BOOST_UNIT)
+cet_test(FastMatrixMath_test USE_BOOST_UNIT
+  LIBRARIES PRIVATE
+  lardataalg::UtilitiesHeaders
+)
+cet_test(SimpleFits_test USE_BOOST_UNIT
+  LIBRARIES PRIVATE
+  lardataalg::UtilitiesHeaders
+)
 cet_test(ChiSquareAccumulator_test USE_BOOST_UNIT)
 cet_test(Dereference_test USE_BOOST_UNIT)
 cet_test(TensorIndices_test USE_BOOST_UNIT)
@@ -20,7 +26,10 @@ cet_test(GridContainers_test USE_BOOST_UNIT)
 cet_test(RangeForWrapper_test USE_BOOST_UNIT)
 cet_test(filterRangeFor_test USE_BOOST_UNIT)
 cet_test(CollectionView_test USE_BOOST_UNIT)
-cet_test(TupleLookupByTag_test)
+cet_test(TupleLookupByTag_test
+  LIBRARIES PRIVATE
+  larcorealg::CoreUtils
+)
 
 # run a FHiCL file with only ComputePi inside
 cet_test(timingreference_test HANDBUILT
@@ -31,6 +40,5 @@ cet_test(timingreference_test HANDBUILT
 )
 
 
-install_headers()
 install_fhicl()
 install_source()

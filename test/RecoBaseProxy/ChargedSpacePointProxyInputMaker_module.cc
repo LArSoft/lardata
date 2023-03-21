@@ -22,7 +22,7 @@
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // Boost libraries
-#include <boost/test/test_tools.hpp> // BOOST_CHECK()
+#include "boost/test/unit_test.hpp"
 
 // C/C++ standard libraries
 #include <memory> // std::make_unique()
@@ -92,12 +92,12 @@ void lar::test::ChargedSpacePointProxyInputMaker::produce(art::Event& event)
 
   auto spacePoints = recob::ChargedSpacePointCollectionCreator::forPtrs(event);
 
-  BOOST_CHECK(spacePoints.empty());
+  BOOST_TEST(spacePoints.empty());
 
   const double err[6U] = {1.0, 0.0, 1.0, 0.0, 0.0, 1.0};
 
   for (unsigned int iPoint = 0; iPoint < nPoints; ++iPoint) {
-    BOOST_CHECK_EQUAL(spacePoints.size(), (std::size_t)iPoint);
+    BOOST_TEST(spacePoints.size() == (std::size_t)iPoint);
 
     double const pos[3U] = {double(iPoint), double(2.0 * iPoint), double(4.0 * iPoint)};
 
@@ -111,13 +111,13 @@ void lar::test::ChargedSpacePointProxyInputMaker::produce(art::Event& event)
       << " (ptr: " << spacePoints.lastChargePtr() << ")";
 
   } // for (iPoint)
-  BOOST_CHECK_EQUAL(spacePoints.size(), (std::size_t)nPoints);
+  BOOST_TEST(spacePoints.size() == (std::size_t)nPoints);
 
   mf::LogInfo("ChargedSpacePointProxyInputMaker")
     << "Produced " << spacePoints.size() << " points and charges.";
 
   spacePoints.put();
-  BOOST_CHECK(spacePoints.empty());
+  BOOST_TEST(spacePoints.empty());
 
 } // lar::test::ChargedSpacePointProxyInputMaker::produce()
 

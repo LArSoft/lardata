@@ -10,6 +10,7 @@
 
 #include <map>
 
+#include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "cetlib_except/exception.h"
 
 #include "larcore/Geometry/Geometry.h"

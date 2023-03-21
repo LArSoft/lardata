@@ -17,8 +17,7 @@
 
 // Boost libraries
 #define BOOST_TEST_MODULE (PointIsolationAlg_test)
-#include <boost/test/test_tools.hpp>  // BOOST_CHECK(), BOOST_CHECK_EQUAL()
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
+#include "boost/test/unit_test.hpp"
 
 // C/C++ standard libraries
 #include <array>
@@ -104,12 +103,12 @@ void associated_groups_with_left_test()
 
   //strings should be same as vs
   std::cout << "Starting check..." << std::endl;
-  BOOST_CHECK_EQUAL(results.size(), expected.size());
+  BOOST_TEST(results.size() == expected.size());
   for (auto const& [i, result, expected] : util::enumerate(results, expected)) {
     auto const& [A, Bs] = result;
     auto const& [expectedA, expectedBs] = expected;
     BOOST_TEST_MESSAGE("  element #" << i << ", A=" << expectedA);
-    BOOST_CHECK_EQUAL(A, expectedA);
+    BOOST_TEST(A == expectedA);
     BOOST_CHECK_EQUAL_COLLECTIONS(Bs.cbegin(), Bs.cend(), expectedBs.cbegin(), expectedBs.cend());
   } // for results
 

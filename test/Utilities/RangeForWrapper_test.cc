@@ -209,14 +209,14 @@ void iterator_tests(Iter iter, RefIter refIter, RefIter refEnd)
   const bool isLast = (std::next(refIter) == refEnd);
 
   Iter ia = iter;
-  BOOST_CHECK(bool(ia == iter));
+  BOOST_TEST(bool(ia == iter));
 
   if (isDereferenciable) {
-    //BOOST_CHECK_EQUAL(*iter, *refIter);
+    //BOOST_TEST(*iter == *refIter);
     BOOST_TEST((*iter == *refIter));
   }
   if (!isLast && !isEnd && !isSingular) {
-    //BOOST_CHECK_EQUAL(*++iter, *++refIter);
+    //BOOST_TEST(*++iter == *++refIter);
     BOOST_TEST((*++iter == *++refIter));
   }
 
@@ -237,17 +237,17 @@ void const_input_iterator_tests(Iter iter, RefIter refIter, RefIter refEnd)
 
   if (!isEnd) {
     auto ia = iter;
-    if (!isSingular) BOOST_CHECK(++ia != iter);
+    if (!isSingular) BOOST_TEST(++ia != iter);
   }
 
   if (isNormal) {
     auto ia = iter, ib = iter;
     ia++;
     ++ib;
-    BOOST_CHECK(ia == ib);
+    BOOST_TEST(ia == ib);
     if (!isLast) {
       auto ia = iter;
-      BOOST_CHECK(*(ia++) == *iter);
+      BOOST_TEST(*(ia++) == *iter);
     }
   }
 
@@ -281,7 +281,7 @@ void const_output_iterator_tests(Iter iter, RefIter refIter, RefIter refEnd)
     auto ia = iter;
     auto addr = &ia;
     if (!isSingular) {
-      BOOST_CHECK((++ia != iter));
+      BOOST_TEST((++ia != iter));
       BOOST_TEST((&++ia == addr));
     }
   }
@@ -290,7 +290,7 @@ void const_output_iterator_tests(Iter iter, RefIter refIter, RefIter refEnd)
     auto ia = iter, ib = iter;
     ia++;
     ++ib;
-    BOOST_CHECK(ia == ib);
+    BOOST_TEST(ia == ib);
   }
 
   {
@@ -327,7 +327,7 @@ void output_iterator_tests(Iter iter, RefIter refIter, RefIter refEnd)
     *ia++ = newValue;
     ++ib;
     BOOST_TEST((*iter == newValue));
-    BOOST_CHECK(ia == ib);
+    BOOST_TEST(ia == ib);
 
     *iter = value;
     BOOST_TEST((*iter == value));
@@ -359,11 +359,11 @@ void const_forward_iterator_tests(Iter iter, RefIter refIter, RefIter refEnd)
   if (isDereferenciable) {
     auto ia = iter, ib = iter;
 
-    BOOST_CHECK((ia == ib));
+    BOOST_TEST((ia == ib));
 
     BOOST_TEST((&*ia == &*ib));
 
-    BOOST_CHECK((++ia == ++ib));
+    BOOST_TEST((++ia == ++ib));
   }
 
 } // const_forward_iterator_tests()
@@ -388,15 +388,15 @@ void const_bidirectional_iterator_tests(Iter iter, RefIter refIter, RefIter refE
 
   auto ib = ia;
   --ib;
-  BOOST_CHECK((ib != ia));
+  BOOST_TEST((ib != ia));
   BOOST_TEST((*ib == *std::prev(iaRef)));
-  BOOST_CHECK((++ib == ia));
+  BOOST_TEST((++ib == ia));
   if (isDereferenciable) BOOST_TEST((*ib == *iaRef));
 
   ib--;
-  BOOST_CHECK((ib != ia));
+  BOOST_TEST((ib != ia));
   BOOST_TEST((*ib == *std::prev(iaRef)));
-  BOOST_CHECK((++ib == ia));
+  BOOST_TEST((++ib == ia));
   if (isDereferenciable) BOOST_TEST((*ib == *iaRef));
 
 } // const_bidirectional_iterator_tests()
@@ -597,7 +597,7 @@ void RangeForWrapperIteratorStandardsTest()
   BOOST_TEST(range.size() == data.size());
   BOOST_TEST(range.empty() == data.empty());
   for (std::size_t i = 0; i < data.size(); ++i) {
-    BOOST_CHECK_EQUAL(range[i], data[i]);
+    BOOST_TEST(range[i] == data[i]);
   }
 
 } // RangeForWrapperIteratorStandardsTest()

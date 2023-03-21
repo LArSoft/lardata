@@ -23,8 +23,7 @@
 
 // Boost libraries
 #define BOOST_TEST_MODULE (PointIsolationAlg_test)
-#include <boost/test/test_tools.hpp>  // BOOST_CHECK(), BOOST_CHECK_EQUAL()
-#include <cetlib/quiet_unit_test.hpp> // BOOST_AUTO_TEST_CASE()
+#include "boost/test/unit_test.hpp"
 
 //------------------------------------------------------------------------------
 //--- tests
@@ -53,26 +52,26 @@ void GridContainer2DTest()
   //
   // container structure and indexing
   //
-  BOOST_CHECK_EQUAL(grid.dims(), 2U);
+  BOOST_TEST(grid.dims() == 2U);
 
-  BOOST_CHECK_EQUAL(grid.size(), 6U);
-  BOOST_CHECK_EQUAL(grid.sizeX(), 2U);
-  BOOST_CHECK_EQUAL(grid.sizeY(), 3U);
+  BOOST_TEST(grid.size() == 6U);
+  BOOST_TEST(grid.sizeX() == 2U);
+  BOOST_TEST(grid.sizeY() == 3U);
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  BOOST_CHECK_EQUAL(grid.index({{0, 0}}), 0U);
-  BOOST_CHECK_EQUAL(grid.index({{1, 2}}), 5U);
+  BOOST_TEST(grid.index({{0, 0}}) == 0U);
+  BOOST_TEST(grid.index({{1, 2}}) == 5U);
   BOOST_CHECK_NO_THROW(grid.index({{2, 2}})); // out-of-bound
 
-  BOOST_CHECK(grid.has(0));
-  BOOST_CHECK(grid.has(grid.size() - 1));
-  BOOST_CHECK(!grid.has(grid.size()));
+  BOOST_TEST(grid.has(0));
+  BOOST_TEST(grid.has(grid.size() - 1));
+  BOOST_TEST(!grid.has(grid.size()));
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  BOOST_CHECK_EQUAL(grid.indexOffset({{0, 1}}, {{1, 2}}), 4);
-  BOOST_CHECK_EQUAL(grid.indexOffset({{1, 2}}, {{0, 1}}), -4);
+  BOOST_TEST(grid.indexOffset({{0, 1}}, {{1, 2}}) == 4);
+  BOOST_TEST(grid.indexOffset({{1, 2}}, {{0, 1}}) == -4);
 
   //
   // fill the container
@@ -106,12 +105,12 @@ void GridContainer2DTest()
       auto const& cell = (count & 1) ? grid[cellIndex] : grid[cellID];
 
       BOOST_TEST_CHECKPOINT("[" << cellID[0] << "][" << cellID[1] << "]");
-      BOOST_CHECK_EQUAL(cell.size(), (size_t)count);
+      BOOST_TEST(cell.size() == (size_t)count);
 
       for (size_t k = 0; k < cell.size(); ++k) {
         int val = cell[k];
         BOOST_TEST_CHECKPOINT("  [" << k << "]");
-        BOOST_CHECK_EQUAL(val, --count);
+        BOOST_TEST(val == --count);
       } // for
 
     } // for iy
@@ -144,27 +143,27 @@ void GridContainer3DTest()
   //
   // container structure and indexing
   //
-  BOOST_CHECK_EQUAL(grid.dims(), 3U);
+  BOOST_TEST(grid.dims() == 3U);
 
-  BOOST_CHECK_EQUAL(grid.size(), 24U);
-  BOOST_CHECK_EQUAL(grid.sizeX(), 2U);
-  BOOST_CHECK_EQUAL(grid.sizeY(), 3U);
-  BOOST_CHECK_EQUAL(grid.sizeZ(), 4U);
+  BOOST_TEST(grid.size() == 24U);
+  BOOST_TEST(grid.sizeX() == 2U);
+  BOOST_TEST(grid.sizeY() == 3U);
+  BOOST_TEST(grid.sizeZ() == 4U);
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  BOOST_CHECK_EQUAL(grid.index({{0, 0, 0}}), 0U);
-  BOOST_CHECK_EQUAL(grid.index({{1, 2, 3}}), 23U);
+  BOOST_TEST(grid.index({{0, 0, 0}}) == 0U);
+  BOOST_TEST(grid.index({{1, 2, 3}}) == 23U);
   BOOST_CHECK_NO_THROW(grid.index({{2, 2, 3}})); // out-of-bound
 
-  BOOST_CHECK(grid.has(0));
-  BOOST_CHECK(grid.has(grid.size() - 1));
-  BOOST_CHECK(!grid.has(grid.size()));
+  BOOST_TEST(grid.has(0));
+  BOOST_TEST(grid.has(grid.size() - 1));
+  BOOST_TEST(!grid.has(grid.size()));
 
   // BUG the double brace syntax is required to work around clang bug 21629
   // (https://bugs.llvm.org/show_bug.cgi?id=21629)
-  BOOST_CHECK_EQUAL(grid.indexOffset({{0, 1, 2}}, {{1, 2, 3}}), 17);
-  BOOST_CHECK_EQUAL(grid.indexOffset({{1, 2, 3}}, {{0, 1, 2}}), -17);
+  BOOST_TEST(grid.indexOffset({{0, 1, 2}}, {{1, 2, 3}}) == 17);
+  BOOST_TEST(grid.indexOffset({{1, 2, 3}}, {{0, 1, 2}}) == -17);
 
   //
   // fill the container
@@ -201,12 +200,12 @@ void GridContainer3DTest()
         auto const& cell = (count & 1) ? grid[cellIndex] : grid[cellID];
 
         BOOST_TEST_CHECKPOINT("[" << cellID[0] << "][" << cellID[1] << "][" << cellID[2] << "]");
-        BOOST_CHECK_EQUAL(cell.size(), (size_t)count);
+        BOOST_TEST(cell.size() == (size_t)count);
 
         for (size_t k = 0; k < cell.size(); ++k) {
           int val = cell[k];
           BOOST_TEST_CHECKPOINT("  [" << k << "]");
-          BOOST_CHECK_EQUAL(val, --count);
+          BOOST_TEST(val == --count);
         } // for
 
       } // for iz

@@ -9,11 +9,16 @@
 #ifndef DETECTORPROPERTIESSERVICE_H
 #define DETECTORPROPERTIESSERVICE_H
 
-#include "art/Framework/Principal/fwd.h"
-#include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
+namespace art {
+  class Event;
+}
+
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "lardataalg/DetectorInfo/DetectorProperties.h"
 #include "lardataalg/DetectorInfo/DetectorPropertiesData.h"
+
+#include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
+#include "art/Framework/Services/Registry/ServiceHandle.h"
 
 namespace detinfo {
   class DetectorClocksData;

@@ -11,6 +11,7 @@
 #include "lardata/ArtDataHelper/TrackUtils.h"
 
 // LArSoft libraries
+#include "larcore/CoreUtils/ServiceUtil.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcorealg/CoreUtils/RealComparisons.h"
 #include "larcorealg/Geometry/GeometryCore.h"
@@ -40,9 +41,9 @@ double lar::util::TrackProjectedLength(recob::Track const& track, geo::View_t vi
 
   auto const* geom = lar::providerFrom<geo::Geometry>();
   double angleToVert = 0.;
-  for (unsigned int i = 0; i < geom->Nplanes(); ++i) {
-    if (geom->Plane(i).View() == view) {
-      angleToVert = geom->Plane(i).Wire(0).ThetaZ(false) - 0.5 * ::util::pi<>();
+  for (auto const& plane : geom->Iterate<geo::PlaneGeo>(geo::CryostatID{0})) {
+    if (plane.View() == view) {
+      angleToVert = plane.Wire(0).ThetaZ(false) - 0.5 * ::util::pi<>();
       break;
     }
   }
@@ -96,19 +97,17 @@ double lar::util::TrackPitchInView(recob::Track const& track,
   geo::PlaneGeo const& plane = geom.PositionToTPC(point.position).Plane(view);
 
 #if 0 // this can be enabled after `geo::PlaneGeo::InterWireProjectedDistance()` becomes available in larcorealg
-   double const d = plane.InterWireProjectedDistance(point.direction());
+  double const d = plane.InterWireProjectedDistance(point.direction());
 
-   // do we prefer to just return the value and let the caller check it?
-   if (d > 50.0 * plane.WirePitch()) { // after many pitches track would scatter
-      throw cet::exception("Track")
-        << "track at point #" << trajectory_point
-        << " is almost parallel to the wires in view "
-        << geo::PlaneGeo::ViewName(view) << " (wire direction is "
-        << plane.GetWireDirection<geo::Vector_t>() << "; track direction is "
-        << point.direction()
-        << ").\n";
-   }
-   return d;
+  // do we prefer to just return the value and let the caller check it?
+  if (d > 50.0 * plane.WirePitch()) { // after many pitches track would scatter
+    throw cet::exception("Track") << "track at point #" << trajectory_point
+                                  << " is almost parallel to the wires in view "
+                                  << geo::PlaneGeo::ViewName(view) << " (wire direction is "
+                                  << plane.GetWireDirection() << "; track direction is "
+                                  << point.direction() << ").\n";
+  }
+  return d;
 
 #else  // !0
   //
@@ -124,10 +123,9 @@ double lar::util::TrackPitchInView(recob::Track const& track,
     throw cet::exception("Track") << "track at point #" << trajectory_point
                                   << " is almost parallel to the wires in view "
                                   << geo::PlaneGeo::ViewName(view) << " (wire direction is "
-                                  << plane.GetWireDirection<geo::Vector_t>()
-                                  << "; track direction is " << point.direction()
-                                  << ", its projection on plane " << plane.ID() << " is " << proj
-                                  << ").\n";
+                                  << plane.GetWireDirection() << "; track direction is "
+                                  << point.direction() << ", its projection on plane " << plane.ID()
+                                  << " is " << proj << ").\n";
   }
 
   //

@@ -1,6 +1,11 @@
-add_subdirectory(ProxyBase)
+cet_make_library(SOURCE Track.cxx
+  LIBRARIES
+  PUBLIC
+  lardataobj::RecoBase
+  larcorealg::geo_vectors_utils
+  larcorealg::CoreUtils
+  canvas::canvas
+)
 
-art_make(LIB_LIBRARIES lardataobj_RecoBase ROOT::Core)
-
-install_headers()
-install_source()
+install_headers(SUBDIRS ProxyBase)
+install_source(SUBDIRS ProxyBase)

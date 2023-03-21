@@ -30,7 +30,7 @@
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // Boost libraries
-#include <boost/test/test_tools.hpp> // BOOST_CHECK()
+#include "boost/test/unit_test.hpp"
 
 // C/C++ libraries
 #include <algorithm> // std::for_each()
@@ -199,16 +199,16 @@ void TrackProxyTest::testTracks(art::Event const& event)
 
   static_assert(tracks.has<recob::TrackFitHitInfo>(), "recob::TrackFitHitInfo not found!!!");
 
-  BOOST_CHECK_EQUAL(tracks.empty(), expectedTracks.empty());
-  BOOST_CHECK_EQUAL(tracks.size(), expectedTracks.size());
+  BOOST_TEST(tracks.empty() == expectedTracks.empty());
+  BOOST_TEST(tracks.size() == expectedTracks.size());
 
-  BOOST_CHECK_EQUAL(tracks.size(), expectedTrackFitHitInfo.size());
+  BOOST_TEST(tracks.size() == expectedTrackFitHitInfo.size());
   decltype(auto) allFitHitInfo = tracks.get<recob::TrackFitHitInfo>();
   static_assert(std::is_lvalue_reference<decltype(allFitHitInfo)>(), "Copy of parallel data!");
-  BOOST_CHECK_EQUAL(allFitHitInfo.data(), std::addressof(expectedTrackFitHitInfo));
+  BOOST_TEST(allFitHitInfo.data() == std::addressof(expectedTrackFitHitInfo));
 
   auto fitHitInfoSize = std::distance(allFitHitInfo.begin(), allFitHitInfo.end());
-  BOOST_CHECK_EQUAL(fitHitInfoSize, expectedTrackFitHitInfo.size());
+  BOOST_TEST(fitHitInfoSize == expectedTrackFitHitInfo.size());
 
   std::size_t iExpectedTrack = 0;
   for (auto const& trackProxy : tracks) {
@@ -223,36 +223,35 @@ void TrackProxyTest::testTracks(art::Event const& event)
 
     recob::Track const& trackRef = *trackProxy;
 
-    BOOST_CHECK_EQUAL(std::addressof(trackRef), std::addressof(expectedTrack));
-    BOOST_CHECK_EQUAL(std::addressof(trackProxy.track()), std::addressof(expectedTrack));
-    BOOST_CHECK_EQUAL(trackProxy.nHits(), expectedHits.size());
-    BOOST_CHECK_EQUAL(trackProxy.index(), iExpectedTrack);
+    BOOST_TEST(std::addressof(trackRef) == std::addressof(expectedTrack));
+    BOOST_TEST(std::addressof(trackProxy.track()) == std::addressof(expectedTrack));
+    BOOST_TEST(trackProxy.nHits() == expectedHits.size());
+    BOOST_TEST(trackProxy.index() == iExpectedTrack);
 
     decltype(auto) fitHitInfo = trackProxy.get<recob::TrackFitHitInfo>();
     static_assert(std::is_lvalue_reference<decltype(fitHitInfo)>(),
                   "Copy of parallel data element!");
-    BOOST_CHECK_EQUAL(std::addressof(fitHitInfo), std::addressof(expectedFitHitInfo));
-    BOOST_CHECK_EQUAL(fitHitInfo.size(), expectedFitHitInfo.size());
+    BOOST_TEST(std::addressof(fitHitInfo), std::addressof(expectedFitHitInfo));
+    BOOST_TEST(fitHitInfo.size() == expectedFitHitInfo.size());
 
-    BOOST_CHECK_EQUAL(trackProxy.get<tag::SpecialHits>().size(), expectedHits.size());
+    BOOST_TEST(trackProxy.get<tag::SpecialHits>().size(), expectedHits.size());
 
     // trajectory?
-    BOOST_CHECK_EQUAL(trackProxy.hasOriginalTrajectory(), !expectedTrajPtr.isNull());
+    BOOST_TEST(trackProxy.hasOriginalTrajectory() == !expectedTrajPtr.isNull());
     if (expectedTrajCPtr) {
-      BOOST_CHECK_EQUAL(trackProxy.originalTrajectoryPtr(), expectedTrajPtr);
-      BOOST_CHECK_EQUAL(&trackProxy.originalTrajectory(), expectedTrajPtr.get());
+      BOOST_TEST(trackProxy.originalTrajectoryPtr() == expectedTrajPtr);
+      BOOST_TEST(&trackProxy.originalTrajectory() == expectedTrajPtr.get());
     }
     else {
-      BOOST_CHECK(!(trackProxy.originalTrajectoryPtr()));
+      BOOST_TEST(!(trackProxy.originalTrajectoryPtr()));
     }
 
-    BOOST_CHECK_EQUAL(trackProxy(proxy::Tracks::Fitted),
-                      std::addressof(expectedTrack.Trajectory()));
-    BOOST_CHECK_EQUAL(trackProxy(proxy::Tracks::Unfitted), expectedTrajCPtr);
-    BOOST_CHECK_EQUAL(trackProxy(proxy::Tracks::NTypes), nullptr);
+    BOOST_TEST(trackProxy(proxy::Tracks::Fitted) == std::addressof(expectedTrack.Trajectory()));
+    BOOST_TEST(trackProxy(proxy::Tracks::Unfitted) == expectedTrajCPtr);
+    BOOST_TEST(trackProxy(proxy::Tracks::NTypes) == nullptr);
 
     // direct interface to recob::Track
-    BOOST_CHECK_EQUAL(trackProxy->NPoints(), expectedTrack.NPoints());
+    BOOST_TEST(trackProxy->NPoints() == expectedTrack.NPoints());
 
     std::array<unsigned int, recob::TrajectoryPointFlagTraits::maxFlags()> flagCounts;
     flagCounts.fill(0U);
@@ -262,15 +261,15 @@ void TrackProxyTest::testTracks(art::Event const& event)
 
       decltype(auto) expectedPointFlags = expectedTrack.FlagsAtPoint(iPoint);
 
-      BOOST_CHECK_EQUAL(pointInfo.index(), iPoint);
-      BOOST_CHECK_EQUAL(pointInfo.position(), expectedTrack.Trajectory().LocationAtPoint(iPoint));
-      BOOST_CHECK_EQUAL(pointInfo.momentum(), expectedTrack.MomentumVectorAtPoint(iPoint));
-      BOOST_CHECK_EQUAL(pointInfo.flags(), expectedPointFlags);
+      BOOST_TEST(pointInfo.index() == iPoint);
+      BOOST_TEST(pointInfo.position() == expectedTrack.Trajectory().LocationAtPoint(iPoint));
+      BOOST_TEST(pointInfo.momentum() == expectedTrack.MomentumVectorAtPoint(iPoint));
+      BOOST_TEST(pointInfo.flags() == expectedPointFlags);
       if (expectedPointFlags.hasOriginalHitIndex()) {
-        BOOST_CHECK_EQUAL(pointInfo.hitPtr().key(), expectedPointFlags.fromHit());
+        BOOST_TEST(pointInfo.hitPtr().key() == expectedPointFlags.fromHit());
       }
       else {
-        BOOST_CHECK(!pointInfo.hitPtr());
+        BOOST_TEST(!pointInfo.hitPtr());
       }
 
       // collect the count of each flag type
@@ -282,14 +281,13 @@ void TrackProxyTest::testTracks(art::Event const& event)
         if (expectedPointFlags.isSet(flag)) ++flagCounts[flag.index()];
       }
 
-      BOOST_CHECK_EQUAL(fitHitInfo[iPoint].WireId(), expectedFitHitInfo[iPoint].WireId());
-      BOOST_CHECK_EQUAL(pointInfo.fitInfoPtr(), std::addressof(expectedFitHitInfo[iPoint]));
-      BOOST_CHECK_EQUAL(std::addressof(fitHitInfo[iPoint]),
-                        std::addressof(expectedFitHitInfo[iPoint]));
+      BOOST_TEST(fitHitInfo[iPoint].WireId() == expectedFitHitInfo[iPoint].WireId());
+      BOOST_TEST(pointInfo.fitInfoPtr() == std::addressof(expectedFitHitInfo[iPoint]));
+      BOOST_TEST(std::addressof(fitHitInfo[iPoint]) == std::addressof(expectedFitHitInfo[iPoint]));
 
       ++iPoint;
     } // for
-    BOOST_CHECK_EQUAL(iPoint, expectedTrack.NPoints());
+    BOOST_TEST(iPoint == expectedTrack.NPoints());
 
     // testing pointsWithFlags() with some single flags
     for (auto flag : {recob::TrajectoryPointFlags::flag::NoPoint,
@@ -301,17 +299,17 @@ void TrackProxyTest::testTracks(art::Event const& event)
       for (auto const& pointInfo : trackProxy.pointsWithFlags(flag)) {
 
         BOOST_TEST_CHECKPOINT("    point #" << pointInfo.index());
-        BOOST_CHECK(pointInfo.flags().isDefined(flag));
-        BOOST_CHECK(pointInfo.flags().isSet(flag));
+        BOOST_TEST(pointInfo.flags().isDefined(flag));
+        BOOST_TEST(pointInfo.flags().isSet(flag));
 
         ++flagCount;
       } // for pointInfo
-      BOOST_CHECK_EQUAL(flagCount, flagCounts[flag.index()]);
+      BOOST_TEST(flagCount == flagCounts[flag.index()]);
     } // for flag
 
     ++iExpectedTrack;
   } // for
-  BOOST_CHECK_EQUAL(iExpectedTrack, expectedTracks.size());
+  BOOST_TEST(iExpectedTrack == expectedTracks.size());
 
 } // TrackProxyTest::testTracks()
 

@@ -35,12 +35,12 @@
  * (for example, a random seed).
  */
 #define BOOST_TEST_MODULE (FastMatrixMath_test)
-#include <boost/test/test_tools.hpp>                      // BOOST_CHECK(), BOOST_CHECK_EQUAL()
-#include <boost/test/tools/floating_point_comparison.hpp> // BOOST_CHECK_CLOSE()
-#include <cetlib/quiet_unit_test.hpp>                     // BOOST_AUTO_TEST_CASE()
+#include "boost/test/unit_test.hpp"
 
 // LArSoft libraries
 #include "lardata/Utilities/FastMatrixMathHelper.h"
+
+using boost::test_tools::tolerance;
 
 //==============================================================================
 //=== Test code
@@ -79,7 +79,7 @@ void CheckSymmetric(Array const& m)
 
   for (size_t r = 1; r < Dim; ++r)
     for (size_t c = r + 1; c < Dim; ++c)
-      BOOST_CHECK_CLOSE(m[r * Dim + c], m[r * Dim + c], 1e-3); // at 0.001%
+      BOOST_TEST(m[r * Dim + c] == m[r * Dim + c], 0.001 % tolerance());
 
 } // CheckSymmetric()
 
@@ -90,7 +90,7 @@ void CheckInverse(Array const& a, Array const& a_inv)
   const size_t Dim = size_t(std::sqrt(a.size()));
   using Data_t = typename Array::value_type;
 
-  BOOST_CHECK_EQUAL(a.size(), a_inv.size());
+  BOOST_TEST(a.size() == a_inv.size());
 
   for (size_t r = 0; r < Dim; ++r) {
     for (size_t c = 0; c < Dim; ++c) {
@@ -99,9 +99,9 @@ void CheckInverse(Array const& a, Array const& a_inv)
         v += a[r * Dim + k] * a_inv[k * Dim + c];
       } // for
       if (r == c)
-        BOOST_CHECK_CLOSE(v, Data_t(1), 0.01); // 0.01%
+        BOOST_TEST(v == Data_t(1), 0.01 % tolerance());
       else
-        BOOST_CHECK_SMALL(v, 1e-5);
+        BOOST_TEST(v == 0, 1e-5 % tolerance());
     } // for column
   }   // for row
 
@@ -136,7 +136,7 @@ void MatrixTest(Array const& mat, typename Array::value_type det)
   using FastMatrixOperations = lar::util::details::FastMatrixOperations<Data_t, Dim>;
 
   const Data_t my_det = FastMatrixOperations::Determinant(mat);
-  BOOST_CHECK_CLOSE(my_det, det, 1e-4); // 0.0001%
+  BOOST_TEST(my_det == det, 1e-4 % tolerance());
 
   if (std::isnormal(det)) {
     Array mat_inv = FastMatrixOperations::InvertMatrix(mat, det);
@@ -176,7 +176,7 @@ void SymmetricMatrixTest(Array const& mat, typename Array::value_type det)
   using FastMatrixOperations = lar::util::details::FastMatrixOperations<Data_t, Dim>;
 
   const Data_t my_det = FastMatrixOperations::Determinant(mat);
-  BOOST_CHECK_CLOSE(my_det, det, 1e-4); // 0.0001%
+  BOOST_TEST(my_det == det, 1e-4 % tolerance());
 
   if (std::isnormal(det)) {
     Array mat_inv = FastMatrixOperations::InvertSymmetricMatrix(mat, det);
