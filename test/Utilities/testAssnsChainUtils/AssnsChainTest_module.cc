@@ -184,7 +184,6 @@ void lar::test::AssnsChainTest::printAssociatedHits(art::Event const& event,
   //
   unsigned int nDuplicates = 0;
   std::set<art::Ptr<recob::Hit>> foundHits; // all hits found
-  std::set<art::ProductID> foundHitProducts;
 
   unsigned int const pageSize = nObjectsPerLine; // hits per line
   mf::LogVerbatim log("AssnsChainTest");
@@ -195,10 +194,7 @@ void lar::test::AssnsChainTest::printAssociatedHits(art::Event const& event,
 
     unsigned int hitsLeft = pageSize;
     for (art::Ptr<recob::Hit> const& hit : hits) {
-      if (foundHits.count(hit) == 0) {
-        foundHits.insert(hit);
-        foundHitProducts.insert(hit.id());
-      }
+      if (foundHits.count(hit) == 0) { foundHits.insert(hit); }
       else {
         mf::LogProblem("AssnsChainTest")
           << "ERROR: Hit " << hit << " appears in more than one shower!";
@@ -213,18 +209,14 @@ void lar::test::AssnsChainTest::printAssociatedHits(art::Event const& event,
 
   } // for iShower
 
-  mf::LogVerbatim("AssnsChainTest") << foundHits.size() << " hits collected for " << showers->size()
-                                    << " showers ('" << showers.provenance()->inputTag().encode()
-                                    << "') from " << foundHitProducts.size() << " data products:";
-  for (art::ProductID const& PID : foundHitProducts) {
-    art::Handle<std::vector<recob::Hit>> hits;
-    if (event.get(PID, hits)) {
-      mf::LogVerbatim("AssnsChainTest") << " - '" << hits.provenance()->inputTag().encode()
-                                        << "' (contains " << hits->size() << " hits)";
-    }
-    else {
-      mf::LogVerbatim("AssnsChainTest") << " - <" << PID << "> (not found!)";
-    }
+  mf::LogVerbatim("AssnsChainTest")
+    << foundHits.size() << " hits collected for " << showers->size() << " showers ('"
+    << showers.provenance()->inputTag().encode() << "') from data products:";
+  for (art::Ptr<recob::Hit> const& hit : foundHits) {
+    auto const& parent = hit.parentAs<std::vector>();
+    mf::LogVerbatim("AssnsChainTest")
+      << " - '" << event.getProductProvenance(hit.id())->inputTag().encode() << "' (contains "
+      << parent.size() << " hits)";
   } // for PIDs
 
   if (nDuplicates > 0) {
@@ -258,7 +250,6 @@ void lar::test::AssnsChainTest::printAssociatedClusters(art::Event const& event,
   //
   unsigned int nDuplicates = 0;
   std::set<art::Ptr<recob::Cluster>> foundObjects; // all objects found
-  std::set<art::ProductID> foundObjectProducts;
 
   unsigned int const pageSize = nObjectsPerLine; // objects per line
   mf::LogVerbatim log("AssnsChainTest");
@@ -269,10 +260,7 @@ void lar::test::AssnsChainTest::printAssociatedClusters(art::Event const& event,
 
     unsigned int objectsLeft = pageSize;
     for (ObjectPtr_t const& object : objects) {
-      if (foundObjects.count(object) == 0) {
-        foundObjects.insert(object);
-        foundObjectProducts.insert(object.id());
-      }
+      if (foundObjects.count(object) == 0) { foundObjects.insert(object); }
       else {
         mf::LogProblem("AssnsChainTest")
           << "ERROR: Cluster " << object << " appears in more than one shower!";
@@ -289,19 +277,13 @@ void lar::test::AssnsChainTest::printAssociatedClusters(art::Event const& event,
 
   mf::LogVerbatim("AssnsChainTest")
     << foundObjects.size() << " " << objectsDesc << " collected for " << showers->size()
-    << " showers ('" << showers.provenance()->inputTag().encode() << "') from "
-    << foundObjectProducts.size() << " data products:";
-  for (art::ProductID const& PID : foundObjectProducts) {
-    art::Handle<std::vector<recob::Cluster>> objects;
-    if (event.get(PID, objects)) {
-      mf::LogVerbatim("AssnsChainTest")
-        << " - '" << objects.provenance()->inputTag().encode() << "' (contains " << objects->size()
-        << " " << objectsDesc << ")";
-    }
-    else {
-      mf::LogVerbatim("AssnsChainTest") << " - <" << PID << "> (not found!)";
-    }
-  } // for PIDs
+    << " showers ('" << showers.provenance()->inputTag().encode() << "') from data products:";
+  for (art::Ptr<recob::Cluster> const& cluster : foundObjects) {
+    auto const& parent = cluster.parentAs<std::vector>();
+    mf::LogVerbatim("AssnsChainTest")
+      << " - '" << event.getProductProvenance(cluster.id())->inputTag().encode() << "' (contains "
+      << parent.size() << " " << objectsDesc << ")";
+  } // for Ptrs
 
   if (nDuplicates > 0) {
     throw cet::exception("AssnsChainTest")
@@ -334,7 +316,6 @@ void lar::test::AssnsChainTest::printAssociatedPFOs(art::Event const& event,
   //
   unsigned int nDuplicates = 0;
   std::set<art::Ptr<recob::PFParticle>> foundObjects; // all objects found
-  std::set<art::ProductID> foundObjectProducts;
 
   unsigned int const pageSize = nObjectsPerLine; // objects per line
   mf::LogVerbatim log("AssnsChainTest");
@@ -344,10 +325,7 @@ void lar::test::AssnsChainTest::printAssociatedPFOs(art::Event const& event,
 
     unsigned int objectsLeft = pageSize;
     for (ObjectPtr_t const& object : objects) {
-      if (foundObjects.count(object) == 0) {
-        foundObjects.insert(object);
-        foundObjectProducts.insert(object.id());
-      }
+      if (foundObjects.count(object) == 0) { foundObjects.insert(object); }
       else {
         mf::LogProblem("AssnsChainTest")
           << "ERROR: Particle " << object << " appears in more than one shower!";
@@ -370,19 +348,13 @@ void lar::test::AssnsChainTest::printAssociatedPFOs(art::Event const& event,
 
   mf::LogVerbatim("AssnsChainTest")
     << foundObjects.size() << " " << objectsDesc << " collected for " << showers->size()
-    << " showers ('" << showers.provenance()->inputTag().encode() << "') from "
-    << foundObjectProducts.size() << " data products:";
-  for (art::ProductID const& PID : foundObjectProducts) {
-    art::Handle<std::vector<recob::PFParticle>> objects;
-    if (event.get(PID, objects)) {
-      mf::LogVerbatim("AssnsChainTest")
-        << " - '" << objects.provenance()->inputTag().encode() << "' (contains " << objects->size()
-        << " " << objectsDesc << ")";
-    }
-    else {
-      mf::LogVerbatim("AssnsChainTest") << " - <" << PID << "> (not found!)";
-    }
-  } // for PIDs
+    << " showers ('" << showers.provenance()->inputTag().encode() << "') from data products:";
+  for (art::Ptr<recob::PFParticle> const& pfparticle : foundObjects) {
+    auto const& parent = pfparticle.parentAs<std::vector>();
+    mf::LogVerbatim("AssnsChainTest")
+      << " - '" << event.getProductProvenance(pfparticle.id())->inputTag().encode()
+      << "' (contains " << parent.size() << " " << objectsDesc << ")";
+  } // for Ptrs
 
   if (nDuplicates > 0) {
     throw cet::exception("AssnsChainTest")

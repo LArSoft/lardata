@@ -93,7 +93,7 @@ namespace util {
   auto associated_groups(A const& assns)
   {
     return assns | ranges::views::all |
-           ranges::views::group_by([](auto a1, auto a2) { return a1.first == a2.first; }) |
+           ranges::views::chunk_by([](auto a1, auto a2) { return a1.first == a2.first; }) |
            ranges::views::transform(
              [](auto pairs) { return pairs | ranges::views::values | util::range_for; }) |
            util::range_for;
@@ -150,7 +150,7 @@ namespace util {
   auto associated_groups_with_left(A const& assns)
   {
     return assns | ranges::views::all |
-           ranges::views::group_by([](auto a1, auto a2) { return a1.first == a2.first; }) |
+           ranges::views::chunk_by([](auto a1, auto a2) { return a1.first == a2.first; }) |
            ranges::views::transform([](auto pairs) {
              return std::make_pair(pairs.front().first, // assuming they're all the same, pick first
                                    pairs | ranges::views::values | util::range_for);

@@ -73,16 +73,14 @@
 #define ASSOCIATIONUTIL_H
 
 // C/C++ standard libraries
+#include <climits>
 #include <memory>
 #include <string>
 #include <utility> // std::move(), std::pair<>
 #include <vector>
 
 // framework libraries
-namespace art {
-  class Event;
-}
-
+#include "art/Framework/Principal/fwd.h"
 #include "art/Framework/Principal/Handle.h"
 #include "art/Persistency/Common/PtrMaker.h"
 #include "canvas/Persistency/Common/Assns.h"
