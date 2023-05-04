@@ -116,7 +116,7 @@ namespace pid {
       auto scores = pid.ParticleIDAlgScores();
       log << "Number of algorithms = " << scores.size() << '\n';
       int ialg = 0;
-      for (const anab::sParticleIDAlgScores score : scores) {
+      for (const anab::sParticleIDAlgScores& score : scores) {
         log << "  ParticleID #" << ipid << ", Algorithm " << ialg << '\n'
             << "    Algorithm name = " << score.fAlgName << '\n'
             << "    Variable type  = " << score.fVariableType << '\n'

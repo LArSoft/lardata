@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <stdexcept>
 #include <utility>
 
 namespace util {

@@ -41,7 +41,10 @@ namespace trkf {
 
   class HitState {
   public:
-    HitState(double hitMeas, double hitMeasErr2, geo::WireID& wireId, const geo::WireGeo& wgeom)
+    HitState(double hitMeas,
+             double hitMeasErr2,
+             geo::WireID const& wireId,
+             const geo::WireGeo& wgeom)
       : fHitMeas(hitMeas)
       , fHitMeasErr2(hitMeasErr2)
       , fWireId(wireId)

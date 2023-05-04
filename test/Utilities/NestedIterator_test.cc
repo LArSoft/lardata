@@ -103,7 +103,6 @@ void RunVectorMapTest()
   // fill the double tier structure
   using VectorMapI_t = std::map<int, std::vector<int>>;
   VectorMapI_t data; // get the first vector started
-  //data.emplace(0, std::vector<int>{});
   data[0] = {};
   constexpr size_t NElements = 10000;
   constexpr float SwitchProbability = 0.1; // expect about 1000 containers
@@ -116,7 +115,7 @@ void RunVectorMapTest()
     // add a new map (some times)
     if (uniform(random_engine) < SwitchProbability) {
       if (data.rbegin()->second.empty()) ++nEmpty;
-      data.insert({data.size(), {}});
+      data[static_cast<int>(data.size())];
     }
     // add the element i to the last vector
     data.rbegin()->second.push_back(i);
