@@ -80,8 +80,8 @@
 #include <vector>
 
 // framework libraries
-#include "art/Framework/Principal/fwd.h"
 #include "art/Framework/Principal/Handle.h"
+#include "art/Framework/Principal/fwd.h"
 #include "art/Persistency/Common/PtrMaker.h"
 #include "canvas/Persistency/Common/Assns.h"
 #include "canvas/Persistency/Common/FindMany.h"
@@ -139,7 +139,7 @@ namespace util {
    *
    *       // add an association between the last object in wirecol
    *       // (that we just inserted) and digit_ptr
-   *       if (!util::CreateAssn(*this, evt, *wirecol, digit_ptr, *WireDigitAssn, spill_name)) {
+   *       if (!util::CreateAssn(evt, *wirecol, digit_ptr, *WireDigitAssn, spill_name)) {
    *         throw art::Exception(art::errors::ProductRegistrationFailure)
    *           << "Can't associate wire #" << (wirecol->size() - 1)
    *           << " with raw digit #" << digit_ptr.key();
@@ -194,7 +194,7 @@ namespace util {
    *
    *       // add an association between the last object in wirecol
    *       // (that we just inserted) and digit_ptr
-   *       if (!util::CreateAssn(*this, evt, *wirecol, digit_ptr, *WireDigitAssn)) {
+   *       if (!util::CreateAssn(evt, *wirecol, digit_ptr, *WireDigitAssn)) {
    *         throw art::Exception(art::errors::ProductRegistrationFailure)
    *           << "Can't associate wire #" << (wirecol->size() - 1)
    *           << " with raw digit #" << digit_ptr.key();
