@@ -249,6 +249,9 @@ namespace util {
     template <typename RangeRef>
     struct RangeForWrapperTraits {
 
+      static_assert(std::is_reference<RangeRef>::value,
+                    "RangeForWrapperBox requires a reference type.");
+
       using RangeRef_t = RangeRef; ///< Type of the stored reference.
 
       ///< Type of the stored range (constantness is preserved).
@@ -391,7 +394,7 @@ namespace util {
     // referenceness
     template <typename BaseRange,
               bool SameIteratorsType =
-                details::RangeForWrapperTraits<std::decay_t<BaseRange>>::sameIteratorTypes>
+                details::RangeForWrapperTraits<BaseRange&>::sameIteratorTypes>
     struct WrapRangeForDispatcher;
 
     // Template specialization for same iterator types

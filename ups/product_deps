@@ -247,9 +247,9 @@ fcldir	product_dir	job
 #
 ####################################
 product		version		qual	flags		<table_format=2>
-larcore		v09_09_00	-
-lardataalg	v09_14_00	-
-larvecutils	v09_03_00	-
+larcore		v09_10_00	-
+lardataalg	v09_15_01	-
+larvecutils	v09_04_00	-
 range		v3_0_12_0	-
 cetmodules	v3_20_00	-	only_for_build
 end_product_list
@@ -307,10 +307,12 @@ end_product_list
 #
 ####################################
 qualifier	larcore		lardataalg	larvecutils	range	notes
+c14:debug	c14:debug	c14:debug	c14:debug	-nq-
+c14:prof	c14:prof	c14:prof	c14:prof	-nq-
 c7:debug	c7:debug	c7:debug	c7:debug	-nq-
 c7:prof		c7:prof		c7:prof		c7:prof		-nq-
-e19:debug	e19:debug	e19:debug	e19:debug	-nq-
-e19:prof	e19:prof	e19:prof	e19:prof	-nq-
+e26:debug	e26:debug	e26:debug	e26:debug	-nq-
+e26:prof	e26:prof	e26:prof	e26:prof	-nq-
 e20:debug	e20:debug	e20:debug	e20:debug	-nq-
 e20:prof	e20:prof	e20:prof	e20:prof	-nq-
 end_qualifier_list
