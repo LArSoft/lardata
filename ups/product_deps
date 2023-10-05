@@ -87,7 +87,7 @@
 #>  define_pythonpath
 ####################################
 parent		lardata
-defaultqual	e20
+defaultqual	e26
 ####################################
 
 ####################################
@@ -247,9 +247,9 @@ fcldir	product_dir	job
 #
 ####################################
 product		version		qual	flags		<table_format=2>
-larcore		v09_10_00	-
-lardataalg	v09_16_01	-
-larvecutils	v09_04_00	-
+larcore		v09_10_01	-
+lardataalg	v09_16_02	-
+larvecutils	v09_04_01	-
 range		v3_0_12_0	-
 cetmodules	v3_20_00	-	only_for_build
 end_product_list
@@ -309,12 +309,8 @@ end_product_list
 qualifier	larcore		lardataalg	larvecutils	range	notes
 c14:debug	c14:debug	c14:debug	c14:debug	-nq-
 c14:prof	c14:prof	c14:prof	c14:prof	-nq-
-c7:debug	c7:debug	c7:debug	c7:debug	-nq-
-c7:prof		c7:prof		c7:prof		c7:prof		-nq-
 e26:debug	e26:debug	e26:debug	e26:debug	-nq-
 e26:prof	e26:prof	e26:prof	e26:prof	-nq-
-e20:debug	e20:debug	e20:debug	e20:debug	-nq-
-e20:prof	e20:prof	e20:prof	e20:prof	-nq-
 end_qualifier_list
 ####################################
 
