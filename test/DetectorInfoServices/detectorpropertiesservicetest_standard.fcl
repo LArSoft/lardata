@@ -13,7 +13,7 @@
 # Dependencies:
 # - DetectorProperties service and its dependencies
 #   - Geometry
-#     - ExptGeoHelperInterface
+#     - WireReadout
 #     - GeometryConfigurationWriter
 #   - LArProperties
 #   - DetectorClocks

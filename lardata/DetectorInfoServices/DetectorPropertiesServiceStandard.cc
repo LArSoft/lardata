@@ -8,6 +8,7 @@
 // LArSoft includes
 #include "lardata/DetectorInfoServices/DetectorPropertiesServiceStandard.h"
 #include "larcore/Geometry/Geometry.h"
+#include "larcore/Geometry/WireReadout.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "lardata/DetectorInfoServices/LArPropertiesService.h"
 #include "lardata/DetectorInfoServices/ServicePack.h" // lar::extractProviders()
@@ -27,6 +28,7 @@ namespace detinfo {
     art::ActivityRegistry& reg)
     : fProp{pset,
             lar::providerFrom<geo::Geometry>(),
+            &art::ServiceHandle<geo::WireReadout>()->Get(),
             lar::providerFrom<detinfo::LArPropertiesService>(),
             std::set<std::string>({"InheritNumberTimeSamples"})}
     , fPS{pset}

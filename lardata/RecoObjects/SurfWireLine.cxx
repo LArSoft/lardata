@@ -9,10 +9,12 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "lardata/RecoObjects/SurfWireLine.h"
-#include "TMath.h"
-#include "art/Framework/Services/Registry/ServiceHandle.h"
-#include "larcore/Geometry/Geometry.h"
+#include "larcore/Geometry/WireReadout.h"
 #include "larcorealg/Geometry/WireGeo.h"
+
+#include "art/Framework/Services/Registry/ServiceHandle.h"
+
+#include "TMath.h"
 
 namespace trkf {
 
@@ -25,13 +27,8 @@ namespace trkf {
   ///
   SurfWireLine::SurfWireLine(const geo::WireID& wireid, double x)
   {
-    // Get geometry service.
-
-    art::ServiceHandle<geo::Geometry const> geom;
-
-    // Get wire geometry.
-
-    geo::WireGeo const& wgeom = geom->WireIDToWireGeo(wireid);
+    auto const& wireReadoutGeom = art::ServiceHandle<geo::WireReadout>()->Get();
+    geo::WireGeo const& wgeom = wireReadoutGeom.Wire(wireid);
 
     // Get wire center and angle from the wire geometry.
     // Put local origin at center of wire.
