@@ -28,6 +28,7 @@
 #include "boost/test/unit_test.hpp"
 
 // C/C++ standard libraries
+#include <array>
 #include <stdexcept> // std::out_of_range
 
 //------------------------------------------------------------------------------
