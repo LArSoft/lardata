@@ -247,8 +247,8 @@ fcldir	product_dir	job
 #
 ####################################
 product		version		qual	flags		<table_format=2>
-larcore		v09_90_00rc0	-
-lardataalg	v09_90_00rc0	-
+larcore		v09_90_00rc1	-
+lardataalg	v09_90_00rc1	-
 larvecutils	v09_04_01	-
 range		v3_0_12_0	-
 cetmodules	v3_22_02	-	only_for_build
