@@ -12,7 +12,7 @@
 #include "art/Framework/Core/ProducesCollector.h"
 #include "art/Framework/Principal/Event.h"
 #include "canvas/Utilities/InputTag.h"
-
+#include "lardataobj/AnalysisBase/MVAOutput.h"
 #include "lardata/ArtDataHelper/MVAWrapperBase.h"
 
 namespace anab {
@@ -337,7 +337,7 @@ anab::FVector_ID anab::FVectorWriter<N>::initOutputs(art::InputTag const& dataTa
   anab::FVector_ID id = fVectors.size() - 1;
   fTypeHashToID[dataHash] = id;
 
-  if (dataSize) { fVectors[id].resize(dataSize, {}); }
+  if (dataSize) { fVectors[id].resize(dataSize); }
 
   return id;
 }
