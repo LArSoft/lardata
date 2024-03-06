@@ -58,10 +58,16 @@ namespace trkf {
   SurfXYZPlane::~SurfXYZPlane() {}
 
   /// Clone method.
-  Surface* SurfXYZPlane::clone() const { return new SurfXYZPlane(*this); }
+  Surface* SurfXYZPlane::clone() const
+  {
+    return new SurfXYZPlane(*this);
+  }
 
   /// Surface-specific tests of validity of track parameters.
-  bool SurfXYZPlane::isTrackValid(const TrackVector& vec) const { return true; }
+  bool SurfXYZPlane::isTrackValid(const TrackVector& vec) const
+  {
+    return true;
+  }
 
   /// Transform global to local coordinates.
   ///

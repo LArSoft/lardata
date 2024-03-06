@@ -327,7 +327,7 @@ namespace lar {
         struct MatchConstIterator_t : public std::pair<const_iterator, bool> {
           using Base_t = std::pair<const_iterator, bool>;
           using Base_t::Base_t; // inherit all constructors
-          auto const& operator-> () const { return std::get<0>(*this); }
+          auto const& operator->() const { return std::get<0>(*this); }
           operator bool() const { return std::get<1>(*this); }
           bool operator!() const { return !this->operator bool(); }
         }; // struct MatchConstIterator_t

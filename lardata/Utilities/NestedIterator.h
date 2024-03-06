@@ -92,14 +92,17 @@ namespace lar {
       // Culled by SFINAE if T::const_iterator does not exist
       // or is not accessible or not default-constructable
       template <typename T>
-      constexpr auto has_const_iterator_helper(T * /* = nullptr */)
+      constexpr auto has_const_iterator_helper(T* /* = nullptr */)
         -> decltype(typename T::const_iterator(), bool())
       {
         return true;
       }
 
       // Used as fallback when SFINAE culls the template method
-      constexpr bool has_const_iterator_helper(...) { return false; }
+      constexpr bool has_const_iterator_helper(...)
+      {
+        return false;
+      }
       //------------------------------------------------------------------------
 
     } // namespace type_traits

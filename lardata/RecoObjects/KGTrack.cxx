@@ -297,6 +297,9 @@ namespace trkf {
   }
 
   /// Output operator.
-  std::ostream& operator<<(std::ostream& out, const KGTrack& trg) { return trg.Print(out); }
+  std::ostream& operator<<(std::ostream& out, const KGTrack& trg)
+  {
+    return trg.Print(out);
+  }
 
 } // end namespace trkf

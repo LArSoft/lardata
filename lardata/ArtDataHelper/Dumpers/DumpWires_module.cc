@@ -149,7 +149,7 @@ void caldata::DumpWires::PrintWire(Stream&& out,
                                    recob::Wire const& wire,
                                    std::string indent /* = "  " */,
                                    std::string firstIndent /* = "  " */
-                                   ) const
+) const
 {
 
   using RegionsOfInterest_t = recob::Wire::RegionsOfInterest_t;

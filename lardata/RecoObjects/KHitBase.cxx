@@ -41,6 +41,9 @@ namespace trkf {
   }
 
   /// Output operator.
-  std::ostream& operator<<(std::ostream& out, const KHitBase& trk) { return trk.Print(out); }
+  std::ostream& operator<<(std::ostream& out, const KHitBase& trk)
+  {
+    return trk.Print(out);
+  }
 
 } // end namespace trkf
