@@ -508,7 +508,7 @@ namespace {
                                     size_t iPart,
                                     std::string indentstr /* = "" */,
                                     unsigned int gen /* = 0 */
-                                    ) const
+  ) const
   {
     lar::OptionalHexFloat hexfloat(options.hexFloats);
 
@@ -607,7 +607,7 @@ namespace {
                                           size_t pID,
                                           std::string indentstr /* = "" */,
                                           unsigned int gen /* = 0 */
-                                          ) const
+  ) const
   {
     size_t const pos = particle_map[pID];
     if (particle_map.is_valid_value(pos)) { DumpParticle(out, pos, indentstr, gen); }

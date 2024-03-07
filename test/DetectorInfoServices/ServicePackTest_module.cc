@@ -118,7 +118,10 @@ namespace lar {
   ServicePackTest::ServicePackTest(const fhicl::ParameterSet& pset) : EDAnalyzer(pset) {}
 
   //----------------------------------------------------------------------------
-  void ServicePackTest::beginJob() { extractProviders_tests(); } // ServicePackTest::beginJob()
+  void ServicePackTest::beginJob()
+  {
+    extractProviders_tests();
+  } // ServicePackTest::beginJob()
 
   //----------------------------------------------------------------------------
   void ServicePackTest::endJob()

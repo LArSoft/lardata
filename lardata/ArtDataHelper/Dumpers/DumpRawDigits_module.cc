@@ -161,7 +161,7 @@ void detsim::DumpRawDigits::PrintRawDigit(Stream&& out,
                                           raw::RawDigit const& digits,
                                           std::string indent /* = "  " */,
                                           std::string firstIndent /* = "  " */
-                                          ) const
+) const
 {
 
   //

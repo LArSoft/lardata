@@ -38,10 +38,16 @@ namespace trkf {
   SurfYZPlane::~SurfYZPlane() {}
 
   /// Clone method.
-  Surface* SurfYZPlane::clone() const { return new SurfYZPlane(*this); }
+  Surface* SurfYZPlane::clone() const
+  {
+    return new SurfYZPlane(*this);
+  }
 
   /// Surface-specific tests of validity of track parameters.
-  bool SurfYZPlane::isTrackValid(const TrackVector& vec) const { return true; }
+  bool SurfYZPlane::isTrackValid(const TrackVector& vec) const
+  {
+    return true;
+  }
 
   /// Transform global to local coordinates.
   ///

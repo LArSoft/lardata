@@ -39,7 +39,10 @@ namespace trkf {
   SurfYZLine::~SurfYZLine() {}
 
   /// Clone method.
-  Surface* SurfYZLine::clone() const { return new SurfYZLine(*this); }
+  Surface* SurfYZLine::clone() const
+  {
+    return new SurfYZLine(*this);
+  }
 
   /// Surface-specific tests of validity of track parameters.
   bool SurfYZLine::isTrackValid(const TrackVector& vec) const

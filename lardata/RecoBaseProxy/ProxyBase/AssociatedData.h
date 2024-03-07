@@ -138,7 +138,7 @@ namespace proxy {
       auto operator*() const -> decltype(auto) { return asIterator().transform(asDataIterator()); }
 
       /// Dereference operator; need to be redefined by derived classes.
-      auto operator-> () const -> decltype(auto) { return makeValuePointer(operator*()); }
+      auto operator->() const -> decltype(auto) { return makeValuePointer(operator*()); }
 
     protected:
       /// Transforms and returns the value at the specified data iterator.
@@ -160,7 +160,7 @@ namespace proxy {
       public:
         ValuePtr(Value const& value) : value(value) {}
         /// Access the contained value via its pointer.
-        auto operator-> () const -> decltype(auto) { return std::addressof(value); }
+        auto operator->() const -> decltype(auto) { return std::addressof(value); }
       }; // class ValuePtr<>
       template <typename Value>
       static ValuePtr<Value> makeValuePointer(Value&& value)

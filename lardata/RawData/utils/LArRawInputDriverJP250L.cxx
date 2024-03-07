@@ -43,7 +43,10 @@ namespace lris {
   }
 
   // ======================================================================
-  void LArRawInputDriverJP250L::closeCurrentFile() { delete[] m_data; }
+  void LArRawInputDriverJP250L::closeCurrentFile()
+  {
+    delete[] m_data;
+  }
 
   // ======================================================================
   void LArRawInputDriverJP250L::readFile(std::string const& name, art::FileBlock*& fb)
