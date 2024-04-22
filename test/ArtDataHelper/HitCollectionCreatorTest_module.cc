@@ -122,7 +122,8 @@ void recob::test::HitCollectionCreatorTest::produceHits(art::Event& event, std::
                                  5.0,                         /* rms */
                                  100.0,                       /* peak_amplitude */
                                  1.0,                         /* sigma_peak_amplitude */
-                                 500.0,                       /* summedADC */
+                                 500.0,                       /* ROIsummedADC */
+				 500.0,                       /* HitsummedADC */
                                  500.0,                       /* hit_integral */
                                  1.0,                         /* hit_sigma_integral */
                                  1,                           /* multiplicity */

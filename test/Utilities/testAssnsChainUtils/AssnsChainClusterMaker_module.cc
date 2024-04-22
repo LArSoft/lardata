@@ -166,13 +166,13 @@ void lar::test::AssnsChainClusterMaker::produce(art::Event& event)
                       clusterHits.cend(),
                       0.0,
                       [](float sum, art::Ptr<recob::Hit> const& hit) {
-                        return sum + hit->SummedADC();
+                        return sum + hit->ROISummedADC();
                       }), // summedADC
       std::sqrt(std::accumulate(clusterHits.cbegin(),
                                 clusterHits.cend(),
                                 0.0,
                                 [](float sum, art::Ptr<recob::Hit> const& hit) {
-                                  return sum + hit->SummedADC();
+                                  return sum + hit->ROISummedADC();
                                 })),             // summedADC_stddev
       clusterHits.size(),                        // n_hits
       0.0,                                       // multiple_hit_density

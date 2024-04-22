@@ -105,7 +105,8 @@ namespace recob {
        * @param sigma_peak_amplitude uncertainty on amplitude at peak
        * @param hit_integral total charge integrated under the hit signal
        * @param hit_sigma_integral uncertainty on the total hit charge
-       * @param summedADC total ADC count in the region assigned to the hit
+       * @param ROIsummedADC total ADC count in the region assigned to the hit ROI
+       * @param HitsummedADC total ADC count in the region assigned to the hit HIT
        * @param multiplicity number of hits in the region it was extracted from
        * @param local_index index of this hit in the region it was extracted
        *        from
@@ -126,7 +127,8 @@ namespace recob {
                float sigma_peak_amplitude,
                float hit_integral,
                float hit_sigma_integral,
-               float summedADC,
+               float ROIsummedADC,
+	       float HitsummedADC,
                short int multiplicity,
                short int local_index,
                float goodness_of_fit,
@@ -146,7 +148,8 @@ namespace recob {
        * @param sigma_peak_amplitude uncertainty on amplitude at peak
        * @param hit_integral total charge integrated under the hit signal
        * @param hit_sigma_integral uncertainty on the total hit charge
-       * @param summedADC total ADC count in the region assigned to the hit
+       * @param ROIsummedADC total ADC count in the region assigned to the hit ROI
+       * @param HitsummedADC total ADC count in the region assigned to the hit Hit
        * @param multiplicity number of hits in the region it was extracted from
        * @param local_index index of this hit in the region it was extracted
        *        from
@@ -167,7 +170,8 @@ namespace recob {
                float sigma_peak_amplitude,
                float hit_integral,
                float hit_sigma_integral,
-               float summedADC,
+               float ROIsummedADC,
+	       float HitsummedADC,
                short int multiplicity,
                short int local_index,
                float goodness_of_fit,
@@ -227,7 +231,8 @@ namespace recob {
        * @param sigma_peak_amplitude uncertainty on amplitude at peak
        * @param hit_integral total charge integrated under the hit signal
        * @param hit_sigma_integral uncertainty on the total hit charge
-       * @param summedADC total ADC count in the region assigned to the hit
+       * @param ROIsummedADC total ADC count in the region assigned to the hit ROI
+       * @param HitsummedADC total ADC count in the region assigned to the hit Hit
        * @param multiplicity number of hits in the region it was extracted from
        * @param local_index index of this hit in the region it was extracted
        *        from
@@ -250,7 +255,8 @@ namespace recob {
                float sigma_peak_amplitude,
                float hit_integral,
                float hit_sigma_integral,
-               float summedADC,
+               float ROIsummedADC,
+	       float HitsummedADC,
                short int multiplicity,
                short int local_index,
                float goodness_of_fit,
@@ -269,7 +275,8 @@ namespace recob {
        * @param sigma_peak_amplitude uncertainty on amplitude at peak
        * @param hit_integral total charge integrated under the hit signal
        * @param hit_sigma_integral uncertainty on the total hit charge
-       * @param summedADC total ADC count in the region assigned to the hit
+       * @param ROI summedADC total ADC count in the region assigned to the hit ROI
+       * @param Hit summedADC total ADC count in the region assigned to the hit Hit
        * @param multiplicity number of hits in the region it was extracted from
        * @param local_index index of this hit in the region it was extracted from
        * @param goodness_of_fit quality parameter for the hit
@@ -292,7 +299,8 @@ namespace recob {
                float sigma_peak_amplitude,
                float hit_integral,
                float hit_sigma_integral,
-               float summedADC,
+               float ROIsummedADC,
+	       float HitsummedADC,
                short int multiplicity,
                short int local_index,
                float goodness_of_fit,
