@@ -87,7 +87,7 @@ void lar::test::AssnsChainHitMaker::produce(art::Event& event)
                        200.0 + i,                   // peak_amplitude
                        10.0,                        // sigma_peak_amplitude
                        400.0,                       // ROIsummedADC
-		       400.0,                       // HitsummedADC
+                       400.0,                       // HitsummedADC
                        400.0,                       // hit_integral
                        10.0,                        // hit_sigma_integral
                        1,                           // multiplicity
