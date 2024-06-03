@@ -73,6 +73,9 @@ cet_test(test_associatedgroupswithleft HANDBUILT
   TEST_PROPERTIES DEPENDS test_feag2
 )
 
+find_package(canvas_root_io REQUIRED)
+include(ArtDictionary)
+
 art_dictionary(NO_INSTALL
   DICTIONARY_LIBRARIES
   cetlib::cetlib

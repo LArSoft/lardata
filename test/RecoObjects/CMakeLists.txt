@@ -19,6 +19,11 @@ cet_test(LATest
   lardata_RecoObjects
 )
 
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.2)
+  # GCC 13.2 aggressively/spuriously warns about array-bounds issues.
+  target_compile_options(LATest PRIVATE "-Wno-array-bounds;-Wno-stringop-overflow")
+endif()
+
 install_headers()
 install_fhicl()
 install_source()
