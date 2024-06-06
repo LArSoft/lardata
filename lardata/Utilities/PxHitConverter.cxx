@@ -46,7 +46,7 @@ namespace util {
     pxhit.t = hit.PeakTime() * fGeomUtils.TimeToCm();
     pxhit.w = hit.WireID().Wire * fGeomUtils.WireToCm();
     pxhit.charge = hit.Integral();
-    pxhit.sumADC = hit.SummedADC();
+    pxhit.sumADC = hit.ROISummedADC();
     pxhit.peak = hit.PeakAmplitude();
     pxhit.plane = hit.WireID().Plane;
     return pxhit;
