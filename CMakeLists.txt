@@ -8,8 +8,8 @@
 
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-find_package(cetmodules 3.12.00 REQUIRED)
-project(lardata VERSION 09.16.02 LANGUAGES CXX)
+find_package(cetmodules 3.24.00 REQUIRED)
+project(lardata VERSION 09.16.06 LANGUAGES CXX)
 
 # cetbuildtools contains our cmake modules
 
@@ -24,10 +24,7 @@ cet_set_compiler_flags(DIAGS CAUTIOUS
 
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
-find_package(nusimdata REQUIRED EXPORT)
-
 find_package(art_root_io REQUIRED EXPORT)
-find_package(canvas_root_io REQUIRED)
 find_package(art REQUIRED EXPORT)
 find_package(canvas REQUIRED EXPORT)
 find_package(fhiclcpp REQUIRED EXPORT)
@@ -48,7 +45,6 @@ find_package(lardataalg REQUIRED EXPORT)
 find_package(larcore REQUIRED EXPORT)
 find_package(larvecutils REQUIRED EXPORT)
 
-include(ArtDictionary)
 include(ArtMake)
 include(BasicPlugin)
 

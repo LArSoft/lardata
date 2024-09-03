@@ -6,6 +6,7 @@
 
 #include "boost/numeric/ublas/io.hpp"
 #include "lardata/RecoObjects/KalmanLinearAlgebra.h"
+
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -24,7 +25,6 @@ int main()
   // Test matrix inversion.
 
   // 1x1 KSymMatrix.
-
   trkf::KSymMatrix<1>::type m1(1);
   for (unsigned int i = 0; i < m1.size1(); ++i) {
     for (unsigned int j = 0; j <= i; ++j)

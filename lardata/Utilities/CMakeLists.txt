@@ -51,9 +51,10 @@ cet_build_plugin(DatabaseUtil art::service
   art::Framework_Core
   art::Framework_Principal
   art_root_io::RootDB
+  PUBLIC
+  PostgreSQL::PostgreSQL
   PRIVATE
   messagefacility::MF_MessageLogger
-  PostgreSQL::PostgreSQL
 )
 
 cet_build_plugin(LArFFT art::service
