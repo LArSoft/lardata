@@ -23,7 +23,7 @@
 #include "canvas/Utilities/Exception.h"
 
 // LArSoft libraries
-#include "larcore/Geometry/Geometry.h"
+#include "larcore/Geometry/WireReadout.h"
 #include "lardata/Utilities/MakeIndex.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/Wire.h"
@@ -79,8 +79,8 @@ namespace recob {
           local_index,
           goodness_of_fit,
           dof,
-          art::ServiceHandle<geo::Geometry const>()->View(digits.Channel()),
-          art::ServiceHandle<geo::Geometry const>()->SignalType(digits.Channel()),
+          art::ServiceHandle<geo::WireReadout const>()->Get().View(digits.Channel()),
+          art::ServiceHandle<geo::WireReadout const>()->Get().SignalType(digits.Channel()),
           wireID)
   {} // HitCreator::HitCreator(RawDigit)
 
@@ -119,7 +119,7 @@ namespace recob {
           goodness_of_fit,
           dof,
           wire.View(),
-          art::ServiceHandle<geo::Geometry const>()->SignalType(wire.Channel()),
+          art::ServiceHandle<geo::WireReadout const>()->Get().SignalType(wire.Channel()),
           wireID)
   {} // HitCreator::HitCreator(Wire)
 

@@ -11,6 +11,7 @@
 #include "larcorealg/Geometry/GeometryCore.h"
 #include "larcorealg/Geometry/PlaneGeo.h"
 #include "larcorealg/Geometry/WireGeo.h"
+#include "larcorealg/Geometry/WireReadoutGeom.h"
 #include "lardata/Utilities/UtilException.h"
 #include "lardataalg/DetectorInfo/DetectorClocksData.h"
 #include "lardataalg/DetectorInfo/DetectorPropertiesData.h"
@@ -18,25 +19,24 @@
 
 #include "cetlib/pow.h"
 
-#include "TLorentzVector.h"
-
 #include <cmath>
 
 namespace util {
 
   GeometryUtilities::GeometryUtilities(geo::GeometryCore const& geom,
+                                       geo::WireReadoutGeom const& wireReadoutGeom,
                                        detinfo::DetectorClocksData const& clockData,
                                        detinfo::DetectorPropertiesData const& propData)
-    : fGeom{geom}, fClocks{clockData}, fDetProp{propData}
+    : fGeom{geom}, fWireReadoutGeom{wireReadoutGeom}, fClocks{clockData}, fDetProp{propData}
   {
-    fNPlanes = fGeom.Nplanes();
+    fNPlanes = wireReadoutGeom.Nplanes();
     vertangle.resize(fNPlanes);
     for (unsigned int ip = 0; ip < fNPlanes; ip++) {
       geo::WireID const wid{0, 0, ip, 0};
-      vertangle[ip] = fGeom.Wire(wid).ThetaZ(false) - TMath::Pi() / 2.; // wire angle
+      vertangle[ip] = wireReadoutGeom.Wire(wid).ThetaZ(false) - TMath::Pi() / 2.; // wire angle
     }
 
-    fWirePitch = fGeom.WirePitch();
+    fWirePitch = fWireReadoutGeom.Plane({0, 0, 0}).WirePitch();
     fTimeTick = sampling_rate(fClocks) / 1000.;
     fDriftVelocity = fDetProp.DriftVelocity(fDetProp.Efield(), fDetProp.Temperature());
 
@@ -227,7 +227,7 @@ namespace util {
   /////////////////////////////////////////////////////////
   double GeometryUtilities::CalculatePitch(unsigned int iplane, double phi, double theta) const
   {
-    auto const& plane = fGeom.Plane({0, 0, iplane});
+    auto const& plane = fWireReadoutGeom.Plane({0, 0, iplane});
     if (plane.View() == geo::kUnknown || plane.View() == geo::k3D) {
       mf::LogError(Form("Warning :  no Pitch foreseen for view %d", plane.View()));
       return -1.;
@@ -238,7 +238,8 @@ namespace util {
     double const fPhi = -(phi + pi / 2);
 
     double wirePitch = plane.WirePitch();
-    double angleToVert = 0.5 * TMath::Pi() - fGeom.WireAngleToVertical(plane.View(), plane.ID());
+    double angleToVert =
+      0.5 * TMath::Pi() - fWireReadoutGeom.WireAngleToVertical(plane.View(), plane.ID());
     double cosgamma = std::abs(std::sin(angleToVert) * std::cos(fTheta) +
                                std::cos(angleToVert) * std::sin(fTheta) * std::sin(fPhi));
 
@@ -251,7 +252,7 @@ namespace util {
   /////////////////////////////////////////////////////////
   double GeometryUtilities::CalculatePitchPolar(unsigned int iplane, double phi, double theta) const
   {
-    auto const& plane = fGeom.Plane({0, 0, iplane});
+    auto const& plane = fWireReadoutGeom.Plane({0, 0, iplane});
     if (plane.View() == geo::kUnknown || plane.View() == geo::k3D) {
       mf::LogError(Form("Warning :  no Pitch foreseen for view %d", plane.View()));
       return -1.;
@@ -261,7 +262,8 @@ namespace util {
     double const fPhi = phi;
 
     double wirePitch = plane.WirePitch();
-    double angleToVert = 0.5 * TMath::Pi() - fGeom.WireAngleToVertical(plane.View(), plane.ID());
+    double angleToVert =
+      0.5 * TMath::Pi() - fWireReadoutGeom.WireAngleToVertical(plane.View(), plane.ID());
     double cosgamma = std::abs(std::sin(angleToVert) * std::cos(fTheta) +
                                std::cos(angleToVert) * std::sin(fTheta) * std::sin(fPhi));
 
@@ -367,23 +369,24 @@ namespace util {
   double GeometryUtilities::Get2DangleFrom3D(unsigned int plane, TVector3 dir_vector) const
   {
     geo::PlaneID const planeid{0, 0, plane};
-    double alpha =
-      0.5 * TMath::Pi() - fGeom.WireAngleToVertical(fGeom.Plane(planeid).View(), planeid);
-    // create dummy  xyz point in middle of detector and another one in unit
-    // length. calculate correspoding points in wire-time space and use the
-    // differnces between those to return 2D a angle
+    double alpha = 0.5 * TMath::Pi() - fWireReadoutGeom.WireAngleToVertical(
+                                         fWireReadoutGeom.Plane(planeid).View(), planeid);
+    // create dummy xyz point in middle of detector and another one in unit
+    // length. calculate correspoding points in wire-time space and use the differnces
+    // between those to return 2D a angle
 
-    TVector3 start(fGeom.DetHalfWidth(), 0., fGeom.DetLength() / 2.);
+    auto const& tpc = fGeom.TPC(planeid.parentID());
+    TVector3 start(tpc.HalfWidth(), 0., tpc.Length() / 2.);
     TVector3 end = start + dir_vector;
 
     // the wire coordinate is already in cm. The time needs to be converted.
     PxPoint startp(plane,
-                   (fGeom.DetHalfHeight() * std::sin(std::fabs(alpha)) +
-                    start[2] * std::cos(alpha) - start[1] * std::sin(alpha)),
+                   (tpc.HalfHeight() * std::sin(std::fabs(alpha)) + start[2] * std::cos(alpha) -
+                    start[1] * std::sin(alpha)),
                    start[0]);
 
     PxPoint endp(plane,
-                 (fGeom.DetHalfHeight() * std::sin(std::fabs(alpha)) + end[2] * std::cos(alpha) -
+                 (tpc.HalfHeight() * std::sin(std::fabs(alpha)) + end[2] * std::cos(alpha) -
                   end[1] * std::sin(alpha)),
                  end[0]);
 
@@ -393,8 +396,7 @@ namespace util {
   }
 
   //////////////////////////////////////
-  // Calculate 2D distance
-  // in "cm" "cm" coordinates
+  // Calculate 2D distance in "cm" "cm" coordinates
   ////////////////////////////////////////
   double GeometryUtilities::Get2DDistance(double wire1,
                                           double time1,
@@ -410,8 +412,7 @@ namespace util {
   }
 
   ////////////////////////////
-  // Calculate 2D distance, using 2D angle
-  // in "cm" "cm" coordinates
+  // Calculate 2D distance, using 2D angle in "cm" "cm" coordinates
   ////////////////////////////
   double GeometryUtilities::Get2DPitchDistance(double angle, double inwire, double wire) const
   {
@@ -429,7 +430,6 @@ namespace util {
 
   ///////////////////////////////////
   // Calculate wire,time coordinates of the Hit projection onto a line
-  //
   ///////////////////////////////////
   int GeometryUtilities::GetPointOnLine(double slope,
                                         double intercept,
@@ -454,8 +454,8 @@ namespace util {
   }
 
   //////////////////////////////////
-  // Calculate wire,time coordinates of the Hit projection onto a line
-  //  all points are assumed to be in cm/cm space.
+  // Calculate wire,time coordinates of the Hit projection onto a line all points are
+  // assumed to be in cm/cm space.
   ///////////////////////////////////
   int GeometryUtilities::GetPointOnLine(double slope,
                                         const PxPoint* startpoint,
@@ -469,8 +469,8 @@ namespace util {
   }
 
   ///////////////////////////////////
-  // Calculate wire,time coordinates of the Hit projection onto a line
-  //  all points assumed to be in cm/cm space.
+  // Calculate wire,time coordinates of the Hit projection onto a line all points assumed
+  // to be in cm/cm space.
   ///////////////////////////////////
   int GeometryUtilities::GetPointOnLine(double slope,
                                         double intercept,
@@ -495,7 +495,6 @@ namespace util {
 
   ///////////////////////////////////
   // Calculate wire,time coordinates of the Hit projection onto a line
-  //
   ///////////////////////////////////
   int GeometryUtilities::GetPointOnLine(double slope,
                                         double wirestart,
@@ -512,7 +511,7 @@ namespace util {
 
   ///////////////////////////////////
   // Calculate wire,time coordinates of the Hit projection onto a line
-  //
+  ///////////////////////////////////
   int GeometryUtilities::GetPointOnLineWSlopes(double slope,
                                                double intercept,
                                                double ort_intercept,
@@ -535,8 +534,8 @@ namespace util {
   }
 
   ///////////////////////////////////
-  // Calculate wire,time coordinates of the Hit projection onto a line
-  // slope should be in cm/cm space. PxPoint should be in cm/cm space.
+  // Calculate wire,time coordinates of the Hit projection onto a line slope should be in
+  // cm/cm space. PxPoint should be in cm/cm space.
   ///////////////////////////////////
   int GeometryUtilities::GetPointOnLineWSlopes(double slope,
                                                double intercept,
@@ -561,21 +560,20 @@ namespace util {
       pN.plane = i;
     }
 
-    // Assuming there is no problem ( and we found the best pair that comes
-    // close in time ) we try to get the Y and Z coordinates for the start of
-    // the shower.
-    unsigned int chan1 = fGeom.PlaneWireToChannel(geo::WireID(0, 0, p0->plane, p0->w));
-    unsigned int chan2 = fGeom.PlaneWireToChannel(geo::WireID(0, 0, p1->plane, p1->w));
+    // Assuming there is no problem ( and we found the best pair that comes close in time
+    // ) we try to get the Y and Z coordinates for the start of the shower.
+    unsigned int chan1 = fWireReadoutGeom.PlaneWireToChannel(geo::WireID(0, 0, p0->plane, p0->w));
+    unsigned int chan2 = fWireReadoutGeom.PlaneWireToChannel(geo::WireID(0, 0, p1->plane, p1->w));
     geo::PlaneGeo::LocalPoint_t const origin{};
-    auto pos = fGeom.Plane(geo::PlaneID(0, 0, p0->plane)).toWorldCoords(origin);
+    auto pos = fWireReadoutGeom.Plane(geo::PlaneID(0, 0, p0->plane)).toWorldCoords(origin);
     double x = (p0->t - trigger_offset(fClocks)) * fTimetoCm + pos.X();
 
-    double y, z;
-    if (!fGeom.ChannelsIntersect(chan1, chan2, y, z)) return -1;
+    auto const intersection = fWireReadoutGeom.ChannelsIntersect(chan1, chan2);
+    if (!intersection) return -1;
 
-    pos.SetCoordinates(x, y, z);
+    pos.SetCoordinates(x, intersection->y, intersection->z);
 
-    pN = Get2DPointProjection(pos, pN.plane);
+    pN = Get2DPointProjection(pos, {0, 0, pN.plane});
 
     return 0;
   }
@@ -587,8 +585,6 @@ namespace util {
     geo::TPCID const tpcid{0, 0};
     geo::PlaneID const plane_0{tpcid, p0->plane};
     geo::PlaneID const plane_1{tpcid, p1->plane};
-
-    double y, z;
 
     // Force to the closest wires if not in the range
     int z0 = p0->w / fWiretoCm;
@@ -603,15 +599,15 @@ namespace util {
                 << "\033[93mWarning ends...\033[00m" << std::endl;
       z0 = 0;
     }
-    else if (z0 >= (int)(fGeom.Nwires(plane_0))) {
+    else if (z0 >= (int)(fWireReadoutGeom.Nwires(plane_0))) {
       std::cout << "\033[93mWarning\033[00m "
                    "\033[95m<<GeometryUtilities::GetYZ>>\033[00m"
                 << std::endl
                 << " 2D wire position " << p0->w << " [cm] exceeds max wire number "
-                << (fGeom.Nwires(plane_0) - 1) << std::endl
+                << (fWireReadoutGeom.Nwires(plane_0) - 1) << std::endl
                 << " Forcing it to the max wire number..." << std::endl
                 << "\033[93mWarning ends...\033[00m" << std::endl;
-      z0 = fGeom.Nwires(plane_0) - 1;
+      z0 = fWireReadoutGeom.Nwires(plane_0) - 1;
     }
     if (z1 < 0) {
       std::cout << "\033[93mWarning\033[00m "
@@ -623,24 +619,25 @@ namespace util {
                 << "\033[93mWarning ends...\033[00m" << std::endl;
       z1 = 0;
     }
-    if (z1 >= (int)(fGeom.Nwires(plane_1))) {
+    if (z1 >= (int)(fWireReadoutGeom.Nwires(plane_1))) {
       std::cout << "\033[93mWarning\033[00m "
                    "\033[95m<<GeometryUtilities::GetYZ>>\033[00m"
                 << std::endl
                 << " 2D wire position " << p1->w << " [cm] exceeds max wire number "
-                << (fGeom.Nwires(plane_1) - 1) << std::endl
+                << (fWireReadoutGeom.Nwires(plane_1) - 1) << std::endl
                 << " Forcing it to the max wire number..." << std::endl
                 << "\033[93mWarning ends...\033[00m" << std::endl;
-      z1 = fGeom.Nwires(plane_1) - 1;
+      z1 = fWireReadoutGeom.Nwires(plane_1) - 1;
     }
 
-    unsigned int chan1 = fGeom.PlaneWireToChannel(geo::WireID(plane_0, z0));
-    unsigned int chan2 = fGeom.PlaneWireToChannel(geo::WireID(plane_1, z1));
+    unsigned int chan1 = fWireReadoutGeom.PlaneWireToChannel(geo::WireID(plane_0, z0));
+    unsigned int chan2 = fWireReadoutGeom.PlaneWireToChannel(geo::WireID(plane_1, z1));
 
-    if (!fGeom.ChannelsIntersect(chan1, chan2, y, z)) return -1;
+    auto const intersection = fWireReadoutGeom.ChannelsIntersect(chan1, chan2);
+    if (!intersection) return -1;
 
-    yz[0] = y;
-    yz[1] = z;
+    yz[0] = intersection->y;
+    yz[1] = intersection->z;
 
     return 0;
   }
@@ -649,7 +646,7 @@ namespace util {
   int GeometryUtilities::GetXYZ(const PxPoint* p0, const PxPoint* p1, double* xyz) const
   {
     geo::PlaneGeo::LocalPoint_t const origin{};
-    auto const pos = fGeom.Plane(geo::PlaneID{0, 0, p0->plane}).toWorldCoords(origin);
+    auto const pos = fWireReadoutGeom.Plane(geo::PlaneID{0, 0, p0->plane}).toWorldCoords(origin);
     double x = (p0->t) - trigger_offset(fClocks) * fTimetoCm + pos.X();
     double yz[2];
 
@@ -664,23 +661,20 @@ namespace util {
 
   //////////////////////////////////////////////////////////////
 
-  PxPoint GeometryUtilities::Get2DPointProjection(geo::Point_t const& xyz, unsigned int plane) const
+  PxPoint GeometryUtilities::Get2DPointProjection(geo::Point_t const& xyz,
+                                                  geo::PlaneID const& planeID) const
   {
-    geo::PlaneID const planeID{0, 0, plane};
-    PxPoint pN(0, 0, 0);
     geo::PlaneGeo::LocalPoint_t const origin{};
-    auto pos = fGeom.Plane(planeID).toWorldCoords(origin);
+    auto pos = fWireReadoutGeom.Plane(planeID).toWorldCoords(origin);
     double drifttick = (xyz.X() / fDriftVelocity) * (1. / fTimeTick);
 
     pos.SetY(xyz.Y());
     pos.SetZ(xyz.Z());
 
-    ///\todo: this should use the cryostat and tpc as well in the NearestWire
-    /// method
-
-    pN.w = fGeom.NearestWireID(pos, planeID).Wire;
+    PxPoint pN(0, 0, 0);
+    pN.w = fWireReadoutGeom.Plane(planeID).NearestWireID(pos).Wire;
     pN.t = drifttick - (pos.X() / fDriftVelocity) * (1. / fTimeTick) + trigger_offset(fClocks);
-    pN.plane = plane;
+    pN.plane = planeID.Plane;
 
     return pN;
   }
@@ -691,42 +685,19 @@ namespace util {
   // on the previous version. A.S. 03/26/14
   //////////////////////////////////////
 
-  PxPoint GeometryUtilities::Get2DPointProjectionCM(std::vector<double> const& xyz,
-                                                    unsigned int plane) const
+  PxPoint GeometryUtilities::Get2DPointProjectionCM(geo::Point_t point,
+                                                    geo::PlaneID const& planeID) const
   {
-
-    PxPoint pN(0, 0, 0);
-
-    geo::Point_t const pos{0., xyz[1], xyz[2]};
-
-    ///\todo: this should use the cryostat and tpc as well in the NearestWire
-    /// method
-
-    return {plane, fGeom.NearestWireID(pos, geo::PlaneID{0, 0, plane}).Wire * fWiretoCm, xyz[0]};
-  }
-
-  PxPoint GeometryUtilities::Get2DPointProjectionCM(double const* xyz, unsigned int plane) const
-  {
-    geo::Point_t const pos{0., xyz[1], xyz[2]};
-
-    ///\todo: this should use the cryostat and tpc as well in the NearestWire
-    /// method
-
-    return {plane, fGeom.NearestWireID(pos, geo::PlaneID{0, 0, plane}).Wire * fWiretoCm, xyz[0]};
-  }
-
-  PxPoint GeometryUtilities::Get2DPointProjectionCM(TLorentzVector const* xyz,
-                                                    unsigned int plane) const
-  {
-    double xyznew[3] = {(*xyz)[0], (*xyz)[1], (*xyz)[2]};
-
-    return Get2DPointProjectionCM(xyznew, plane);
+    auto const x = point.X();
+    point.SetX(0);
+    return {
+      planeID.Plane, fWireReadoutGeom.Plane(planeID).NearestWireID(point).Wire * fWiretoCm, x};
   }
 
   double GeometryUtilities::GetTimeTicks(double x, unsigned int plane) const
   {
     geo::PlaneGeo::LocalPoint_t const origin{};
-    auto const pos = fGeom.Plane(geo::PlaneID{0, 0, plane}).toWorldCoords(origin);
+    auto const pos = fWireReadoutGeom.Plane(geo::PlaneID{0, 0, plane}).toWorldCoords(origin);
     double drifttick = (x / fDriftVelocity) * (1. / fTimeTick);
 
     return drifttick - (pos.X() / fDriftVelocity) * (1. / fTimeTick) + trigger_offset(fClocks);
@@ -745,11 +716,12 @@ namespace util {
     double wirePitch = 0.;
     double angleToVert = 0.;
 
-    auto const& planegeom = fGeom.Plane({0, 0, plane});
+    auto const& planegeom = fWireReadoutGeom.Plane({0, 0, plane});
     wirePitch = planegeom.WirePitch();
-    angleToVert = fGeom.WireAngleToVertical(planegeom.View(), planegeom.ID()) - 0.5 * TMath::Pi();
+    angleToVert =
+      fWireReadoutGeom.WireAngleToVertical(planegeom.View(), planegeom.ID()) - 0.5 * TMath::Pi();
 
-    //(sin(angleToVert),std::cos(angleToVert)) is the direction perpendicular to
+    //(sin(angleToVert),std::cos(angleToVert)) is the direction perpendiculaOBr to
     // wire fDir.front() is the direction of the track at the beginning of its
     // trajectory
     double cosgamma = std::abs(std::sin(angleToVert) * dirs[1] + std::cos(angleToVert) * dirs[2]);
@@ -798,7 +770,6 @@ namespace util {
                                              double& lineslopetest,
                                              PxHit& averageHit) const
   {
-
     hitlistlocal.clear();
     std::vector<unsigned int> hitlistlocal_index;
 
@@ -830,21 +801,17 @@ namespace util {
                                                   double& ortlimit,
                                                   double& lineslopetest) const
   {
-
     hitlistlocal_index.clear();
     double locintercept = startHit.t - startHit.w * lineslopetest;
 
     for (size_t i = 0; i < hitlist.size(); ++i) {
 
       PxPoint hitonline;
+      GetPointOnLine(lineslopetest, locintercept, &hitlist.at(i), hitonline);
 
-      GetPointOnLine(lineslopetest, locintercept, (const PxHit*)(&hitlist.at(i)), hitonline);
-
-      // calculate linear distance from start point and orthogonal distance from
-      // axis
-      double lindist = Get2DDistance((const PxPoint*)(&hitonline), (const PxPoint*)(&startHit));
-      double ortdist =
-        Get2DDistance((const PxPoint*)(&hitlist.at(i)), (const PxPoint*)(&hitonline));
+      // calculate linear distance from start point and orthogonal distance from axis
+      double lindist = Get2DDistance(&hitonline, &startHit);
+      double ortdist = Get2DDistance(&hitlist.at(i), &hitonline);
 
       if (lindist < linearlimit && ortdist < ortlimit) { hitlistlocal_index.push_back(i); }
     }
@@ -885,7 +852,7 @@ namespace util {
     // Loop over hits and find corner points in the plane view
     // Also fill corner edge points
     std::vector<PxPoint> edges(4, PxPoint(plane, 0, 0));
-    double wire_max = fGeom.Nwires({0, 0, plane}) * fWiretoCm;
+    double wire_max = fWireReadoutGeom.Nwires({0, 0, plane}) * fWiretoCm;
     double time_max = fDetProp.NumberTimeSamples() * fTimetoCm;
 
     for (size_t index = 0; index < ordered_hits.size(); ++index) {
@@ -974,8 +941,8 @@ namespace util {
       }
     }
 
-    // Loop over the resulting hit indexes and append unique hits to define the
-    // polygon to the return hit list
+    // Loop over the resulting hit indexes and append unique hits to define the polygon to
+    // the return hit list
     std::set<size_t> unique_index;
     std::vector<size_t> candidate_polygon;
     candidate_polygon.reserve(9);
@@ -1012,8 +979,8 @@ namespace util {
       double Ay = ordered_hits.at(candidate_polygon.at(i))->t;
       double Bx = ordered_hits.at(candidate_polygon.at(i + 1))->w;
       double By = ordered_hits.at(candidate_polygon.at(i + 1))->t;
-      // loop over edges that have not been checked yet...
-      // only ones furhter down in polygon
+      // loop over edges that have not been checked yet...  only ones further down in
+      // polygon
       for (unsigned int j = i + 2; j < (candidate_polygon.size() - 1); j++) {
         // avoid consecutive segments:
         if (candidate_polygon.at(i) == candidate_polygon.at(j + 1))

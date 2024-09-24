@@ -17,7 +17,7 @@
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 
 // LArSoft libraries
-#include "larcore/Geometry/Geometry.h"
+#include "larcore/Geometry/WireReadout.h"
 #include "lardataobj/RawData/RawDigit.h"
 #include "lardataobj/RecoBase/Wire.h"
 
@@ -28,7 +28,7 @@ namespace recob {
   WireCreator::WireCreator(const RegionsOfInterest_t& sigROIlist, const raw::RawDigit& rawdigit)
     : wire(sigROIlist,
            rawdigit.Channel(),
-           art::ServiceHandle<geo::Geometry const>()->View(rawdigit.Channel()))
+           art::ServiceHandle<geo::WireReadout const>()->Get().View(rawdigit.Channel()))
   {
     // resize fSignalROI again:
     // just in case the user hasn't cared to set sigROIlist size right
@@ -39,7 +39,7 @@ namespace recob {
   WireCreator::WireCreator(RegionsOfInterest_t&& sigROIlist, const raw::RawDigit& rawdigit)
     : wire(std::move(sigROIlist),
            rawdigit.Channel(),
-           art::ServiceHandle<geo::Geometry const>()->View(rawdigit.Channel()))
+           art::ServiceHandle<geo::WireReadout const>()->Get().View(rawdigit.Channel()))
   {
     // resize fSignalROI again:
     // just in case the user hasn't cared to set sigROIlist size right

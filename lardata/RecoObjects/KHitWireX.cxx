@@ -10,7 +10,8 @@
 
 #include "lardata/RecoObjects/KHitWireX.h"
 #include "cetlib_except/exception.h"
-#include "larcore/Geometry/Geometry.h"
+#include "larcore/Geometry/WireReadout.h"
+#include "larcorealg/Geometry/PlaneGeo.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "lardata/RecoObjects/SurfWireX.h"
 
@@ -93,10 +94,6 @@ namespace trkf {
   KHitWireX::KHitWireX(const geo::WireID& wireid, double x, double xerr)
     : KHit(std::shared_ptr<const Surface>(new SurfWireX(wireid)))
   {
-    // Get services.
-
-    art::ServiceHandle<geo::Geometry const> geom;
-
     // Get plane number.
 
     setMeasPlane(wireid.Plane);
@@ -135,8 +132,7 @@ namespace trkf {
 
     // Update prediction error to include contribution from track slope.
 
-    art::ServiceHandle<geo::Geometry const> geom;
-    double pitch = geom->WirePitch();
+    double pitch = art::ServiceHandle<geo::WireReadout>()->Get().Plane({0, 0, 0}).WirePitch();
     double slope = tre.getVector()(2);
     double slopevar = pitch * pitch * slope * slope / 12.;
     perr(0, 0) += slopevar;

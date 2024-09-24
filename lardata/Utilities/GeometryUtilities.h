@@ -9,7 +9,9 @@
 #ifndef UTIL_GEOMETRYUTILITIES_H
 #define UTIL_GEOMETRYUTILITIES_H
 
+#include "larcorealg/Geometry/fwd.h"
 #include "larcorealg/Geometry/geo_vectors_utils.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 #include "larcoreobj/SimpleTypesAndConstants/geo_vectors.h"
 
 #include "TVector3.h"
@@ -25,9 +27,6 @@ namespace detinfo {
   class DetectorClocksData;
   class DetectorPropertiesData;
 }
-namespace geo {
-  class GeometryCore;
-}
 
 /// General LArSoft Utilities
 namespace util {
@@ -37,6 +36,7 @@ namespace util {
   class GeometryUtilities {
   public:
     GeometryUtilities(geo::GeometryCore const& geom,
+                      geo::WireReadoutGeom const& wireReadoutGeom,
                       detinfo::DetectorClocksData const& clockData,
                       detinfo::DetectorPropertiesData const& propData);
 
@@ -113,17 +113,8 @@ namespace util {
                               double ort_intercept,
                               PxPoint& pointonline) const;
 
-    inline PxPoint Get2DPointProjection(double const* xyz, unsigned int plane) const
-    {
-      return Get2DPointProjection(geo::vect::toPoint(xyz), plane);
-    }
-    PxPoint Get2DPointProjection(geo::Point_t const& xyz, unsigned int plane) const;
-
-    PxPoint Get2DPointProjectionCM(std::vector<double> const& xyz, unsigned int plane) const;
-
-    PxPoint Get2DPointProjectionCM(double const* xyz, unsigned int plane) const;
-
-    PxPoint Get2DPointProjectionCM(TLorentzVector const* xyz, unsigned int plane) const;
+    PxPoint Get2DPointProjection(geo::Point_t const& xyz, geo::PlaneID const& planeID) const;
+    PxPoint Get2DPointProjectionCM(geo::Point_t xyz, geo::PlaneID const& planeID) const;
 
     double GetTimeTicks(double x, unsigned int plane) const;
 
@@ -183,6 +174,7 @@ namespace util {
 
   private:
     geo::GeometryCore const& fGeom;
+    geo::WireReadoutGeom const& fWireReadoutGeom;
     detinfo::DetectorClocksData const& fClocks;
     detinfo::DetectorPropertiesData const& fDetProp;
 
