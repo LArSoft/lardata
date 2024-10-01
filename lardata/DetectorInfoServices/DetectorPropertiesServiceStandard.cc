@@ -90,30 +90,24 @@ namespace detinfo {
     sqlite3_stmt* stmt = nullptr;
     sqlite3_prepare_v2(sqliteDB, "SELECT PSetBlob from ParameterSets;", -1, &stmt, nullptr);
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-      fhicl::ParameterSet ps;
-      ps = fhicl::ParameterSet::make(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 0)));
-      // Is this a DetectorPropertiesService parameter set?
+      auto ps =
+        fhicl::ParameterSet::make(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 0)));
+      if (!isDetectorPropertiesServiceStandard(ps)) { continue; }
 
-      if (isDetectorPropertiesServiceStandard(ps)) {
+      auto const newNumberTimeSamples = ps.get<unsigned int>("NumberTimeSamples");
+      if (newNumberTimeSamples == fPS.get<unsigned int>("NumberTimeSamples")) { continue; }
 
-        // Check NumberTimeSamples
-
-        auto const newNumberTimeSamples = ps.get<unsigned int>("NumberTimeSamples");
-
-        // Ignore parameter values that match the current configuration.
-
-        if (newNumberTimeSamples != fPS.get<unsigned int>("NumberTimeSamples")) {
-          if (nNumberTimeSamples == 0)
-            iNumberTimeSamples = newNumberTimeSamples;
-          else if (newNumberTimeSamples != iNumberTimeSamples) {
-            throw cet::exception(__FUNCTION__)
-              << "Historical values of NumberTimeSamples do not agree: " << iNumberTimeSamples
-              << " " << newNumberTimeSamples << "\n";
-          }
-          ++nNumberTimeSamples;
-        }
+      if (nNumberTimeSamples != 0 and newNumberTimeSamples != iNumberTimeSamples) {
+        sqlite3_finalize(stmt);
+        throw cet::exception(__FUNCTION__)
+          << "Historical values of NumberTimeSamples do not agree: " << iNumberTimeSamples << " "
+          << newNumberTimeSamples << "\n";
       }
+
+      iNumberTimeSamples = newNumberTimeSamples;
+      ++nNumberTimeSamples;
     }
+    sqlite3_finalize(stmt);
 
     // Done looping over parameter sets.
     // Now decide which parameters we will actually override.
