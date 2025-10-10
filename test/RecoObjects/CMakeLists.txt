@@ -20,8 +20,8 @@ cet_test(LATest
 )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
-    CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "13.2")
-  # GCC 13.2 (and above) aggressively/spuriously warns about array-bounds issues.
+    CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.5")
+  # GCC 12.5 (and above) aggressively/spuriously warns about array-bounds issues.
   target_compile_options(LATest PRIVATE "-Wno-array-bounds;-Wno-stringop-overflow")
 endif()
 
