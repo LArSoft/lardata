@@ -41,6 +41,7 @@ cet_build_plugin(AssnsChainShowerMaker art::EDProducer NO_INSTALL
 cet_build_plugin(AssnsChainTest art::EDAnalyzer NO_INSTALL
   LIBRARIES PRIVATE
   lardataobj::RecoBase
+  larcorealg::CoreUtils
   art::Framework_Core
   art::Framework_Principal
   art::Persistency_Provenance
