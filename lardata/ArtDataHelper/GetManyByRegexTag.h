@@ -46,10 +46,8 @@ namespace lar {
 
       std::vector<typename Evt::template HandleT<T>> handles;
       for (art::InputTag const& t : e.template getInputTags<T>()) {
-        
-        if (!matcher.match(t)) {
-          continue;
-        }
+
+        if (!matcher.match(t)) { continue; }
 
         auto handle = e.template getHandle<T>(t);
         if (handle.isValid()) handles.push_back(std::move(handle));
