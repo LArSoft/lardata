@@ -8,12 +8,13 @@
  * `getManyByRegexTag()` is a function template on the event type `Evt`,
  * duck-typed to a very small interface:
  *   - `Evt::template HandleT<T>`      a product handle type,
- *   - `e.template getInputTags<T>()`  the input tags present for type `T`,
+ *   - `e.template getInputTags<T>(selector)`  the input tags of type `T`
+ *                                     accepted by an `art::SelectorBase`,
  *   - `e.template getHandle<T>(tag)`  a handle, exposing `isValid()`.
  *
  * That lets us validate the real filtering logic (including the real
- * `lar::util::detail::RegexTagMatcher`) against a lightweight mock event,
- * with no art/gallery job required.
+ * `lar::util::detail::RegexTagSelector`) against a lightweight mock event,
+ * with no art job required.
  */
 
 // Boost libraries
@@ -24,7 +25,14 @@
 #include "lardata/ArtDataHelper/GetManyByRegexTag.h"
 
 // framework libraries
+#include "art/Framework/Principal/SelectorBase.h"
+#include "canvas/Persistency/Provenance/BranchDescription.h"
+#include "canvas/Persistency/Provenance/BranchType.h"
+#include "canvas/Persistency/Provenance/ProcessConfiguration.h"
+#include "canvas/Persistency/Provenance/TypeLabel.h"
 #include "canvas/Utilities/InputTag.h"
+#include "canvas/Utilities/TypeID.h"
+#include "fhiclcpp/ParameterSetID.h"
 
 // C/C++ standard libraries
 #include <regex> // std::regex_error
@@ -66,12 +74,20 @@ namespace {
 
     void add(art::InputTag tag, bool valid = true) { products_.push_back({std::move(tag), valid}); }
 
+    /// Like art, hands the selector a `BranchDescription` for each product.
     template <typename T>
-    std::vector<art::InputTag> getInputTags() const
+    std::vector<art::InputTag> getInputTags(art::SelectorBase const& selector) const
     {
       std::vector<art::InputTag> tags;
-      for (auto const& p : products_)
-        tags.push_back(p.tag);
+      for (auto const& p : products_) {
+        art::BranchDescription const bd{
+          art::InEvent,
+          art::TypeLabel{art::TypeID{typeid(T)}, p.tag.instance(), /* supportsView = */ false},
+          p.tag.label(),
+          fhicl::ParameterSetID{},
+          art::ProcessConfiguration{p.tag.process(), fhicl::ParameterSetID{}, ""}};
+        if (selector.match(bd)) tags.push_back(p.tag);
+      }
       return tags;
     }
 

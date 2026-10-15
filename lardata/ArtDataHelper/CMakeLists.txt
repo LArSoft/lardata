@@ -4,7 +4,7 @@ cet_make_library(
   MVAReader.cxx
   MVAWrapperBase.cxx
   MVAWriter.cxx
-  RegexTagMatcher.cxx
+  RegexTagSelector.cxx
   TrackUtils.cxx
   WireCreator.cxx
   ChargedSpacePointCreator.cpp
