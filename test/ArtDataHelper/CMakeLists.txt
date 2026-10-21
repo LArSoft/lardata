@@ -23,6 +23,13 @@ cet_test(HitCollectorTest HANDBUILT
   TEST_ARGS --rethrow-all --config ./hitcollectioncreator_test.fcl
 )
 
+cet_test(getManyByRegexTag_test USE_BOOST_UNIT
+  LIBRARIES PRIVATE
+  lardata_ArtDataHelper
+  canvas::canvas
+  fhiclcpp::fhiclcpp
+)
+
 install_fhicl()
 install_source()
 
