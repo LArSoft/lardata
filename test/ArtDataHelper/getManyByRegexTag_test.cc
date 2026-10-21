@@ -213,10 +213,25 @@ BOOST_AUTO_TEST_CASE(AnyLabelNewestProcess)
   BOOST_TEST((select(makeEvent(), {".*", "", ""}) == expected));
 }
 
+BOOST_AUTO_TEST_CASE(ExplicitProcessCollectsAllProcesses)
+{
+  // An explicit process is a regex: no newest-process filter.
+  std::set<std::string> const expected{"gaushit::reco1", "gaushit::reco2"};
+  BOOST_TEST((select(makeEvent(), {"gaushit", "", ".*"}) == expected));
+}
+
+BOOST_AUTO_TEST_CASE(LabelAndProcessRegex)
+{
+  std::set<std::string> const expected{
+    "gaushit::reco1", "gaushitStage2::reco1", "gaushit::reco2"};
+  BOOST_TEST((select(makeEvent(), {"gaushit.*", "", ".*"}) == expected));
+}
+
 BOOST_AUTO_TEST_CASE(ProcessRegex)
 {
-  // "reco.*" matches both processes: same as an empty process pattern.
-  std::set<std::string> const expected{"gaushit::reco2", "fasthit::reco2"};
+  // "reco.*" matches both processes: products from both are returned.
+  std::set<std::string> const expected{
+    "gaushit::reco1", "gaushitStage2::reco1", "gaushit::reco2", "fasthit::reco2"};
   BOOST_TEST((select(makeEvent(), {".*", "", "reco.*"}) == expected));
 }
 
@@ -238,15 +253,36 @@ BOOST_AUTO_TEST_CASE(InvalidHandlesAreFilteredOut)
   BOOST_TEST((select(e, {".*", "", ""}) == std::set<std::string>{"gaushit::reco1"}));
 }
 
-BOOST_AUTO_TEST_CASE(InvalidNewestProductDoesNotFallBack)
+BOOST_AUTO_TEST_CASE(InvalidNewestProductFallsBackToOlderProcess)
 {
-  // The newest matching process is chosen before checking validity:
-  // the valid reco1 product is not used in place of the invalid reco2 one.
+  // Like e.getHandle<T>("gaushit"): reco2 has no available product,
+  // so reco1 is the newest process with a valid match.
   MockEvent e{{"reco1", "reco2"}};
   e.add({"gaushit", "", "reco1"});
   e.add({"gaushit", "", "reco2"}, /* valid = */ false);
 
-  BOOST_TEST(select(e, {"gaushit", "", ""}).empty());
+  BOOST_TEST((select(e, {"gaushit", "", ""}) == std::set<std::string>{"gaushit::reco1"}));
+}
+
+BOOST_AUTO_TEST_CASE(NewestProcessWithAnyValidMatchWins)
+{
+  // reco2 has one valid match (fasthit): it is the selected process, and the
+  // invalid gaushit::reco2 is not replaced by gaushit::reco1.
+  MockEvent e{{"reco1", "reco2"}};
+  e.add({"gaushit", "", "reco1"});
+  e.add({"gaushit", "", "reco2"}, /* valid = */ false);
+  e.add({"fasthit", "", "reco2"});
+
+  BOOST_TEST((select(e, {".*", "", ""}) == std::set<std::string>{"fasthit::reco2"}));
+}
+
+BOOST_AUTO_TEST_CASE(ExplicitProcessSkipsInvalidProducts)
+{
+  MockEvent e{{"reco1", "reco2"}};
+  e.add({"gaushit", "", "reco1"});
+  e.add({"gaushit", "", "reco2"}, /* valid = */ false);
+
+  BOOST_TEST((select(e, {"gaushit", "", ".*"}) == std::set<std::string>{"gaushit::reco1"}));
 }
 
 //------------------------------------------------------------------------------
