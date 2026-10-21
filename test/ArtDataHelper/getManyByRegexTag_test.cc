@@ -222,8 +222,7 @@ BOOST_AUTO_TEST_CASE(ExplicitProcessCollectsAllProcesses)
 
 BOOST_AUTO_TEST_CASE(LabelAndProcessRegex)
 {
-  std::set<std::string> const expected{
-    "gaushit::reco1", "gaushitStage2::reco1", "gaushit::reco2"};
+  std::set<std::string> const expected{"gaushit::reco1", "gaushitStage2::reco1", "gaushit::reco2"};
   BOOST_TEST((select(makeEvent(), {"gaushit.*", "", ".*"}) == expected));
 }
 
