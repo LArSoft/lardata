@@ -111,15 +111,15 @@ namespace lar {
       std::vector<typename Evt::template HandleT<T>> handles;
       std::string const* newest_process = nullptr;
       for (art::InputTag const& t : e.template getInputTags<T>(selector)) {
+        // check before getHandle() so that no older product is read in vain
+        if (only_newest_process && newest_process && t.process() != *newest_process)
+          break; // older processes from here on
+
         auto handle = e.template getHandle<T>(t);
         if (!handle.isValid()) continue; // not available in this event: look further back, like art
 
-        if (only_newest_process) {
-          if (!newest_process)
-            newest_process = &t.process();
-          else if (t.process() != *newest_process)
-            break; // older processes from here on
-        }
+        // set only on a valid product, so that an unavailable one still falls back
+        if (!newest_process) newest_process = &t.process();
         handles.push_back(std::move(handle));
       }
 
